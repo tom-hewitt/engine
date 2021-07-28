@@ -18,7 +18,7 @@ const Placeholder = styled(motion.div)`
     display: inline-block;
     padding: 0;
 
-    border-radius: 6px;
+    border-radius: 5px;
 `;
 
 const Container = styled(motion.div)<{ color?: string }>`
