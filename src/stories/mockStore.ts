@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import reducer, { initialState, State } from "../reducers/reducer";
+import reducer, { State } from "../reducers/reducer";
 
 export default function mockStore(state: State) {
     return configureStore({

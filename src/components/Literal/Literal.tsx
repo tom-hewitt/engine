@@ -30,7 +30,6 @@ interface Literal3DVectorProps extends Literal3DVector {
 export default function Literal(props: LiteralProps) {
     switch (props.type) {
         case "Boolean":
-            const s = props;
             return <LiteralBooleanView value={props.value} onSubmit={(value) => props.onSubmit({ type: "Boolean", value })}/>;
         case "String":
             return <LiteralStringView {...props} onSubmit={(value) => props.onSubmit({ type: "String", value })}/>;

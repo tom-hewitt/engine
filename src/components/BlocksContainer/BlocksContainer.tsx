@@ -35,7 +35,7 @@ const ArrowSVG = styled.svg`
 function BlocksContainerStart() {
     return (
         <StartSVG viewBox="0 0 501 40">
-            <path d="M1 1C1 1 1.00337 38.8055 45.0034 38.8096C89.0033 38.8136 410.503 38.781 455.003 38.8014C499.503 38.8218 499.5 1 499.5 1" stroke-width="2" stroke-linecap="square" stroke-linejoin="round"/>
+            <path d="M1 1C1 1 1.00337 38.8055 45.0034 38.8096C89.0033 38.8136 410.503 38.781 455.003 38.8014C499.503 38.8218 499.5 1 499.5 1" strokeWidth="2" strokeLinecap="square" strokeLinejoin="round"/>
         </StartSVG>
     )
 }

@@ -1,12 +1,10 @@
 import React from "react";
-import { Story, Meta } from "@storybook/react";
-import styled from "styled-components"
+import { Meta } from "@storybook/react";
 import Expression from "../components/Expression/Expression";
 import mockStore from "./mockStore";
 import { Provider } from "react-redux";
 import { initialState } from "../reducers/reducer";
 import produce from "immer";
-import { ExpressionsState, ExpressionId } from "../reducers/expressions";
 import BlocksDndContext from "../components/BlocksDndContext/BlocksDndContext";
 
 export default {

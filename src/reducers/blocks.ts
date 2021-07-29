@@ -1,9 +1,7 @@
 import { createAction, createReducer, nanoid } from "@reduxjs/toolkit";
 import { addNode, deleteNode, reorderNode } from "../algorithms/nodes";
-import { VariableReferenceBlock } from "./expressionBlocks";
-import { DynamicExpression, Expression, ExpressionId } from "./expressions";
+import { ExpressionId } from "./expressions";
 import { FunctionId } from "./functions";
-import { VariableId } from "./variables";
 
 export interface BlocksState {
     [key: string]: BlocksNode

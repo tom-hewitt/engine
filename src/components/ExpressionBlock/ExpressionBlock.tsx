@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useDraggable } from "@dnd-kit/core";
-import { ExpressionBlock, ExpressionBlockId, FunctionExpressionBlock, Operation, OperatorExpressionBlock, VariableExpressionBlock, VariableReference, VariableReferenceBlock, Vector3DExpressionBlock } from "../../reducers/expressionBlocks";
+import { ExpressionBlock, ExpressionBlockId, FunctionExpressionBlock, OperatorExpressionBlock, VariableExpressionBlock, VariableReference, VariableReferenceBlock, Vector3DExpressionBlock } from "../../reducers/expressionBlocks";
 import VariableIcon from "../Icons/VariableIcon/VariableIcon";
 import typeColors from "../../styles/typeColors";
 import hexToRGB from "../../utilities/hexToRGB";
@@ -273,7 +273,9 @@ export default function ExpressionBlockView(props: { id: ExpressionBlockId, expr
         }
     });
 
-    useEffect(() => props.setIsDragging(isDragging), [isDragging]);
+    const { setIsDragging } = props;
+
+    useEffect(() => setIsDragging(isDragging), [setIsDragging, isDragging]);
 
     return (
         <OuterContainer

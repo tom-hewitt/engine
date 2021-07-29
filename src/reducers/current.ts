@@ -1,7 +1,6 @@
 import { createAsyncThunk, createReducer } from "@reduxjs/toolkit";
-import { createAction } from "@reduxjs/toolkit";
 import defaultValues from "../defaultValues/defaultValues";
-import blocks, { Block, blocksInitialState, BlocksState } from "./blocks";
+import blocks, { blocksInitialState, BlocksState } from "./blocks";
 import { ExpressionBlockId, ExpressionBlocksState } from "./expressionBlocks";
 import expressions, { Expression, ExpressionId, ExpressionsState } from "./expressions";
 import functions, { FunctionsState } from "./functions";

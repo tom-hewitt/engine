@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { closestCenter, DndContext, DragEndEvent, MouseSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { ReactReduxContext, useDispatch } from "react-redux";
+import React from "react";
+import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { useDispatch } from "react-redux";
 import { insertExpressionBlock } from "../../reducers/current";
 import styled from "styled-components";
 import { motion } from "framer-motion";
@@ -32,8 +32,6 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
     const mouseSensor = useSensor(Sensor);
 
     const sensors = useSensors(mouseSensor);
-
-    const { store } = useContext(ReactReduxContext)
 
     const handleDragEnd = (event: DragEndEvent) => {
         if (event.over) {

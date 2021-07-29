@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Meta } from "@storybook/react";
 import Block from "../components/Block/Block";
 import { Provider } from "react-redux";

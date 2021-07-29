@@ -84,7 +84,7 @@ export default function InputField(props: InputFieldProps) {
     }
 
     // Must make this a draggable so it blocks any draggables underneath from being dragged when the user is trying to select text
-    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
+    const {attributes, listeners, setNodeRef} = useDraggable({
         id: "input"
     });
 
