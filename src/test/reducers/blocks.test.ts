@@ -1,39 +1,6 @@
-import blocks, { addBlock, Block, BlocksState } from "../../reducers/blocks"
+import { algorithms, BlocksState } from "../../reducers/blocks"
 
-it("adds a block to an empty container", () => {
-    const initialState: BlocksState = {
-        "0": {}
-    };
-
-    const block: Block = {
-        opcode: "Set Variable",
-        variable: "Message",
-        to: {
-            type: "String",
-            value: "Hello"
-        }
-    };
-
-    const state = blocks(initialState, addBlock(block, "0"));
-
-    const blockId = state["0"].child
-
-    if (blockId) {
-        expect(state).toEqual({
-            "0": {
-                child: blockId
-            },
-            [blockId]: {
-                parent: "0",
-                block: block
-            }
-        });
-    } else {
-        throw new Error("blockId is undefined");
-    }
-});
-
-it("adds a block after another block", () => {
+it("reorders a block", () => {
     const initialState: BlocksState = {
         "0": {
             child: "1"
@@ -42,56 +9,52 @@ it("adds a block after another block", () => {
             parent: "0",
             block: {
                 opcode: "Set Variable",
-                variable: "Message",
-                to: {
-                    type: "String",
-                    value: "Hello" 
-                }
+                variable: "3",
+                to: "4",
+                type: "3D Vector"
+            },
+            child: "2"
+        },
+        "2": {
+            parent: "1",
+            block: {
+                opcode: "Set Variable",
+                variable: "5",
+                to: "6",
+                type: "Float"
             }
-        }
+        },
     };
 
-    const block: Block = {
-        opcode: "Set Variable",
-        variable: "Subject",
-        to: {
-            type: "String",
-            value: "World"
-        }
-    };
+    const state = algorithms.reorderBlock(initialState, "1", "2");
 
-    const state = blocks(initialState, addBlock(block, "1"));
-
-    const blockId = state["1"].child
-
-    if (blockId) {
-        expect(state).toEqual({
-            "0": {
-                child: "1"
-            },
-            "1": {
-                parent: "0",
-                child: blockId,
-                block: {
-                    opcode: "Set Variable",
-                    variable: "Message",
-                    to: {
-                        type: "String",
-                        value: "Hello" 
-                    }
-                }
-            },
-            [blockId]: {
-                parent: "1",
-                block: block
+    expect(state).toEqual({
+        "0": {
+            child: "2"
+        },
+        "1": {
+            parent: "2",
+            block: {
+                opcode: "Set Variable",
+                variable: "3",
+                to: "4",
+                type: "3D Vector"
             }
-        });
-    } else {
-        throw new Error("blockId is undefined");
-    }
+        },
+        "2": {
+            parent: "0",
+            block: {
+                opcode: "Set Variable",
+                variable: "5",
+                to: "6",
+                type: "Float"
+            },
+            child: "1"
+        },
+    });
 });
 
-it("adds a block before another block", () => {
+it("undos reordering a block", () => {
     const initialState: BlocksState = {
         "0": {
             child: "1"
@@ -100,51 +63,24 @@ it("adds a block before another block", () => {
             parent: "0",
             block: {
                 opcode: "Set Variable",
-                variable: "Message",
-                to: {
-                    type: "String",
-                    value: "Hello" 
-                }
+                variable: "3",
+                to: "4",
+                type: "3D Vector"
+            },
+            child: "2"
+        },
+        "2": {
+            parent: "1",
+            block: {
+                opcode: "Set Variable",
+                variable: "5",
+                to: "6",
+                type: "Float"
             }
-        }
+        },
     };
 
-    const block: Block = {
-        opcode: "Set Variable",
-        variable: "Subject",
-        to: {
-            type: "String",
-            value: "World"
-        }
-    };
+    const state = algorithms.reorderBlock(algorithms.reorderBlock(initialState, "1", "2"), "1", "0");
 
-    const state = blocks(initialState, addBlock(block, "0"));
-
-    const blockId = state["0"].child
-
-    if (blockId) {
-        expect(state).toEqual({
-            "0": {
-                child: blockId
-            },
-            "1": {
-                parent: blockId,
-                block: {
-                    opcode: "Set Variable",
-                    variable: "Message",
-                    to: {
-                        type: "String",
-                        value: "Hello" 
-                    }
-                }
-            },
-            [blockId]: {
-                parent: "0",
-                child: "1",
-                block: block
-            }
-        });
-    } else {
-        throw new Error("blockId is undefined");
-    }
-});
+    expect(state).toEqual(initialState);
+})

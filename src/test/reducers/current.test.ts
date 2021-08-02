@@ -1,5 +1,4 @@
-import produce from "immer";
-import { CurrentState, _insertExpressionBlock, _undoInsertExpressionBlock } from "../../reducers/current";
+import { CurrentState, algorithms } from "../../reducers/current";
 
 it("inserts an expression block", () => {
     const initialState: CurrentState = {
@@ -29,7 +28,7 @@ it("inserts an expression block", () => {
         }
     }
 
-    const state = produce(initialState, (draft) => _insertExpressionBlock(draft, "0", "2", "1"));
+    const state = algorithms.insertExpressionBlock(initialState, "0", "2", "1");
 
     expect(state.expressions["0"]).toEqual({
         expressionType: "Block",
@@ -66,10 +65,10 @@ it("undos an expression block insertion", () => {
         }
     };
 
-    const state = produce(initialState, (draft) => _undoInsertExpressionBlock(draft, "0", "2", "1", {
+    const state = algorithms.undoInsertExpressionBlock(initialState, "0", "2", "1", {
         type: "String",
         value: "Hello"
-    }));
+    });
 
     expect(state).toEqual(initialState);
 });
