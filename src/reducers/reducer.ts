@@ -1,20 +1,23 @@
 import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
 import produce from "immer";
 import current, { CurrentState, initialCurrentState } from "./current";
+import temp, { initialTempState, TempState } from "./temp";
 
-type ReversibleAction = PayloadAction<{ reversible: true, reverse?: boolean, [key: string]: any }>;
+type ReversibleAction = PayloadAction<{ undo: boolean, [key: string]: any }>;
 
 export interface State {
     current: CurrentState,
     history: ReversibleAction[],
     index: number,
-    undoMessage?: string
+    undoMessage?: string,
+    temp: TempState
 };
 
 export const initialState: State = {
     current: initialCurrentState,
     history: [],
-    index: 0
+    index: 0,
+    temp: initialTempState
 };
 
 export const undo = createAction("UNDO");
@@ -45,13 +48,12 @@ const reducer = createReducer(initialState, (builder) => {
             }
         })
         .addDefaultCase((state, action) => {
-            if (action.payload) {
-                if (action.payload.undo === false) {
-                    state.history.splice(state.index, state.history.length - state.index, action as ReversibleAction);
-                    state.index++;
-                }
-                state.current = current(state.current, action);
+            if (action.payload && action.payload.undo === false) {
+                state.history.splice(state.index, state.history.length - state.index, action as ReversibleAction);
+                state.index++;
             }
+            state.current = current(state.current, action);
+            state.temp = temp(state.temp, action);
         })
 });
 

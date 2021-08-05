@@ -1,3 +1,4 @@
+import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { BlockId } from "../../reducers/blocks";
@@ -50,27 +51,28 @@ function Arrow() {
     )
 }
 
-function Blocks(props: { id: BlockId }) {
-    const child = useSelector((state: State) => state.current.blocks[props.id].child);
-    return (
+export const BlocksContainerContext = React.createContext<{ draggingItem?: { id: BlockId, newParent: BlockId }, setDraggingId: (id?: BlockId) => void }>({
+    draggingItem: undefined,
+    setDraggingId: (id) => {}
+});
+
+function Blocks(props: { parent: BlockId }) {
+    const id = useSelector((state: State) => state.current.blocks[props.parent].child);
+    
+    return id ? 
         <>
-            <Arrow/>
-            <Block id={props.id}/>
-            { child ?
-                <Blocks id={child}/>
-            : null}
+            <Arrow key={`arrow-${id}`}/>
+            <Block id={id} key={`block-${id}`}/>
+            <Blocks parent={id}/>
         </>
-    )
+    : null;
 }
 
 export default function BlocksContainer(props: { id: BlockId }) {
-    const blocksContainer = useSelector((state: State) => state.current.blocks[props.id]);
     return (
         <Container>
             <BlocksContainerStart/>
-            { blocksContainer.child ? 
-                <Blocks id={blocksContainer.child}/>
-            : null}
+            <Blocks parent={props.id}/>
         </Container>
     )
 }

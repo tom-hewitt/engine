@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useDraggable } from "@dnd-kit/core";
@@ -10,6 +10,8 @@ import colors from "../../styles/colors";
 import backgroundTypeColors from "../../styles/backgroundTypeColors";
 import FunctionIcon from "../Icons/FunctionIcon/FunctionIcon";
 import Expression from "../Expression/Expression";
+import { useContext } from "react";
+import { BlockContext } from "../Block/Block";
 
 const OuterContainer = styled(motion.div)`
     display: inline-flex;
@@ -113,6 +115,8 @@ const FieldName = styled.span<{ color: string }>`
     color: ${props => props.color};
 `;
 
+export const ParentDragContext = React.createContext(false);
+
 function Member(props: { member: VariableReference, lastType: Type, isDragging: boolean, isReference: boolean }) {
     const color = typeColors[props.member.type];
     const backgroundColor = props.isReference ? colors.Block : backgroundTypeColors[props.member.type];
@@ -126,8 +130,8 @@ function Member(props: { member: VariableReference, lastType: Type, isDragging: 
                 color={ props.isReference ? "#D6D6D6" : color }
                 animate={{
                     boxShadow: props.isDragging
-                    ? "0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-                    : undefined,
+                    ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
+                    : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
                     backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
                 }}
             >
@@ -149,8 +153,8 @@ export function VariableBlock(props: { expressionBlock: VariableExpressionBlock 
                 color={ isReference ? "#D6D6D6" : color }
                 animate={{
                     boxShadow: props.isDragging
-                    ? "0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-                    : undefined,
+                    ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
+                    : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
                     backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
                 }}
             >
@@ -178,8 +182,8 @@ function FunctionBlock(props: { expressionBlock: FunctionExpressionBlock, isDrag
             color={color}
             animate={{
                 boxShadow: props.isDragging
-                ? "0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-                : undefined,
+                ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
+                : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
                 backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
             }}
         >
@@ -201,8 +205,8 @@ function OperatorExpressionBlockView(props: { expressionBlock: OperatorExpressio
             color={color}
             animate={{
                 boxShadow: props.isDragging
-                ? "0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-                : undefined,
+                ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
+                : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
                 backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
             }}
         >
@@ -222,8 +226,8 @@ function Vector3DExpressionBlockView(props: { expressionBlock: Vector3DExpressio
             color={color}
             animate={{
                 boxShadow: props.isDragging
-                ? "0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-                : undefined,
+                ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
+                : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
                 backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
             }}
         >
@@ -264,18 +268,19 @@ function InnerExpressionBlock(props: { expressionBlock: ExpressionBlock, isDragg
     };
 };
 
-export default function ExpressionBlockView(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock, setIsDragging: (value: boolean) => void}) {
+export default function ExpressionBlockView(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock }) {
+    const { id: blockParent } = useContext(BlockContext);
+
+    const isParentDragging = useContext(ParentDragContext);
+    
     const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
         id: props.id,
         data: {
             draggableType: "ExpressionBlock",
-            expressionBlock: props.id
+            expressionBlock: props.id,
+            blockParent
         }
     });
-
-    const { setIsDragging } = props;
-
-    useEffect(() => setIsDragging(isDragging), [setIsDragging, isDragging]);
 
     return (
         <OuterContainer
@@ -294,7 +299,9 @@ export default function ExpressionBlockView(props: { id: ExpressionBlockId, expr
             {...listeners}
             {...attributes}
         >
-            <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={isDragging}/>
+            <ParentDragContext.Provider value={isDragging || isParentDragging}>
+                <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={isDragging} />
+            </ParentDragContext.Provider>
         </OuterContainer>
     )
 };
