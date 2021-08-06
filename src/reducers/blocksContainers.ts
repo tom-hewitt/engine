@@ -20,14 +20,14 @@ export const reorderBlock = createAction(
             undo: false,
             container,
             oldIndex,
-            newIndex
+            newIndex: newIndex > oldIndex ? newIndex - 1 : newIndex
         }
     })
 );
 
 export const algorithms = {
     reorderBlock: (state: BlocksContainersState, container: BlocksContainerId, oldIndex: number, newIndex: number) => {
-        state[container].blocks.splice(oldIndex, 0, state[container].blocks.splice(newIndex, 1)[0]);
+        state[container].blocks.splice(newIndex, 0, state[container].blocks.splice(oldIndex, 1)[0]);
 
         return state;
     }
