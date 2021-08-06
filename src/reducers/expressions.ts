@@ -15,7 +15,7 @@ export interface DynamicExpression {
     expressionType: "Block"
 };
 
-const expressionsInitialState: ExpressionsState = {};
+export const expressionsInitialState: ExpressionsState = {};
 
 export const setExpression = createAction("expressions/SET_EXPRESSION", (id: ExpressionId, expression: Expression) => {
     return {

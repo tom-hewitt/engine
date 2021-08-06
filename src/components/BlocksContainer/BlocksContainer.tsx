@@ -6,7 +6,8 @@ import { BlockId } from "../../reducers/blocks";
 import { State } from "../../reducers/reducer";
 import Block from "../Block/Block";
 import { ActiveBlock } from "../../reducers/temp";
-import { AnimatePresence } from "framer-motion";
+import { BlocksContainerId } from "../../reducers/blocksContainers";
+import { ReactElement } from "react";
 
 const Container = styled.div`
     display: inline-flex;
@@ -54,11 +55,13 @@ function Arrow() {
     )
 }
 
-function ArrowDroppable(props: { parent: BlockId }) {
+function ArrowDroppable(props: { id: BlockId, container: BlocksContainerId, index: number }) {
     const {setNodeRef} = useDroppable({
-        id: props.parent,
+        id: props.id,
         data: {
-            droppableType: "Arrow"
+            droppableType: "Arrow",
+            container: props.container,
+            index: props.index
         }
     });
 
@@ -71,40 +74,43 @@ function ArrowDroppable(props: { parent: BlockId }) {
     )
 }
 
-function Blocks(props: { parent: BlockId, activeBlock?: ActiveBlock}) {
-    const id = useSelector((state: State) => state.current.blocks[props.parent].child);
-    
-    return (
-        <>
-            { props.activeBlock && props.parent === props.activeBlock.parent ?
-                <>
-                    <Arrow/>
-                    <Block id={props.activeBlock.id} key={`block-${id}`}/>
-                </>
-            : null }
-            { !props.activeBlock || props.activeBlock.id !== id ? 
-                <>
-                    <ArrowDroppable parent={props.parent} key={`arrow-${props.parent}`}/>
-                    { id ?
-                        <Block id={id} key={`block-${id}`}/>
-                    : null }
-                </>
-            : null }
-            { id ? 
-                <Blocks parent={id} activeBlock={props.activeBlock}/>
-            : null }
-            
-        </>
-    );
+const Blocks = (container: BlocksContainerId, blocks: BlockId[], activeBlock?: ActiveBlock) => {
+    let array: ReactElement[] = [];
+
+    array.push(<ArrowDroppable id={container} container={container} index={0} key={`arrow-0`}/>);
+
+    if (activeBlock && (activeBlock.newIndex === 0)) {
+        array.push(<Block id={activeBlock.id} index={activeBlock.newIndex} key={`block-${activeBlock.id}`}/>);
+        array.push(<Arrow key={`arrow-active`}/>);
+    }
+
+    blocks.forEach((id, index) => {
+        if (!activeBlock || (activeBlock.id !== id)) {
+            array.push(<Block id={id} index={index} key={`block-${id}`}/>);
+            array.push(<ArrowDroppable id={id} container={container} index={index + 1} key={`arrow-${index + 1}`}/>);
+        }
+
+        if (activeBlock && (index + 1 === activeBlock.newIndex)) {
+            array.push(<Block id={activeBlock.id} index={activeBlock.newIndex} key={`block-${activeBlock.id}`}/>);
+            array.push(<Arrow key={`arrow-active`}/>);
+        }
+    });
+
+    return array;
 }
 
-export default function BlocksContainer(props: { id: BlockId }) {
-    const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" ? state.temp.active : undefined);
+export const BlocksContainerContext = React.createContext<{ container?: BlocksContainerId }>({});
+
+export default function BlocksContainer(props: { id: BlocksContainerId }) {
+    const blocks = useSelector((state: State) => state.current.blocksContainers[props.id].blocks);
+    const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.container === props.id ? state.temp.active : undefined);
 
     return (
         <Container>
-            <BlocksContainerStart/>
-            <Blocks parent={props.id} activeBlock={activeBlock}/>
+            <BlocksContainerContext.Provider value={{ container: props.id }}>
+                <BlocksContainerStart/>
+                { Blocks(props.id, blocks, activeBlock) }
+            </BlocksContainerContext.Provider>
         </Container>
     )
 }

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import { dragBlockOver, endDrag, startBlockDrag, startExpressionBlockDrag } from "../../reducers/temp";
 import { State } from "../../reducers/reducer";
+import { BlocksContainerId, reorderBlock } from "../../reducers/blocksContainers";
 
 const Container = styled(motion.div)`
     display: inline-flex;
@@ -49,15 +50,11 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
 
     const sensors = useSensors(mouseSensor);
 
-    let active: unknown = undefined;
-
     const handleDragStart = (event: DragStartEvent) => {
-        active = event.active;
-
         if (event.active.data.current?.draggableType) {
             switch (event.active.data.current.draggableType) {
                 case "Block": {
-                    dispatch(startBlockDrag({ id: event.active.data.current.id, parent: event.active.data.current.parent }));
+                    dispatch(startBlockDrag({ id: event.active.data.current.id, container: event.active.data.current.container, index: event.active.data.current.index }));
                     break;
                 }
                 case "ExpressionBlock": {
@@ -71,8 +68,9 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
         if (event.active.data.current?.draggableType) {
             switch (event.active.data.current.draggableType) {
                 case "Block": {
-                    const id = event.over?.id;
-                    if (id) dispatch(dragBlockOver({ newParent: id }));
+                    const container: BlocksContainerId | undefined = event.over?.data.current?.container;
+                    const index: number | undefined = event.over?.data.current?.index;
+                    if (container && index !== undefined) dispatch(dragBlockOver({ container, newIndex: index }));
                     break;
                 }
             }
@@ -85,6 +83,16 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
         if (event.over) {
             if (event.over.data.current?.droppableType) {
                 switch (event.over.data.current.droppableType) {
+                    case "Arrow": {
+                        if (event.active.data.current?.draggableType) {
+                            switch (event.active.data.current.draggableType) {
+                                case "Block": {
+                                    dispatch(reorderBlock(event.over.data.current.container, event.active.data.current.index, event.over.data.current.index));
+                                }
+                            }
+                        };
+                        break;
+                    }
                     case "Expression": {
                         if (event.active.data.current?.draggableType) {
                             switch (event.active.data.current.draggableType) {
@@ -93,6 +101,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                                 }
                             }
                         }
+                        break;
                     }
                 }
             }
@@ -110,7 +119,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                 let score: number | undefined = undefined;
                 switch (active.draggableType) {
                     case "Block": {
-                        if (state.current.blocks[id]) {
+                        if (state.current.blocks[id] || state.current.blocksContainers[id]) {
                             score = euclidianDistance(rectCenter(rect), rectCenter(draggable));
                         }
                         break;
@@ -143,9 +152,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
             sensors={sensors}
             collisionDetection={collisions}
         >
-            <Container
-                layout
-            >
+            <Container>
                 {props.children}
             </Container>
         </DndContext>

@@ -14,22 +14,23 @@ export default {
 
 export const Default = () => {
     const store = mockStore(produce(initialState, (draft) => {
-        draft.current.blocks = {
+        draft.current.blocksContainers = {
             "0": {
-                child: "3"
-            },
+                blocks: ["3", "1", "2"]
+            }
+        }
+        draft.current.blocks = {
             "1": {
-                parent: "3",
+                parent: "0",
                 block: {
                     opcode: "Set Variable",
                     variable: "2",
                     to: "3",
                     type: "3D Vector"
-                },
-                child: "2"
+                }
             },
             "2": {
-                parent: "1",
+                parent: "0",
                 block: {
                     opcode: "Set Variable",
                     variable: "10",
@@ -44,8 +45,7 @@ export const Default = () => {
                     variable: "18",
                     to: "19",
                     type: "3D Vector"
-                },
-                child: "1"
+                }
             }
         };
         draft.current.expressions = {

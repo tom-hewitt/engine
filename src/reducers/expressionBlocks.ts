@@ -53,9 +53,9 @@ export interface Vector3DExpressionBlock extends BaseExpressionBlock {
     arguments: [ExpressionId, ExpressionId, ExpressionId]
 }
 
-const expressionsInitialState: ExpressionBlocksState = {};
+export const expressionBlocksInitialState: ExpressionBlocksState = {};
 
-const expressions = createReducer(expressionsInitialState, (builder) => {
+const expressions = createReducer(expressionBlocksInitialState, (builder) => {
 
 });
 

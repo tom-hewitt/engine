@@ -1,12 +1,14 @@
 import { createAsyncThunk, createReducer } from "@reduxjs/toolkit";
 import defaultValues from "../defaultValues/defaultValues";
 import blocks, { blocksInitialState, BlocksState } from "./blocks";
-import { ExpressionBlockId, ExpressionBlocksState } from "./expressionBlocks";
-import expressions, { Expression, ExpressionId, ExpressionsState } from "./expressions";
-import functions, { FunctionsState } from "./functions";
+import blocksContainers, { blocksContainersInitialState, BlocksContainersState } from "./blocksContainers";
+import { ExpressionBlockId, expressionBlocksInitialState, ExpressionBlocksState } from "./expressionBlocks";
+import expressions, { Expression, ExpressionId, expressionsInitialState, ExpressionsState } from "./expressions";
+import functions, { functionsInitialState, FunctionsState } from "./functions";
 import { State } from "./reducer";
 
 export interface CurrentState {
+    blocksContainers: BlocksContainersState,
     blocks: BlocksState,
     expressions: ExpressionsState,
     expressionBlocks: ExpressionBlocksState,
@@ -14,10 +16,11 @@ export interface CurrentState {
 };
 
 export const initialCurrentState: CurrentState = {
+    blocksContainers: blocksContainersInitialState,
     blocks: blocksInitialState,
-    expressions: {},
-    expressionBlocks: {},
-    functions: {}
+    expressions: expressionsInitialState,
+    expressionBlocks: expressionBlocksInitialState,
+    functions: functionsInitialState
 };
 
 export const insertExpressionBlock = createAsyncThunk(
@@ -102,6 +105,7 @@ export const current = createReducer(initialCurrentState, (builder) => {
             }
         })
         .addDefaultCase((state, action) => {
+            state.blocksContainers = blocksContainers(state.blocksContainers, action);
             state.blocks = blocks(state.blocks, action);
             state.functions = functions(state.functions, action);
             state.expressions = expressions(state.expressions, action);

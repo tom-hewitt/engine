@@ -15,9 +15,9 @@ export interface FunctionsState {
     [key: string]: Function
 };
 
-export const initialFunctionsState: FunctionsState = {};
+export const functionsInitialState: FunctionsState = {};
 
-const functions = createReducer(initialFunctionsState, (builder) => {
+const functions = createReducer(functionsInitialState, (builder) => {
 });
 
 export default functions;

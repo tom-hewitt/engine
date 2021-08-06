@@ -15,9 +15,6 @@ export default {
 export const SetVariable = () => {
     const store = mockStore(produce(initialState, (draft) => {
         draft.current.blocks = {
-            "0": {
-                child: "1"
-            },
             "1": {
                 parent: "0",
                 block: {
@@ -107,9 +104,6 @@ export const SetVariable = () => {
 export const BuiltInFunction = () => {
     const store = mockStore(produce(initialState, (draft) => {
         draft.current.blocks = {
-            "0": {
-                child: "1"
-            },
             "1": {
                 parent: "0",
                 block: {

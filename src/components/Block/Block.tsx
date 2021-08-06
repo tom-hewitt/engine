@@ -13,6 +13,7 @@ import FunctionIcon from "../Icons/FunctionIcon/FunctionIcon";
 import TypeText from "../TypeText/TypeText";
 import { ExpressionId } from "../../reducers/expressions";
 import { useContext } from "react";
+import { BlocksContainerContext } from "../BlocksContainer/BlocksContainer";
 
 const Placeholder = styled(motion.div)`
     display: inline-block;
@@ -94,12 +95,13 @@ const ParameterName = styled.span`
     color: ${colors.Primary};
 `;
 
-export const BlockContext = React.createContext({
+export const BlockContext = React.createContext<{ id: BlockId, index?: number }>({
     id: ""
-})
+});
 
-function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
-    const { id } = useContext(BlockContext);
+function OuterBlock(props: { children: React.ReactNode }) {
+    const { id, index } = useContext(BlockContext);
+    const { container } = useContext(BlocksContainerContext);
 
     const isChildDragging = useSelector((state: State) => state.temp.active?.draggableType === "Expression Block" &&  state.temp.active?.blockParent === id);
 
@@ -108,7 +110,8 @@ function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
         data: {
             draggableType: "Block",
             id: id,
-            parent: props.parent
+            index: index,
+            container
         }
     });
 
@@ -127,7 +130,7 @@ function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
                 ref={setNodeRef}
                 layoutId={`block-${id}`}
                 initial={{
-                    backgroundColor: colors.Block
+                    backgroundColor: colors.Block   
                 }}
                 animate={{
                     x: transform ? transform.x : 0,
@@ -153,9 +156,9 @@ function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
     )
 };
 
-function SetVariableBlockView(props: { parent: BlockId, block: SetVariableBlock }) {
+function SetVariableBlockView(props: { block: SetVariableBlock }) {
     return (
-        <OuterBlock parent={props.parent}>
+        <OuterBlock>
             <Opcode color={typeColors[props.block.type]}>SET VARIABLE</Opcode>
             <HorizontalContainer>
                 <Expression expression={props.block.variable}/>
@@ -181,11 +184,11 @@ function ArgumentView(props: { name: string, expression: ExpressionId, setIsDrag
     )
 }
 
-function FunctionBlockView(props: { parent: BlockId, block: FunctionBlock | BuiltInFunctionBlock }) {
+function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock }) {
     const color = props.block.type ? typeColors[props.block.type] : colors.Primary;
 
     return (
-        <OuterBlock parent={props.parent}>
+        <OuterBlock>
             <Opcode color={color}>FUNCTION</Opcode>
             <HorizontalContainer>
                 <FunctionIcon color={color}/>
@@ -211,31 +214,28 @@ function FunctionBlockView(props: { parent: BlockId, block: FunctionBlock | Buil
 
 function InnerBlock() {
     const { id } = useContext(BlockContext);
-    const { block, parent: _parent} = useSelector((state: State) => state.current.blocks[id]);
+    const { block } = useSelector((state: State) => state.current.blocks[id]);
 
     if (!block) {
-        throw new Error("Block cannot be undefined")
+        throw new Error(`Block with id: "${id}" does not exist`)
     };
-
-    // It is a block so must have a parent
-    const parent = _parent as BlockId;
 
     switch (block.opcode) {
         case "Set Variable": {
-            return <SetVariableBlockView parent={parent} block={block}/>
+            return <SetVariableBlockView block={block}/>
         }
         case "Function": {
-            return <FunctionBlockView parent={parent} block={block}/>
+            return <FunctionBlockView block={block}/>
         }
         case "Built In Function": {
-            return <FunctionBlockView parent={parent} block={block}/>
+            return <FunctionBlockView block={block}/>
         }
     }
 };
 
-export default function BlockView(props: { id: BlockId }) {
+export default function BlockView(props: { id: BlockId, index?: number }) {
     return (
-        <BlockContext.Provider value={{ id: props.id }}>
+        <BlockContext.Provider value={{ id: props.id, index: props.index }}>
             <InnerBlock/>
         </BlockContext.Provider>
     )
