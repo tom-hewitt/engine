@@ -1,9 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { useDroppable } from "@dnd-kit/core";
 import { BlockId } from "../../reducers/blocks";
 import { State } from "../../reducers/reducer";
 import Block from "../Block/Block";
+import { ActiveBlock } from "../../reducers/temp";
+import { AnimatePresence } from "framer-motion";
 
 const Container = styled.div`
     display: inline-flex;
@@ -51,28 +54,57 @@ function Arrow() {
     )
 }
 
-export const BlocksContainerContext = React.createContext<{ draggingItem?: { id: BlockId, newParent: BlockId }, setDraggingId: (id?: BlockId) => void }>({
-    draggingItem: undefined,
-    setDraggingId: (id) => {}
-});
+function ArrowDroppable(props: { parent: BlockId }) {
+    const {setNodeRef} = useDroppable({
+        id: props.parent,
+        data: {
+            droppableType: "Arrow"
+        }
+    });
 
-function Blocks(props: { parent: BlockId }) {
+    return (
+        <ArrowContainer ref={setNodeRef}>
+            <ArrowSVG viewBox="0 0 16 41">
+                <path d="M8 0.226497L2.2265 6L8 11.7735L13.7735 6L8 0.226497ZM7.29289 40.7071C7.68342 41.0976 8.31658 41.0976 8.70711 40.7071L15.0711 34.3431C15.4616 33.9526 15.4616 33.3195 15.0711 32.9289C14.6805 32.5384 14.0474 32.5384 13.6569 32.9289L8 38.5858L2.34315 32.9289C1.95262 32.5384 1.31946 32.5384 0.928932 32.9289C0.538408 33.3195 0.538408 33.9526 0.928932 34.3431L7.29289 40.7071ZM7 6V40H9V6H7Z" fill="#919191"/>
+            </ArrowSVG>
+        </ArrowContainer>
+    )
+}
+
+function Blocks(props: { parent: BlockId, activeBlock?: ActiveBlock}) {
     const id = useSelector((state: State) => state.current.blocks[props.parent].child);
     
-    return id ? 
+    return (
         <>
-            <Arrow key={`arrow-${id}`}/>
-            <Block id={id} key={`block-${id}`}/>
-            <Blocks parent={id}/>
+            { props.activeBlock && props.parent === props.activeBlock.parent ?
+                <>
+                    <Arrow/>
+                    <Block id={props.activeBlock.id} key={`block-${id}`}/>
+                </>
+            : null }
+            { !props.activeBlock || props.activeBlock.id !== id ? 
+                <>
+                    <ArrowDroppable parent={props.parent} key={`arrow-${props.parent}`}/>
+                    { id ?
+                        <Block id={id} key={`block-${id}`}/>
+                    : null }
+                </>
+            : null }
+            { id ? 
+                <Blocks parent={id} activeBlock={props.activeBlock}/>
+            : null }
+            
         </>
-    : null;
+    );
 }
 
 export default function BlocksContainer(props: { id: BlockId }) {
+    const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" ? state.temp.active : undefined);
+
     return (
         <Container>
             <BlocksContainerStart/>
-            <Blocks parent={props.id}/>
+            <Blocks parent={props.id} activeBlock={activeBlock}/>
         </Container>
     )
 }

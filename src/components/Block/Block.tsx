@@ -101,7 +101,7 @@ export const BlockContext = React.createContext({
 function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
     const { id } = useContext(BlockContext);
 
-    const isChildDragging = useSelector((state: State) => state.temp.draggingExpressionBlock?.blockParent === id);
+    const isChildDragging = useSelector((state: State) => state.temp.active?.draggableType === "Expression Block" &&  state.temp.active?.blockParent === id);
 
     const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
         id: `block-${id}`,
@@ -126,6 +126,9 @@ function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
             <Container
                 ref={setNodeRef}
                 layoutId={`block-${id}`}
+                initial={{
+                    backgroundColor: colors.Block
+                }}
                 animate={{
                     x: transform ? transform.x : 0,
                     y: transform ? transform.y : 0,
@@ -134,7 +137,7 @@ function OuterBlock(props: { parent: BlockId, children: React.ReactNode }) {
                     boxShadow: isDragging
                     ? "0px 15px 15px 0 rgba(0, 0, 0, 0.25)"
                     : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
-                    backgroundColor: isDragging ? hexToRGB("#3A3A3A", "0.9") : "#3A3A3A"
+                    backgroundColor: isDragging ? hexToRGB(colors.Block, "0.9") : colors.Block
                 }}
                 transition={{
                     duration: 0.25,
