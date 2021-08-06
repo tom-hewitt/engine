@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useDraggable } from "@dnd-kit/core";
-import { BlockId, BuiltInFunctionBlock, FunctionBlock, SetVariableBlock } from "../../reducers/blocks";
+import { Block, BlockId, BuiltInFunctionBlock, FunctionBlock, SetVariableBlock } from "../../reducers/blocks";
 import hexToRGB from "../../utilities/hexToRGB";
 import { useSelector } from "react-redux";
 import { State } from "../../reducers/reducer";
@@ -22,7 +22,14 @@ const Placeholder = styled(motion.div)`
     border-radius: 5px;
 `;
 
-const Container = styled(motion.div)<{ color?: string }>`
+const DraggableContainer = styled(motion.div)`
+    display: flex;
+    flex-direction: column;
+
+    cursor: grab;
+`;
+
+const OuterBlock = styled(motion.div)<{ color?: string }>`
     display: flex;
     flex-direction: column;
 
@@ -32,6 +39,8 @@ const Container = styled(motion.div)<{ color?: string }>`
     border-radius: 5px;
 
     ${props => props.color ? "border: 1px solid #FFA215;": ""};
+
+    background-color: ${colors.Block};
 
     user-select: none;
 
@@ -99,63 +108,6 @@ export const BlockContext = React.createContext<{ id: BlockId, index?: number }>
     id: ""
 });
 
-function OuterBlock(props: { children: React.ReactNode }) {
-    const { id, index } = useContext(BlockContext);
-    const { container } = useContext(BlocksContainerContext);
-
-    const isChildDragging = useSelector((state: State) => state.temp.active?.draggableType === "Expression Block" &&  state.temp.active?.blockParent === id);
-
-    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
-        id: `block-${id}`,
-        data: {
-            draggableType: "Block",
-            id: id,
-            index: index,
-            container
-        }
-    });
-
-    return (
-        <Placeholder
-            ref={setNodeRef}
-            animate={{
-                backgroundColor: isDragging ? "rgba(40, 40, 40, 1)" : "rgba(40, 40, 40, 0)",
-                zIndex: isDragging || isChildDragging ? 1 : 0
-            }}
-            transition={{
-                zIndex: { delay: isDragging || isChildDragging ? 0 : 0.25 }
-            }}
-        >
-            <Container
-                ref={setNodeRef}
-                layoutId={`block-${id}`}
-                initial={{
-                    backgroundColor: colors.Block   
-                }}
-                animate={{
-                    x: transform ? transform.x : 0,
-                    y: transform ? transform.y : 0,
-                    cursor: isDragging ? "grabbing" : "grab",
-                    scale: isDragging ? 1.03 : 1,
-                    boxShadow: isDragging
-                    ? "0px 15px 15px 0 rgba(0, 0, 0, 0.25)"
-                    : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
-                    backgroundColor: isDragging ? hexToRGB(colors.Block, "0.9") : colors.Block
-                }}
-                transition={{
-                    duration: 0.25,
-                    x: { duration: isDragging ? 0 : 0.25 },
-                    y: { duration: isDragging ? 0 : 0.25 }
-                }}
-                {...listeners}
-                {...attributes}
-            >
-                {props.children}
-            </Container>
-        </Placeholder>
-    )
-};
-
 function SetVariableBlockView(props: { block: SetVariableBlock }) {
     return (
         <OuterBlock>
@@ -212,31 +164,68 @@ function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock 
     )
 }
 
-function InnerBlock() {
-    const { id } = useContext(BlockContext);
-    const { block } = useSelector((state: State) => state.current.blocks[id]);
-
-    if (!block) {
-        throw new Error(`Block with id: "${id}" does not exist`)
-    };
-
-    switch (block.opcode) {
+function BlockView(props: { block: Block }) {
+    switch (props.block.opcode) {
         case "Set Variable": {
-            return <SetVariableBlockView block={block}/>
+            return <SetVariableBlockView block={props.block}/>
         }
         case "Function": {
-            return <FunctionBlockView block={block}/>
+            return <FunctionBlockView block={props.block}/>
         }
         case "Built In Function": {
-            return <FunctionBlockView block={block}/>
+            return <FunctionBlockView block={props.block}/>
         }
     }
 };
 
-export default function BlockView(props: { id: BlockId, index?: number }) {
+export function BlockNode(props: { id: BlockId }) {
+    const block = useSelector((state: State) => state.current.blocks[props.id].block);
+
+    if (!block) {
+        throw new Error(`Block with id: "${props.id}" does not exist`)
+    };
+
+    return <BlockView block={block}/>
+}
+
+export default function DraggableBlock(props: { id: BlockId, index?: number }) {
+    const { container } = useContext(BlocksContainerContext);
+
+    const isChildDragging = useSelector((state: State) => 
+        state.temp.active?.draggableType === "Expression Block" && state.temp.active?.blockParent === props.id
+    );
+
+    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
+        id: `block-${props.id}`,
+        data: {
+            draggableType: "Block",
+            id: props.id,
+            index: props.index,
+            container
+        }
+    });
+
     return (
-        <BlockContext.Provider value={{ id: props.id, index: props.index }}>
-            <InnerBlock/>
-        </BlockContext.Provider>
+        <Placeholder
+            layoutId={`block-placeholder-${props.id}`}
+            animate={{
+                border: isDragging ? `1px solid ${colors.Primary}` : `1px solid ${hexToRGB(colors.Primary, "0")}`
+            }}
+        >
+            <DraggableContainer
+                ref={setNodeRef}
+                layoutId={`block-${props.id}`}
+                animate={{
+                    opacity: isDragging ? 0 : 1
+                }}
+                transition={{
+                    opacity: { duration: 0 }
+                }}
+                {...listeners}
+                {...attributes}
+            >
+                <BlockNode id={props.id}/>
+            </DraggableContainer>
+        </Placeholder>
     )
 }

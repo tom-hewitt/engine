@@ -16,8 +16,10 @@ export interface ActiveExpressionBlock {
 }
 
 export interface TempState {
-    active?: ActiveBlock | ActiveExpressionBlock
+    active?: Active
 }
+
+export type Active = ActiveBlock | ActiveExpressionBlock;
 
 export const initialTempState: TempState = {
 

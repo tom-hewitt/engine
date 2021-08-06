@@ -1,17 +1,32 @@
 import React from "react";
-import { DndContext, DragEndEvent, DragOverEvent, DragStartEvent, LayoutRect, PointerSensor, RectEntry, useSensor, useSensors, ViewRect } from "@dnd-kit/core";
-import { useDispatch, useStore } from "react-redux";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, LayoutRect, PointerSensor, RectEntry, useSensor, useSensors, ViewRect } from "@dnd-kit/core";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { insertExpressionBlock } from "../../reducers/current";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { dragBlockOver, endDrag, startBlockDrag, startExpressionBlockDrag } from "../../reducers/temp";
+import { Active, dragBlockOver, endDrag, startBlockDrag, startExpressionBlockDrag } from "../../reducers/temp";
 import { State } from "../../reducers/reducer";
 import { BlocksContainerId, reorderBlock } from "../../reducers/blocksContainers";
+import { BlockNode } from "../Block/Block";
 
 const Container = styled(motion.div)`
     display: inline-flex;
     flex-direction: column;
 `;
+
+export const DragOverlayContext = React.createContext(false);
+
+function ActiveOverlay(props: { active: Active }) {
+    if (props.active) {
+        switch (props.active.draggableType) {
+            case "Block": {
+                return <BlockNode id={props.active.id}/>;
+            }
+        }
+    };
+
+    return null;
+}
 
 class Sensor extends PointerSensor {
     static activators = [
@@ -44,6 +59,8 @@ const rectCenter = (rect: LayoutRect | ViewRect) => {
 }
 
 export default function BlocksDndContext(props: { children: React.ReactNode }) {
+    const active = useSelector((state: State) => state.temp.active);
+
     const store = useStore();
     const dispatch = useDispatch();
     const mouseSensor = useSensor(Sensor);
@@ -155,6 +172,13 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
             <Container>
                 {props.children}
             </Container>
+            <DragOverlay>
+                { active ?
+                    <DragOverlayContext.Provider value={true}>
+                        <ActiveOverlay active={active}/>
+                    </DragOverlayContext.Provider>
+                : null }
+            </DragOverlay>
         </DndContext>
     )
 }

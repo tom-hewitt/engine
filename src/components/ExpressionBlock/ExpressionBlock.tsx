@@ -12,6 +12,7 @@ import FunctionIcon from "../Icons/FunctionIcon/FunctionIcon";
 import Expression from "../Expression/Expression";
 import { useContext } from "react";
 import { BlockContext } from "../Block/Block";
+import { DragOverlayContext } from "../BlocksDndContext/BlocksDndContext";
 
 const OuterContainer = styled(motion.div)`
     display: inline-flex;
@@ -128,6 +129,9 @@ function Member(props: { member: VariableReference, lastType: Type, isDragging: 
             </Arrow>
             <Container
                 color={ props.isReference ? "#D6D6D6" : color }
+                initial={{
+                    backgroundColor: backgroundColor
+                }}
                 animate={{
                     boxShadow: props.isDragging
                     ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
@@ -151,6 +155,9 @@ export function VariableBlock(props: { expressionBlock: VariableExpressionBlock 
         <>
             <Container
                 color={ isReference ? "#D6D6D6" : color }
+                initial={{
+                    backgroundColor: backgroundColor
+                }}
                 animate={{
                     boxShadow: props.isDragging
                     ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
@@ -180,6 +187,9 @@ function FunctionBlock(props: { expressionBlock: FunctionExpressionBlock, isDrag
     return (
         <Container
             color={color}
+            initial={{
+                backgroundColor: backgroundColor
+            }}
             animate={{
                 boxShadow: props.isDragging
                 ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
@@ -203,6 +213,9 @@ function OperatorExpressionBlockView(props: { expressionBlock: OperatorExpressio
     return (
         <Container
             color={color}
+            initial={{
+                backgroundColor: backgroundColor
+            }}
             animate={{
                 boxShadow: props.isDragging
                 ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
@@ -224,6 +237,9 @@ function Vector3DExpressionBlockView(props: { expressionBlock: Vector3DExpressio
     return (
         <VerticalContainer
             color={color}
+            initial={{
+                backgroundColor: backgroundColor
+            }}
             animate={{
                 boxShadow: props.isDragging
                 ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
@@ -268,7 +284,7 @@ function InnerExpressionBlock(props: { expressionBlock: ExpressionBlock, isDragg
     };
 };
 
-export default function ExpressionBlockView(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock }) {
+function DraggableExpressionBlock(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock }) {
     const { id: blockParent } = useContext(BlockContext);
 
     const isParentDragging = useContext(ParentDragContext);
@@ -300,8 +316,22 @@ export default function ExpressionBlockView(props: { id: ExpressionBlockId, expr
             {...attributes}
         >
             <ParentDragContext.Provider value={isDragging || isParentDragging}>
-                <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={isDragging} />
+                <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={isDragging}/>
             </ParentDragContext.Provider>
         </OuterContainer>
     )
+};
+
+export default function ExpressionBlockView(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock}) {
+    const isDragOverlay = useContext(DragOverlayContext);
+
+    if (isDragOverlay) {
+        return (
+            <OuterContainer>
+                <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={false}/>
+            </OuterContainer>
+        );
+    } else {
+        return <DraggableExpressionBlock id={props.id} expressionBlock={props.expressionBlock}/>
+    }
 };
