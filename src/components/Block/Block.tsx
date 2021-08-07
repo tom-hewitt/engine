@@ -27,6 +27,8 @@ const DraggableContainer = styled(motion.div)`
     flex-direction: column;
 
     cursor: grab;
+
+    outline: none;
 `;
 
 const OuterBlock = styled(motion.div)<{ color?: string }>`
