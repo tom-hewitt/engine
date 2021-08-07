@@ -1,6 +1,7 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { BlockId } from "./blocks";
 import { BlocksContainerId } from "./blocksContainers";
+import { ExpressionBlockId } from "./expressionBlocks";
 
 export interface ActiveBlock {
     draggableType: "Block",
@@ -12,6 +13,7 @@ export interface ActiveBlock {
 
 export interface ActiveExpressionBlock {
     draggableType: "Expression Block",
+    id: ExpressionBlockId,
     blockParent?: BlockId
 }
 
@@ -31,7 +33,7 @@ export const startBlockDrag = createAction<{ id: BlockId, container: BlocksConta
 
 export const dragBlockOver = createAction<{ container: BlocksContainerId, newIndex: number }>("temp/DRAG_BLOCK_OVER");
 
-export const startExpressionBlockDrag = createAction<{ blockParent?: BlockId }>("temp/START_EXPRESSION_BLOCK_DRAG");
+export const startExpressionBlockDrag = createAction<{ id: ExpressionBlockId, blockParent?: BlockId }>("temp/START_EXPRESSION_BLOCK_DRAG");
 
 const temp = createReducer(initialTempState, (builder) => {
     builder
@@ -53,9 +55,10 @@ const temp = createReducer(initialTempState, (builder) => {
                 state.active.container = container;
             }
         })
-        .addCase(startExpressionBlockDrag, (state, { payload: { blockParent }}) => {
+        .addCase(startExpressionBlockDrag, (state, { payload: { id, blockParent }}) => {
             state.active = {
                 draggableType: "Expression Block",
+                id,
                 blockParent
             };
         })

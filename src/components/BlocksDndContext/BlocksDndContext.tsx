@@ -8,6 +8,7 @@ import { Active, dragBlockOver, endDrag, startBlockDrag, startExpressionBlockDra
 import { State } from "../../reducers/reducer";
 import { BlocksContainerId, reorderBlock } from "../../reducers/blocksContainers";
 import { BlockNode } from "../Block/Block";
+import { ExpressionBlockOverlay } from "../ExpressionBlock/ExpressionBlock";
 
 const Container = styled(motion.div)`
     display: inline-flex;
@@ -21,6 +22,9 @@ function ActiveOverlay(props: { active: Active }) {
         switch (props.active.draggableType) {
             case "Block": {
                 return <BlockNode id={props.active.id}/>;
+            }
+            case "Expression Block": {
+                return <ExpressionBlockOverlay id={props.active.id}/>
             }
         }
     };
@@ -75,7 +79,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                     break;
                 }
                 case "ExpressionBlock": {
-                    dispatch(startExpressionBlockDrag({ blockParent: event.active.data.current.blockParent }));
+                    dispatch(startExpressionBlockDrag({ id: event.active.data.current.expressionBlock, blockParent: event.active.data.current.blockParent }));
                 }
             }
         }
@@ -172,7 +176,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
             <Container>
                 {props.children}
             </Container>
-            <DragOverlay>
+            <DragOverlay style={{ cursor: "grabbing"}}>
                 { active ?
                     <DragOverlayContext.Provider value={true}>
                         <ActiveOverlay active={active}/>

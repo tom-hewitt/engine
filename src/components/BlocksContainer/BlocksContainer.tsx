@@ -46,24 +46,15 @@ function BlocksContainerStart() {
     )
 }
 
-function Arrow() {
-    return (
-        <ArrowContainer>
-            <ArrowSVG viewBox="0 0 16 41">
-                <path d="M8 0.226497L2.2265 6L8 11.7735L13.7735 6L8 0.226497ZM7.29289 40.7071C7.68342 41.0976 8.31658 41.0976 8.70711 40.7071L15.0711 34.3431C15.4616 33.9526 15.4616 33.3195 15.0711 32.9289C14.6805 32.5384 14.0474 32.5384 13.6569 32.9289L8 38.5858L2.34315 32.9289C1.95262 32.5384 1.31946 32.5384 0.928932 32.9289C0.538408 33.3195 0.538408 33.9526 0.928932 34.3431L7.29289 40.7071ZM7 6V40H9V6H7Z" fill="#919191"/>
-            </ArrowSVG>
-        </ArrowContainer>
-    )
-}
-
-function ArrowDroppable(props: { id: BlockId, container: BlocksContainerId, index: number }) {
+function ArrowDroppable(props: { id: BlockId | BlocksContainerId, container: BlocksContainerId, index: number, disabled?: boolean }) {
     const {setNodeRef} = useDroppable({
         id: props.id,
         data: {
             droppableType: "Arrow",
             container: props.container,
-            index: props.index
-        }
+            index: props.index,
+        },
+        disabled: props.disabled
     });
 
     return (
@@ -72,17 +63,17 @@ function ArrowDroppable(props: { id: BlockId, container: BlocksContainerId, inde
                 <path d="M8 0.226497L2.2265 6L8 11.7735L13.7735 6L8 0.226497ZM7.29289 40.7071C7.68342 41.0976 8.31658 41.0976 8.70711 40.7071L15.0711 34.3431C15.4616 33.9526 15.4616 33.3195 15.0711 32.9289C14.6805 32.5384 14.0474 32.5384 13.6569 32.9289L8 38.5858L2.34315 32.9289C1.95262 32.5384 1.31946 32.5384 0.928932 32.9289C0.538408 33.3195 0.538408 33.9526 0.928932 34.3431L7.29289 40.7071ZM7 6V40H9V6H7Z" fill="#919191"/>
             </ArrowSVG>
         </ArrowContainer>
-    )
+    );
 }
 
 const Blocks = (container: BlocksContainerId, blocks: BlockId[], activeBlock?: ActiveBlock) => {
     let array: ReactElement[] = [];
 
-    array.push(<ArrowDroppable id={container} container={container} index={0} key={`arrow-0`}/>);
+    array.push(<ArrowDroppable id={container} container={container} index={0} key={`arrow-${container}`}/>);
 
     if (activeBlock && (activeBlock.newIndex === 0)) {
         array.push(<Block id={activeBlock.id} index={activeBlock.newIndex} key={`block-${activeBlock.id}`}/>);
-        array.push(<Arrow key={`arrow-active`}/>);
+        array.push(<ArrowDroppable id={activeBlock.id} container={container} index={1} key={`arrow-active`} disabled/>);
     }
 
     blocks.forEach((id, index) => {
@@ -93,7 +84,7 @@ const Blocks = (container: BlocksContainerId, blocks: BlockId[], activeBlock?: A
 
         if (activeBlock && (index + 1 === activeBlock.newIndex)) {
             array.push(<Block id={activeBlock.id} index={activeBlock.newIndex} key={`block-${activeBlock.id}`}/>);
-            array.push(<Arrow key={`arrow-active`}/>);
+            array.push(<ArrowDroppable id={activeBlock.id} container={container} index={index + 1} key={`arrow-active`} disabled/>);
         }
     });
 

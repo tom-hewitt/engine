@@ -13,6 +13,8 @@ import Expression from "../Expression/Expression";
 import { useContext } from "react";
 import { BlockContext } from "../Block/Block";
 import { DragOverlayContext } from "../BlocksDndContext/BlocksDndContext";
+import { useSelector } from "react-redux";
+import { State } from "../../reducers/reducer";
 
 const OuterContainer = styled(motion.div)`
     display: inline-flex;
@@ -21,6 +23,8 @@ const OuterContainer = styled(motion.div)`
     user-select: none;
 
     outline: none;
+
+    cursor: grab;
 `;
 
 const Container = styled(motion.div)<{ color: string }>`
@@ -289,7 +293,7 @@ function DraggableExpressionBlock(props: { id: ExpressionBlockId, expressionBloc
 
     const isParentDragging = useContext(ParentDragContext);
     
-    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
+    const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
         id: props.id,
         data: {
             draggableType: "ExpressionBlock",
@@ -302,15 +306,10 @@ function DraggableExpressionBlock(props: { id: ExpressionBlockId, expressionBloc
         <OuterContainer
             ref={setNodeRef}
             animate={{
-                x: transform ? transform.x : 0,
-                y: transform ? transform.y : 0,
-                cursor: isDragging ? "grabbing" : "grab",
-                scale: isDragging ? 1.05 : 1
+                opacity: isDragging ? 0 : 1
             }}
             transition={{
-                duration: 0.25,
-                x: { duration: isDragging ? 0 : 0.25 },
-                y: { duration: isDragging ? 0 : 0.25 }
+                opacity: { duration: 0 }
             }}
             {...listeners}
             {...attributes}
@@ -321,6 +320,12 @@ function DraggableExpressionBlock(props: { id: ExpressionBlockId, expressionBloc
         </OuterContainer>
     )
 };
+
+export function ExpressionBlockOverlay(props: { id: ExpressionBlockId }) {
+    const expressionBlock = useSelector((state: State) => state.current.expressionBlocks[props.id]);
+
+    return <InnerExpressionBlock expressionBlock={expressionBlock} isDragging={false}/>;
+}
 
 export default function ExpressionBlockView(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock}) {
     const isDragOverlay = useContext(DragOverlayContext);

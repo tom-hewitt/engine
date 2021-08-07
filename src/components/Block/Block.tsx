@@ -191,11 +191,7 @@ export function BlockNode(props: { id: BlockId }) {
 export default function DraggableBlock(props: { id: BlockId, index?: number }) {
     const { container } = useContext(BlocksContainerContext);
 
-    const isChildDragging = useSelector((state: State) => 
-        state.temp.active?.draggableType === "Expression Block" && state.temp.active?.blockParent === props.id
-    );
-
-    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
+    const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
         id: `block-${props.id}`,
         data: {
             draggableType: "Block",
