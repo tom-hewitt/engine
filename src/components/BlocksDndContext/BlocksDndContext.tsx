@@ -99,21 +99,21 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
     }
 
     const handleDragEnd = (event: DragEndEvent) => {
-        dispatch(endDrag());
+        const state = store.getState() as State;
+
+        if (state.temp.active) {
+            switch (state.temp.active.draggableType) {
+                case "Block": {
+                    if (state.temp.active.newIndex !== state.temp.active.oldIndex) {
+                        dispatch(reorderBlock(state.temp.active.container, state.temp.active.oldIndex, state.temp.active.newIndex))
+                    }
+                }
+            }
+        }
 
         if (event.over) {
             if (event.over.data.current?.droppableType) {
                 switch (event.over.data.current.droppableType) {
-                    case "Block": {
-                        if (event.active.data.current?.draggableType) {
-                            switch (event.active.data.current.draggableType) {
-                                case "Block": {
-                                    dispatch(reorderBlock(event.over.data.current.container, event.active.data.current.index, event.over.data.current.index));
-                                }
-                            }
-                        };
-                        break;
-                    }
                     case "Expression": {
                         if (event.active.data.current?.draggableType) {
                             switch (event.active.data.current.draggableType) {
@@ -127,6 +127,8 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                 }
             }
         }
+
+        dispatch(endDrag());
     };
 
     const collisions = (droppables: RectEntry[], draggable: ViewRect) => {
