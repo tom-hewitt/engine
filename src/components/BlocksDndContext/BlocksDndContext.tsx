@@ -104,7 +104,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
         if (event.over) {
             if (event.over.data.current?.droppableType) {
                 switch (event.over.data.current.droppableType) {
-                    case "Arrow": {
+                    case "Block": {
                         if (event.active.data.current?.draggableType) {
                             switch (event.active.data.current.draggableType) {
                                 case "Block": {

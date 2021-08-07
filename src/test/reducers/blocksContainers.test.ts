@@ -1,4 +1,4 @@
-import { algorithms, BlocksContainersState } from "../../reducers/blocksContainers"
+import { blocksContainerAlgorithms, BlocksContainersState } from "../../reducers/blocksContainers"
 
 it("reorders a block", () => {
     const initialState: BlocksContainersState = {
@@ -7,7 +7,7 @@ it("reorders a block", () => {
         }
     };
 
-    const state = algorithms.reorderBlock(initialState, "0", 0, 2);
+    const state = blocksContainerAlgorithms.reorderBlock(initialState, "0", 0, 2);
 
     expect(state).toEqual({
         "0": {
