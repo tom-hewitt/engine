@@ -23,6 +23,14 @@ const Container = styled(motion.div)`
     border-radius: 5px;
 `;
 
+const GridContainer = styled(motion.div)`
+    display: inline-grid;
+    align-items: center;
+    justify-items: start;
+
+    padding: 0;
+`;
+
 const Input = styled.input.attrs((props: { color: string }) => ({
     type: "text",
     size: "1",
@@ -30,6 +38,24 @@ const Input = styled.input.attrs((props: { color: string }) => ({
     grid-area: 1 / 1 / 2 / 2;
     width: 100%;
     padding: 10px;
+
+    border: none;
+    outline: none;
+
+    font-family: IBM Plex Mono;
+    font-weight: 500;
+    font-size: 10px;
+    color: ${props => props.color};
+    background: none;
+`;
+
+const RawInput = styled.input.attrs((props: { color: string }) => ({
+    type: "text",
+    size: "1",
+}))`
+    grid-area: 1 / 1 / 2 / 2;
+    width: 100%;
+    padding: 0px;
 
     border: none;
     outline: none;
@@ -52,6 +78,17 @@ const HiddenSpan = styled.span`
     font-weight: 500;
     font-size: 10px;
 `;
+
+const RawHiddenSpan = styled.span`
+    grid-area: 1 / 1 / 2 / 2;
+    visibility: hidden;
+    height: 0;
+
+    font-family: IBM Plex Mono;
+    font-weight: 500;
+    font-size: 10px;
+`;
+
 
 /**
  * An auto-growing input field that submits on blur or on enter
@@ -98,7 +135,6 @@ export default function InputField(props: InputFieldProps) {
             <Container
                 color={props.color}
                 animate={{ backgroundColor: focused ? focusedBackground : background }}
-                className="input"
             >
                 <Input
                     color={props.color}
@@ -113,5 +149,29 @@ export default function InputField(props: InputFieldProps) {
                 </HiddenSpan>
             </Container>
         </div>
+    );
+};
+
+export function GrowingInput(props: { color: string, value: string, onFocus: () => void, onChange: (value: string) => void, onSubmit: () => void}) {
+    const onKeyDown = (event: any) => {
+        if (event.keyCode === 13) {
+            event.target.blur();
+        }
+    };
+
+    return (
+        <GridContainer>
+            <RawInput
+                color={props.color}
+                value={props.value}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onChange(event.target.value)}
+                onKeyDown={onKeyDown}
+                onFocus={props.onFocus}
+                onBlur={props.onSubmit}
+            />
+            <RawHiddenSpan>
+                {props.value === "" ? "_" : props.value}
+            </RawHiddenSpan>
+        </GridContainer>
     );
 };

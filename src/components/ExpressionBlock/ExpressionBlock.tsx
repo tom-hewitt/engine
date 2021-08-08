@@ -251,7 +251,7 @@ function Vector3DExpressionBlockView(props: { expressionBlock: Vector3DExpressio
                 backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
             }}
         >
-            <Opcode color={color}>3D VECTOR</Opcode>
+            <Opcode color={color}>MAKE 3D VECTOR</Opcode>
             <FieldContainer>
                 <FieldName color={color}>x: </FieldName>
                 <Expression expression={props.expressionBlock.arguments[0]}/>
