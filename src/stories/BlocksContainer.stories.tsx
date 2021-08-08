@@ -16,7 +16,7 @@ export const Default = () => {
     const store = mockStore(produce(initialState, (draft) => {
         draft.current.blocksContainers = {
             "0": {
-                blocks: ["3", "1", "2"]
+                blocks: ["1", "11", "22"]
             }
         }
         draft.current.blocks = {
@@ -25,26 +25,26 @@ export const Default = () => {
                 block: {
                     opcode: "Set Variable",
                     variable: "2",
-                    to: "3",
+                    to: "4",
                     type: "3D Vector"
                 }
             },
-            "2": {
+            "11": {
                 parent: "0",
                 block: {
                     opcode: "Set Variable",
-                    variable: "10",
-                    to: "12",
+                    variable: "12",
+                    to: "14",
+                    type: "3D Vector"
+                }
+            },
+            "22": {
+                parent: "0",
+                block: {
+                    opcode: "Set Variable",
+                    variable: "23",
+                    to: "25",
                     type: "Float"
-                }
-            },
-            "3": {
-                parent: "0",
-                block: {
-                    opcode: "Set Variable",
-                    variable: "18",
-                    to: "19",
-                    type: "3D Vector"
                 }
             }
         };
@@ -52,70 +52,75 @@ export const Default = () => {
             "2": {
                 expressionType: "Block",
                 type: "3D Vector Reference",
-                expressionBlock: "6"
-            },
-            "3": {
-                expressionType: "Block",
-                type: "3D Vector",
-                expressionBlock: "7"
+                expressionBlock: "3"
             },
             "4": {
                 expressionType: "Block",
                 type: "3D Vector",
-                expressionBlock: "8"
+                expressionBlock: "5"
             },
-            "5": {
+            "6": {
+                expressionType: "Block",
+                type: "Float",
+                expressionBlock: "7"
+            },
+            "8": {
                 expressionType: "Block",
                 type: "Float",
                 expressionBlock: "9"
             },
             "10": {
-                expressionType: "Block",
-                type: "Float Reference",
-                expressionBlock: "11"
+                type: "Float",
+                value: 0
             },
             "12": {
                 expressionType: "Block",
-                type: "Float",
+                type: "3D Vector Reference",
                 expressionBlock: "13"
             },
             "14": {
                 expressionType: "Block",
-                type: "Float",
-                expressionBlock: "16"
+                type: "3D Vector",
+                expressionBlock: "15"
             },
-            "15": {
+            "16": {
                 expressionType: "Block",
-                type: "Float",
+                type: "3D Vector",
                 expressionBlock: "17"
             },
             "18": {
                 expressionType: "Block",
-                type: "3D Vector Reference",
-                expressionBlock: "20"
-            },
-            "19": {
-                expressionType: "Block",
                 type: "3D Vector",
-                expressionBlock: "21"
+                expressionBlock: "19"
             },
-            "22": {
+            "20": {
                 expressionType: "Block",
                 type: "Float",
-                expressionBlock: "25"
+                expressionBlock: "21"
             },
             "23": {
+                expressionType: "Block",
+                type: "Float Reference",
+                expressionBlock: "24"
+            },
+            "25": {
                 expressionType: "Block",
                 type: "Float",
                 expressionBlock: "26"
             },
-            "24": {
+            "27": {
+                expressionType: "Block",
                 type: "Float",
-                value: 0
+                expressionBlock: "28"
+            },
+            "29": {
+                expressionType: "Block",
+                type: "Float",
+                expressionBlock: "30"
             }
         };
         draft.current.expressionBlocks = {
-            "6": {
+            "3": {
                 expressionBlockType: "Variable Reference",
                 type: "3D Vector Reference",
                 variable: {
@@ -124,14 +129,47 @@ export const Default = () => {
                 },
                 parent: "2"
             },
+            "5": {
+                expressionBlockType: "3D Vector",
+                type: "3D Vector",
+                arguments: ["6", "8", "10"],
+                parent: "4"
+            },
             "7": {
+                expressionBlockType: "Variable",
+                type: "Float",
+                variable: {
+                    variable: "Input x",
+                    type: "Float"
+                },
+                parent: "6"
+            },
+            "9": {
+                expressionBlockType: "Variable",
+                type: "Float",
+                variable: {
+                    variable: "Input y",
+                    type: "Float"
+                },
+                parent: "8"
+            },
+            "13": {
+                expressionBlockType: "Variable Reference",
+                type: "3D Vector Reference",
+                variable: {
+                    variable: "New Velocity",
+                    type: "3D Vector"
+                },
+                parent: "12"
+            },
+            "15": {
                 expressionBlockType: "Operator",
                 type: "3D Vector",
                 operation: "*",
-                arguments: ["4", "5"],
-                parent: "3"
+                arguments: ["16", "20"],
+                parent: "14"
             },
-            "8": {
+            "17": {
                 expressionBlockType: "Function",
                 type: "3D Vector",
                 block: {
@@ -139,24 +177,33 @@ export const Default = () => {
                     name: "Normalise",
                     arguments: {
                         byId: {
-                            "a": "2"
+                            "a": "18"
                         },
                         order: ["a"]
                     },
                     type: "3D Vector"
                 },
-                parent: "4"
+                parent: "16"
             },
-            "9": {
+            "19": {
+                expressionBlockType: "Variable",
+                type: "3D Vector",
+                variable: {
+                    variable: "Velocity",
+                    type: "3D Vector"
+                },
+                parent: "18"
+            },
+            "21": {
                 expressionBlockType: "Variable",
                 type: "Float",
                 variable: {
                     variable: "Speed",
                     type: "Float"
                 },
-                parent: "5"
+                parent: "20"
             },
-            "11": {
+            "24": {
                 expressionBlockType: "Variable Reference",
                 type: "Float Reference",
                 variable: {
@@ -167,16 +214,16 @@ export const Default = () => {
                         type: "Float"
                     }
                 },
-                parent: "6"
+                parent: "23"
             },
-            "13": {
+            "26": {
                 expressionBlockType: "Operator",
                 operation: "+",
                 type: "Float",
-                arguments: ["14", "15"],
-                parent: "12"
+                arguments: ["27", "29"],
+                parent: "25"
             },
-            "16": {
+            "28": {
                 expressionBlockType: "Variable",
                 type: "Float",
                 variable: {
@@ -187,50 +234,17 @@ export const Default = () => {
                         type: "Float"
                     }
                 },
-                parent: "14"
+                parent: "27"
             },
-            "17": {
+            "30": {
                 expressionBlockType: "Variable",
                 type: "Float",
                 variable: {
                     variable: "Gravity",
                     type: "Float"
                 },
-                parent: "15"
-            },
-            "20": {
-                expressionBlockType: "Variable Reference",
-                type: "3D Vector Reference",
-                variable: {
-                    variable: "New Velocity",
-                    type: "3D Vector"
-                },
-                parent: "18"
-            },
-            "21": {
-                expressionBlockType: "3D Vector",
-                type: "3D Vector",
-                arguments: ["22", "23", "24"],
-                parent: "19"
-            },
-            "25": {
-                expressionBlockType: "Variable",
-                type: "Float",
-                variable: {
-                    variable: "Input x",
-                    type: "Float"
-                },
-                parent: "22"
-            },
-            "26": {
-                expressionBlockType: "Variable",
-                type: "Float",
-                variable: {
-                    variable: "Input y",
-                    type: "Float"
-                },
-                parent: "23"
-            },
+                parent: "29"
+            }
         }
     }));
 

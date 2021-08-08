@@ -46,7 +46,7 @@ function BlocksContainerStart() {
     )
 }
 
-function Arrow(props: { container: BlocksContainerId, index: number }) {
+function ArrowDroppable(props: { container: BlocksContainerId, index: number }) {
     const {setNodeRef} = useDroppable({
         id: props.container,
         data: {
@@ -65,13 +65,13 @@ function Arrow(props: { container: BlocksContainerId, index: number }) {
     )
 }
 
-function ArrowAndBlock(props: { container: BlocksContainerId, id: BlockId, index: number }) {
+function ArrowAndBlock(props: { container: BlocksContainerId, id: BlockId, index: number, active?: boolean }) {
     const {setNodeRef} = useDroppable({
         id: props.id,
         data: {
             droppableType: "Block",
             container: props.container,
-            index: props.index + 1
+            index: props.active ? props.index : props.index + 1
         }
     });
 
@@ -94,7 +94,7 @@ const Blocks = (container: BlocksContainerId, blocks: BlockId[], activeBlock?: A
 
     blocks.forEach((id, index) => {
         if (activeBlock && activeBlock.newIndex === index) {
-            elements.push(<ArrowAndBlock id={activeBlock.id} container={container} index={index} key={activeBlock.id}/>);
+            elements.push(<ArrowAndBlock id={activeBlock.id} container={container} index={index} key={activeBlock.id} active/>);
         }
 
         if (!activeBlock || activeBlock.id !== id) {
@@ -103,7 +103,7 @@ const Blocks = (container: BlocksContainerId, blocks: BlockId[], activeBlock?: A
     });
 
     if (activeBlock && activeBlock.newIndex === blocks.length) {
-        elements.push(<ArrowAndBlock id={activeBlock.id} container={container} index={blocks.length} key={activeBlock.id}/>);
+        elements.push(<ArrowAndBlock id={activeBlock.id} container={container} index={blocks.length} key={activeBlock.id} active/>);
     }
 
     return elements;
@@ -117,7 +117,7 @@ export default function BlocksContainer(props: { id: BlocksContainerId }) {
         <Container>
             <BlocksContainerContext.Provider value={{ container: props.id }}>
                 <BlocksContainerStart key="start"/>
-                <Arrow container={props.id} index={0} key="arrow-start"/>
+                <ArrowDroppable container={props.id} index={0} key="arrow-start"/>
                 { Blocks(props.id, blocks, activeBlock) }
             </BlocksContainerContext.Provider>
         </Container>
