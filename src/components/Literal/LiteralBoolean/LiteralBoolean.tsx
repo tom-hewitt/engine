@@ -1,62 +1,67 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useDraggable } from "@dnd-kit/core";
 import typeColors from "../../../styles/typeColors";
 import hexToRGB from "../../../utilities/hexToRGB";
+import { useState } from "react";
 
 const focusedBackground = typeColors.Boolean
 const background = hexToRGB(focusedBackground, "0.1")
 
-const Container = styled.div`
-    display: inline-block;
-    vertical-align: middle;
-`;
+const Container = styled(motion.div)<{ color: string }>`
+    display: inline-flex;
+    flex-direction: row;
+    
+    padding: 10px;
 
-const Icon = styled(motion.svg)`
-    fill: none;
-    stroke: white;
-    stroke-width: 2px;
-`;
-
-const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
-    border: 0;
-    clip: rect(0 0 0 0);
-    clippath: inset(50%);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-`;
-
-const StyledCheckbox = styled(motion.div)`
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-
-    border: 1px solid ${focusedBackground};
+    border: 1px solid ${props => props.color};
     box-sizing: border-box;
     border-radius: 5px;
+
+    cursor: pointer;
+`;
+
+let Text = styled(motion.span)<{ color: string }>`
+    font-family: IBM Plex Mono;
+    font-weight: 500;
+    font-size: 10px;
+
+    user-select: none;
+
+    color: ${props => props.color};
 `;
 
 export default function LiteralBoolean(props: { value: boolean, onSubmit: (value: boolean) => void }) {
+    const color = typeColors["Boolean"];
+
+    const [isHovered, setIsHovered] = useState(false);
+
+    // Must make this a draggable so it blocks any draggables underneath from being dragged
+    const {attributes, listeners, setNodeRef} = useDraggable({
+        id: "input"
+    });
+
     return (
-        <label>
-            <Container>
-                <HiddenCheckbox checked={props.value} onChange={() => props.onSubmit(!props.value)}/>
-                <StyledCheckbox
-                    animate={{ backgroundColor: props.value ? focusedBackground : background }}
-                >
-                    <Icon
-                        viewBox="0 0 24 24" 
-                        animate={{ opacity: props.value ? 1 : 0 }}
+        <div
+            className="input"
+            {...attributes}
+            {...listeners}
+        >
+            <Container
+                color={color}
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
+                animate={{
+                    backgroundColor: isHovered ? hexToRGB(color, "0.1") : hexToRGB(color, "0")
+                }}
+                onClick={() => props.onSubmit(!props.value)}
+            >
+                    <Text
+                        color={color}
                     >
-                        <polyline points="20 6 9 17 4 12"/>
-                    </Icon>
-                </StyledCheckbox>
+                        { props.value ? "true" : "false" }
+                    </Text>
             </Container>
-        </label>
+        </div>
     )
 }
