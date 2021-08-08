@@ -1,12 +1,13 @@
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useDraggable } from "@dnd-kit/core";
 import typeColors from "../../../styles/typeColors";
 import hexToRGB from "../../../utilities/hexToRGB";
 import { useState } from "react";
 
-const focusedBackground = typeColors.Boolean
-const background = hexToRGB(focusedBackground, "0.1")
+const color = typeColors["Boolean"];
+const backgroundColor = hexToRGB(color, "0.1")
+const transparentBackgroundColor = hexToRGB(color, "0")
 
 const Container = styled(motion.div)<{ color: string }>`
     display: inline-flex;
@@ -52,7 +53,7 @@ export default function LiteralBoolean(props: { value: boolean, onSubmit: (value
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
                 animate={{
-                    backgroundColor: isHovered ? hexToRGB(color, "0.1") : hexToRGB(color, "0")
+                    backgroundColor: isHovered ? backgroundColor : transparentBackgroundColor
                 }}
                 onClick={() => props.onSubmit(!props.value)}
             >

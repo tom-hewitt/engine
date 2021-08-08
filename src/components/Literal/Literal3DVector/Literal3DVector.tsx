@@ -6,6 +6,10 @@ import { useDraggable } from "@dnd-kit/core";
 import { GrowingInput } from "../InputField/InputField";
 import hexToRGB from "../../../utilities/hexToRGB";
 
+const color = typeColors["3D Vector"];
+const backgroundColor = hexToRGB(color, "0.1");
+const transparentBackgroundColor = hexToRGB(color, "0");
+
 const Container = styled(motion.div)`
     display: inline-flex;
     flex-direction: row;
@@ -94,12 +98,12 @@ export default function Literal3DVector(props: { value: vector3d, onSubmit: (val
         >
             <Container
                 animate={{
-                    background: focus.x || focus.y || focus.z ? hexToRGB(typeColors["3D Vector"], "0.1") : hexToRGB(typeColors["3D Vector"], "0")
+                    background: focus.x || focus.y || focus.z ? backgroundColor : transparentBackgroundColor
                 }}
             >
                     <FieldName>x:</FieldName>
                     <GrowingInput
-                        color={typeColors["3D Vector"]}
+                        color={color}
                         value={stringValue.x}
                         onFocus={() => onFocus("x")}
                         onChange={(value) => onChange(value, "x")}
@@ -107,7 +111,7 @@ export default function Literal3DVector(props: { value: vector3d, onSubmit: (val
                     />
                     <FieldName>, y:</FieldName>
                     <GrowingInput
-                        color={typeColors["3D Vector"]}
+                        color={color}
                         value={stringValue.y}
                         onFocus={() => onFocus("y")}
                         onChange={(value) => onChange(value, "y")}
@@ -115,7 +119,7 @@ export default function Literal3DVector(props: { value: vector3d, onSubmit: (val
                     />
                     <FieldName>, z:</FieldName>
                     <GrowingInput
-                        color={typeColors["3D Vector"]}
+                        color={color}
                         value={stringValue.z}
                         onFocus={() => onFocus("z")}
                         onChange={(value) => onChange(value, "z")}
