@@ -133,12 +133,9 @@ export const Default = () => {
                 expressionBlock: "33"
             },
             "34": {
-                // expressionType: "Block",
-                // type: "Boolean",
-                // expressionBlock: "35"
-                expressionType: "Literal",
+                expressionType: "Block",
                 type: "Boolean",
-                value: true
+                expressionBlock: "35"
             },
             "36": {
                 expressionType: "Block",
