@@ -38,7 +38,10 @@ export interface FunctionExpressionBlock extends BaseExpressionBlock {
     block: ReturnableFunctionBlock | ReturnableBuiltInFunctionBlock
 };
 
-export type Operation = "+" | "-" | "*" | "/" | "^";
+export type Operation = 
+    "+" | "-" | "*" | "/" | "^" |
+    "=" | "<" | "<=" | ">" | ">="
+;
 
 export interface OperatorExpressionBlock extends BaseExpressionBlock {
     expressionBlockType: "Operator",

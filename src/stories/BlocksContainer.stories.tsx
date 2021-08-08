@@ -16,7 +16,7 @@ export const Default = () => {
     const store = mockStore(produce(initialState, (draft) => {
         draft.current.blocksContainers = {
             "0": {
-                blocks: ["1", "11", "22"]
+                blocks: ["1", "11", "22", "31"]
             }
         }
         draft.current.blocks = {
@@ -45,6 +45,15 @@ export const Default = () => {
                     variable: "23",
                     to: "25",
                     type: "Float"
+                }
+            },
+            "31": {
+                parent: "0",
+                block: {
+                    opcode: "Set Variable",
+                    variable: "32",
+                    to: "34",
+                    type: "Boolean"
                 }
             }
         };
@@ -117,6 +126,34 @@ export const Default = () => {
                 expressionType: "Block",
                 type: "Float",
                 expressionBlock: "30"
+            },
+            "32": {
+                expressionType: "Block",
+                type: "Boolean",
+                expressionBlock: "33"
+            },
+            "34": {
+                // expressionType: "Block",
+                // type: "Boolean",
+                // expressionBlock: "35"
+                expressionType: "Literal",
+                type: "Boolean",
+                value: true
+            },
+            "36": {
+                expressionType: "Block",
+                type: "Float",
+                expressionBlock: "37"
+            },
+            "38": {
+                expressionType: "Block",
+                type: "3D Vector",
+                expressionBlock: "39"
+            },
+            "40": {
+                expressionType: "Literal",
+                type: "Float",
+                value: 0
             }
         };
         draft.current.expressionBlocks = {
@@ -244,6 +281,47 @@ export const Default = () => {
                     type: "Float"
                 },
                 parent: "29"
+            },
+            "33": {
+                expressionBlockType: "Variable",
+                type: "Boolean",
+                variable: {
+                    variable: "Is Moving?",
+                    type: "Boolean"
+                },
+                parent: "32"
+            },
+            "35": {
+                expressionBlockType: "Operator",
+                operation: ">",
+                type: "Boolean",
+                arguments: ["36", "40"],
+                parent: "34"
+            },
+            "37": {
+                expressionBlockType: "Function",
+                type: "Float",
+                block: {
+                    opcode: "Built In Function",
+                    name: "Modulus",
+                    arguments: {
+                        byId: {
+                            "a": "38"
+                        },
+                        order: ["a"]
+                    },
+                    type: "Float"
+                },
+                parent: "36"
+            },
+            "39": {
+                expressionBlockType: "Variable",
+                type: "3D Vector",
+                variable: {
+                    variable: "New Velocity",
+                    type: "3D Vector"
+                },
+                parent: "38"
             }
         }
     }));

@@ -42,7 +42,7 @@ export interface ReturnableFunctionBlock extends FunctionBlock {
 
 export type BuiltInFunctionBlock = ReturnableBuiltInFunctionBlock;
 
-export type ReturnableBuiltInFunctionBlock = NormaliseBuiltInFunctionBlock;
+export type ReturnableBuiltInFunctionBlock = NormaliseBuiltInFunctionBlock | ModulusBuiltInFunctionBlock;
 
 interface BaseBuiltInFunctionBlock {
     opcode: "Built In Function",
@@ -64,6 +64,17 @@ export interface NormaliseBuiltInFunctionBlock extends BaseBuiltInFunctionBlock 
         order: ["a"]
     },
     type: "3D Vector"
+}
+
+export interface ModulusBuiltInFunctionBlock extends BaseBuiltInFunctionBlock {
+    name: "Modulus",
+    arguments: {
+        byId: {
+            "a": ExpressionId
+        },
+        order: ["a"]
+    },
+    type: "Float"
 }
 
 export const blocksInitialState: BlocksState = {};
