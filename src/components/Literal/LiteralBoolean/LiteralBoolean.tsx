@@ -33,8 +33,6 @@ let Text = styled(motion.span)<{ color: string }>`
 `;
 
 export default function LiteralBoolean(props: { value: boolean, onSubmit: (value: boolean) => void }) {
-    const color = typeColors["Boolean"];
-
     const [isHovered, setIsHovered] = useState(false);
 
     // Must make this a draggable so it blocks any draggables underneath from being dragged
@@ -44,6 +42,7 @@ export default function LiteralBoolean(props: { value: boolean, onSubmit: (value
 
     return (
         <div
+            ref={setNodeRef}
             className="input"
             {...attributes}
             {...listeners}
