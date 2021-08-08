@@ -129,7 +129,7 @@ export const Default = () => {
             },
             "32": {
                 expressionType: "Block",
-                type: "Boolean",
+                type: "Boolean Reference",
                 expressionBlock: "33"
             },
             "34": {
@@ -280,8 +280,8 @@ export const Default = () => {
                 parent: "29"
             },
             "33": {
-                expressionBlockType: "Variable",
-                type: "Boolean",
+                expressionBlockType: "Variable Reference",
+                type: "Boolean Reference",
                 variable: {
                     variable: "Is Moving?",
                     type: "Boolean"
