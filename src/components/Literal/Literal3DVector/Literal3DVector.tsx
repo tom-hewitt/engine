@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useDraggable } from "@dnd-kit/core";
 import { GrowingInput } from "../InputField/InputField";
 import hexToRGB from "../../../utilities/hexToRGB";
+import { useEffect } from "react";
 
 const color = typeColors["3D Vector"];
 const backgroundColor = hexToRGB(color, "0.1");
@@ -43,11 +44,15 @@ export default function Literal3DVector(props: { value: vector3d, onSubmit: (val
         z: false
     });
 
-    const [stringValue, setStringValue] = useState({
-        x: props.value.x.toString(),
-        y: props.value.y.toString(),
-        z: props.value.z.toString()
+    const vectorToStrings = (value: vector3d) => ({
+        x: value.x.toString(),
+        y: value.y.toString(),
+        z: value.z.toString()
     });
+
+    const [stringValue, setStringValue] = useState(vectorToStrings(props.value));
+
+    useEffect(() => setStringValue(vectorToStrings(props.value)), [props.value]);
 
     const onFocus = (field: "x" | "y" | "z") => {
         setFocus((oldFocus) => ({
@@ -65,7 +70,7 @@ export default function Literal3DVector(props: { value: vector3d, onSubmit: (val
 
     const onSubmit = (field: "x" | "y"| "z") => {
         const newValue = parseFloat(stringValue[field]);
-        if (!isNaN(newValue)) {
+        if (!isNaN(newValue) && newValue !== props.value[field]) {
             if (newValue !== props.value[field]) {
                 props.onSubmit({
                     ...props.value,
@@ -77,7 +82,7 @@ export default function Literal3DVector(props: { value: vector3d, onSubmit: (val
                 ...oldValue,
                 [field]: props.value[field]
             }));
-        }
+        };
         setFocus((oldFocus) => ({
             ...oldFocus,
             [field]: false

@@ -1,5 +1,5 @@
 import React from "react";
-import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, LayoutRect, PointerSensor, RectEntry, useSensor, useSensors, ViewRect } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, RectEntry, useSensor, useSensors, ViewRect } from "@dnd-kit/core";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { insertExpressionBlock } from "../../reducers/current";
 import styled from "styled-components";
@@ -59,11 +59,11 @@ const euclidianDistance = (a: Point, b: Point) => {
 }
 
 const draggableCenter = (rect: { top: number, left: number, height: number, width: number }) => {
-    return { x: rect.left + (rect.width * 0.5), y: rect.top + (rect.height * 0.5)};
+    return { x: rect.left + (rect.width * 0.5), y: rect.top + (rect.height * 0.5) };
 }
 
 const droppableCenter = (rect: { offsetTop: number, offsetLeft: number, height: number, width: number }) => {
-    return { x: rect.offsetLeft + (rect.width * 0.5), y: rect.offsetTop + (rect.height * 0.5)};
+    return { x: rect.offsetLeft + (rect.width * 0.5), y: rect.offsetTop + (rect.height * 0.5) };
 }
 
 export default function BlocksDndContext(props: { children: React.ReactNode }) {
@@ -95,7 +95,6 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                 case "Block": {
                     const container: BlocksContainerId | undefined = event.over?.data.current?.container;
                     const index: number | undefined = event.over?.data.current?.index;
-                    console.log(event.over?.id);
                     if (container && index !== undefined) dispatch(dragBlockOver({ container, newIndex: index }));
                     break;
                 }

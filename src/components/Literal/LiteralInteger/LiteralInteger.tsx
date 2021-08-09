@@ -15,7 +15,7 @@ export default function LiteralInteger(props: { value: number, onSubmit: (value:
 
     const onSubmit = () => {
         const newValue = parseInt(stringValue, 10);
-        if (!isNaN(newValue)) {
+        if (!isNaN(newValue) && newValue !== props.value) {
             if (newValue !== props.value) {
                 props.onSubmit(newValue);
             }

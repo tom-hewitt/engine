@@ -15,7 +15,7 @@ export default function LiteralFloat(props: { value: number, onSubmit: (value: n
 
     const onSubmit = () => {
         const newValue = parseFloat(stringValue);
-        if (!isNaN(newValue)) {
+        if (!isNaN(newValue) && newValue !== props.value) {
             if (newValue !== props.value) {
                 props.onSubmit(newValue);
             }

@@ -10,7 +10,7 @@ import { ActiveBlock } from "../../reducers/temp";
 import { BlocksContainerId } from "../../reducers/blocksContainers";
 import { ReactElement } from "react";
 
-const Container = styled.div`
+const Container = styled(motion.div)`
     display: inline-flex;
     flex-direction: column;
 
