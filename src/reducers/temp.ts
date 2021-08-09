@@ -51,8 +51,11 @@ const temp = createReducer(initialTempState, (builder) => {
         })
         .addCase(dragBlockOver, (state, { payload: { container, newIndex } }) => {
             if (state.active?.draggableType === "Block") {
-                state.active.newIndex = newIndex;
-                state.active.container = container;
+                state.active = {
+                    ...state.active,
+                    newIndex,
+                    container
+                }
             }
         })
         .addCase(startExpressionBlockDrag, (state, { payload: { id, blockParent }}) => {

@@ -58,7 +58,11 @@ const euclidianDistance = (a: Point, b: Point) => {
     return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
 
-const rectCenter = (rect: LayoutRect | ViewRect) => {
+const draggableCenter = (rect: { top: number, left: number, height: number, width: number }) => {
+    return { x: rect.left + (rect.width * 0.5), y: rect.top + (rect.height * 0.5)};
+}
+
+const droppableCenter = (rect: { offsetTop: number, offsetLeft: number, height: number, width: number }) => {
     return { x: rect.offsetLeft + (rect.width * 0.5), y: rect.offsetTop + (rect.height * 0.5)};
 }
 
@@ -91,6 +95,7 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                 case "Block": {
                     const container: BlocksContainerId | undefined = event.over?.data.current?.container;
                     const index: number | undefined = event.over?.data.current?.index;
+                    console.log(event.over?.id);
                     if (container && index !== undefined) dispatch(dragBlockOver({ container, newIndex: index }));
                     break;
                 }
@@ -143,13 +148,13 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
                 switch (active.draggableType) {
                     case "Block": {
                         if (state.current.blocks[id] || state.current.blocksContainers[id]) {
-                            score = euclidianDistance(rectCenter(rect), rectCenter(draggable));
+                            score = euclidianDistance(droppableCenter(rect), draggableCenter(draggable));
                         }
                         break;
                     }
                     case "Expression Block": {
                         if (state.current.expressions[id]) {
-                            score = euclidianDistance(rectCenter(rect), rectCenter(draggable));
+                            score = euclidianDistance(droppableCenter(rect), draggableCenter(draggable));
                         }
                         break;
                     }
