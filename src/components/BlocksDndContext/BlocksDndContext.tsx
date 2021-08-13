@@ -71,7 +71,12 @@ export default function BlocksDndContext(props: { children: React.ReactNode }) {
 
     const store = useStore();
     const dispatch = useDispatch();
-    const mouseSensor = useSensor(Sensor);
+    const mouseSensor = useSensor(Sensor, {
+        activationConstraint: {
+            delay: 150,
+            tolerance: 100
+        }
+    });
 
     const sensors = useSensors(mouseSensor);
 

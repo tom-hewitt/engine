@@ -21,6 +21,7 @@ export const Default = () => {
         }
         draft.current.blocks = {
             "1": {
+                parentType: "Blocks Container",
                 parent: "0",
                 block: {
                     opcode: "Set Variable",
@@ -30,6 +31,7 @@ export const Default = () => {
                 }
             },
             "11": {
+                parentType: "Blocks Container",
                 parent: "0",
                 block: {
                     opcode: "Set Variable",
@@ -39,6 +41,7 @@ export const Default = () => {
                 }
             },
             "22": {
+                parentType: "Blocks Container",
                 parent: "0",
                 block: {
                     opcode: "Set Variable",
@@ -48,12 +51,43 @@ export const Default = () => {
                 }
             },
             "31": {
+                parentType: "Blocks Container",
                 parent: "0",
                 block: {
                     opcode: "Set Variable",
                     variable: "32",
                     to: "34",
                     type: "Boolean"
+                }
+            },
+            "40": {
+                parentType: "Expression Block",
+                parent: "17",
+                block: {
+                    opcode: "Built In Function",
+                    name: "Normalise",
+                    arguments: {
+                        byId: {
+                            "a": "18"
+                        },
+                        order: ["a"]
+                    },
+                    type: "3D Vector"
+                }
+            },
+            "41": {
+                parentType: "Expression Block",
+                parent: "37",
+                block: {
+                    opcode: "Built In Function",
+                    name: "Modulus",
+                    arguments: {
+                        byId: {
+                            "a": "38"
+                        },
+                        order: ["a"]
+                    },
+                    type: "Float"
                 }
             }
         };
@@ -206,17 +240,7 @@ export const Default = () => {
             "17": {
                 expressionBlockType: "Function",
                 type: "3D Vector",
-                block: {
-                    opcode: "Built In Function",
-                    name: "Normalise",
-                    arguments: {
-                        byId: {
-                            "a": "18"
-                        },
-                        order: ["a"]
-                    },
-                    type: "3D Vector"
-                },
+                block: "40",
                 parent: "16"
             },
             "19": {
@@ -298,17 +322,7 @@ export const Default = () => {
             "37": {
                 expressionBlockType: "Function",
                 type: "Float",
-                block: {
-                    opcode: "Built In Function",
-                    name: "Modulus",
-                    arguments: {
-                        byId: {
-                            "a": "38"
-                        },
-                        order: ["a"]
-                    },
-                    type: "Float"
-                },
+                block: "41",
                 parent: "36"
             },
             "39": {

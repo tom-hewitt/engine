@@ -17,24 +17,53 @@ export interface ActiveExpressionBlock {
     blockParent?: BlockId
 }
 
+export interface ExpandedExpressionBlocks {
+    [key: string]: ExpressionBlockId[]
+}
+
 export interface TempState {
-    active?: Active
+    active?: Active,
+    expandedExpressionBlocks: ExpandedExpressionBlocks
 }
 
 export type Active = ActiveBlock | ActiveExpressionBlock;
 
 export const initialTempState: TempState = {
-
+    expandedExpressionBlocks: {}
 };
 
-export const endDrag = createAction("temp/END_DRAG");
+export const endDrag = createAction(
+    "temp/END_DRAG"
+);
 
-export const startBlockDrag = createAction<{ id: BlockId, container: BlocksContainerId, index: number }>("temp/START_BLOCK_DRAG");
+export const startBlockDrag = createAction<{
+    id: BlockId,
+    container: BlocksContainerId,
+    index: number
+}>(
+    "temp/START_BLOCK_DRAG"
+);
 
-export const dragBlockOver = createAction<{ container: BlocksContainerId, newIndex: number }>("temp/DRAG_BLOCK_OVER");
+export const dragBlockOver = createAction<{
+    container: BlocksContainerId,
+    newIndex: number
+}>(
+    "temp/DRAG_BLOCK_OVER"
+);
 
-export const startExpressionBlockDrag = createAction<{ id: ExpressionBlockId, blockParent?: BlockId }>("temp/START_EXPRESSION_BLOCK_DRAG");
+export const startExpressionBlockDrag = createAction<{
+    id: ExpressionBlockId,
+    blockParent?: BlockId
+}>(
+    "temp/START_EXPRESSION_BLOCK_DRAG"
+);
 
+export const toggleExpandExpressionBlock = createAction<{
+    block: BlockId,
+    expressionBlock: ExpressionBlockId
+}>(
+    "temp/TOGGLE_EXPAND_EXPRESSION_BLOCK"
+);
 const temp = createReducer(initialTempState, (builder) => {
     builder
         .addCase(endDrag, (state) => {
@@ -51,11 +80,8 @@ const temp = createReducer(initialTempState, (builder) => {
         })
         .addCase(dragBlockOver, (state, { payload: { container, newIndex } }) => {
             if (state.active?.draggableType === "Block") {
-                state.active = {
-                    ...state.active,
-                    newIndex,
-                    container
-                }
+                state.active.newIndex = newIndex;
+                state.active.container = container;
             }
         })
         .addCase(startExpressionBlockDrag, (state, { payload: { id, blockParent }}) => {
@@ -64,6 +90,19 @@ const temp = createReducer(initialTempState, (builder) => {
                 id,
                 blockParent
             };
+        })
+        .addCase(toggleExpandExpressionBlock, (state, { payload: { block, expressionBlock }}) => {
+            if (state.expandedExpressionBlocks[block]) {
+                const index = state.expandedExpressionBlocks[block].findIndex(id => id === expressionBlock);
+                if (index !== -1) {
+                    state.expandedExpressionBlocks[block].splice(index, 1);
+                } else {
+                    state.expandedExpressionBlocks[block].push(expressionBlock);
+                }
+            } else {
+                state.expandedExpressionBlocks[block] = [expressionBlock];
+            }
+            
         })
 });
 

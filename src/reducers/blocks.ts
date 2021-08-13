@@ -1,5 +1,4 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { BlocksContainerId } from "./blocksContainers";
 import { ExpressionId } from "./expressions";
 import { FunctionId } from "./functions";
 
@@ -10,7 +9,8 @@ export interface BlocksState {
 export type BlockId = string;
 
 export interface BlockNode {
-    parent: BlocksContainerId,
+    parentType: "Blocks Container" | "Expression Block",
+    parent: string,
     block: Block
 };
 

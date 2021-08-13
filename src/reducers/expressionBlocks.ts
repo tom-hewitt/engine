@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { ReturnableBuiltInFunctionBlock, ReturnableFunctionBlock } from "./blocks";
+import { BlockId } from "./blocks";
 import { ExpressionId } from "./expressions";
 
 export type ExpressionBlockId = string;
@@ -35,7 +35,7 @@ export interface VariableReferenceBlock extends BaseExpressionBlock {
 
 export interface FunctionExpressionBlock extends BaseExpressionBlock {
     expressionBlockType: "Function",
-    block: ReturnableFunctionBlock | ReturnableBuiltInFunctionBlock
+    block: BlockId
 };
 
 export type Operation = 

@@ -106,8 +106,8 @@ const ParameterName = styled.span`
     color: ${colors.Primary};
 `;
 
-export const BlockContext = React.createContext<{ id: BlockId, index?: number }>({
-    id: ""
+export const BlockContext = React.createContext<{ id?: BlockId }>({
+    
 });
 
 function SetVariableBlockView(props: { block: SetVariableBlock }) {
@@ -138,11 +138,11 @@ function ArgumentView(props: { name: string, expression: ExpressionId, setIsDrag
     )
 }
 
-function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock }) {
+export function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock, expressionBlock?: boolean }) {
     const color = props.block.type ? typeColors[props.block.type] : colors.Primary;
 
     return (
-        <OuterBlock>
+        <OuterBlock color={props.expressionBlock ? color : undefined}>
             <Opcode color={color}>FUNCTION</Opcode>
             <HorizontalContainer>
                 <FunctionIcon color={color}/>
@@ -160,6 +160,7 @@ function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock 
                 <ArgumentView
                     name={name}
                     expression={props.block.arguments.byId[name as keyof typeof props.block.arguments.byId]}
+                    key={name}
                 />
             )}
         </OuterBlock>
@@ -187,7 +188,11 @@ export function BlockNode(props: { id: BlockId }) {
         throw new Error(`Block with id: "${props.id}" does not exist`)
     };
 
-    return <BlockView block={block}/>
+    return (
+        <BlockContext.Provider value={{ id: props.id }}>
+            <BlockView block={block}/>
+        </BlockContext.Provider>
+    );
 }
 
 export default function DraggableBlock(props: { id: BlockId, index?: number }) {

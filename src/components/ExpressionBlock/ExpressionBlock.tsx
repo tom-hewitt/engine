@@ -13,8 +13,10 @@ import Expression from "../Expression/Expression";
 import { useContext } from "react";
 import { BlockContext } from "../Block/Block";
 import { DragOverlayContext } from "../BlocksDndContext/BlocksDndContext";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { State } from "../../reducers/reducer";
+import { BlocksContainerContext } from "../BlocksContainer/BlocksContainer";
+import { toggleExpandExpressionBlock } from "../../reducers/temp";
 
 const OuterContainer = styled(motion.div)`
     display: inline-flex;
@@ -121,6 +123,7 @@ const FieldName = styled.span<{ color: string }>`
 `;
 
 export const ParentDragContext = React.createContext(false);
+export const ExpressionBlockIdContext = React.createContext<ExpressionBlockId | undefined>(undefined);
 
 function Member(props: { member: VariableReference, lastType: Type, isDragging: boolean, isReference: boolean }) {
     const color = typeColors[props.member.type];
@@ -185,8 +188,26 @@ export function VariableBlock(props: { expressionBlock: VariableExpressionBlock 
 };
 
 function FunctionBlock(props: { expressionBlock: FunctionExpressionBlock, isDragging: boolean }) {
-    const color = typeColors[props.expressionBlock.block.type];
-    const backgroundColor = backgroundTypeColors[props.expressionBlock.block.type];
+    const { block } = useSelector((state: State) => state.current.blocks[props.expressionBlock.block]);
+    if (!block) throw new Error("Function block cannot be undefined");
+
+    if (!(block.opcode === "Function" || block.opcode === "Built In Function")) throw new Error("Block passed to function expression block must be a function");
+
+    if (!block.type) throw new Error("Block passed to function expression block must have a return type");
+
+    const color = typeColors[block.type];
+    const backgroundColor = backgroundTypeColors[block.type];
+
+    const { container } = useContext(BlocksContainerContext);
+    const { id: blockParent } = useContext(BlockContext);
+    const expressionBlock = useContext(ExpressionBlockIdContext);
+    const dispatch = useDispatch();
+
+    const onClick = () => {
+        if (container && expressionBlock && blockParent !== undefined) {
+            dispatch(toggleExpandExpressionBlock({ block: blockParent, expressionBlock }))
+        }
+    };
 
     return (
         <Container
@@ -200,10 +221,11 @@ function FunctionBlock(props: { expressionBlock: FunctionExpressionBlock, isDrag
                 : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
                 backgroundColor: props.isDragging ? hexToRGB(backgroundColor, "0.9") : backgroundColor
             }}
+            onClick={onClick}
         >
             <FunctionIcon color={color}/>
-            <FunctionName>{props.expressionBlock.block.name}</FunctionName>
-            {props.expressionBlock.block.arguments ?
+            <FunctionName>{block.name}</FunctionName>
+            {block.arguments ?
                 <FunctionText>(...)</FunctionText>
             : null }
         </Container>
@@ -288,16 +310,19 @@ function InnerExpressionBlock(props: { expressionBlock: ExpressionBlock, isDragg
     };
 };
 
-function DraggableExpressionBlock(props: { id: ExpressionBlockId, expressionBlock: ExpressionBlock }) {
+function DraggableExpressionBlock(props: { expressionBlock: ExpressionBlock }) {
+    const id = useContext(ExpressionBlockIdContext);
+    if (!id) throw new Error("Draggable expression block id is undefined");
+
     const { id: blockParent } = useContext(BlockContext);
 
     const isParentDragging = useContext(ParentDragContext);
     
     const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
-        id: props.id,
+        id: id,
         data: {
             draggableType: "ExpressionBlock",
-            expressionBlock: props.id,
+            expressionBlock: id,
             blockParent
         }
     });
@@ -332,11 +357,18 @@ export default function ExpressionBlockView(props: { id: ExpressionBlockId, expr
 
     if (isDragOverlay) {
         return (
-            <OuterContainer>
-                <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={false}/>
-            </OuterContainer>
+            <ExpressionBlockIdContext.Provider value={props.id}>
+                <OuterContainer>
+                    <InnerExpressionBlock expressionBlock={props.expressionBlock} isDragging={false}/>
+                </OuterContainer>
+            </ExpressionBlockIdContext.Provider>
+            
         );
     } else {
-        return <DraggableExpressionBlock id={props.id} expressionBlock={props.expressionBlock}/>
+        return (
+            <ExpressionBlockIdContext.Provider value={props.id}>
+                <DraggableExpressionBlock expressionBlock={props.expressionBlock}/>
+            </ExpressionBlockIdContext.Provider>
+        )
     }
 };
