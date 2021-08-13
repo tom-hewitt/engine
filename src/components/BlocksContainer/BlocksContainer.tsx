@@ -10,6 +10,7 @@ import { ActiveBlock, ExpandedExpressionBlocks } from "../../reducers/temp";
 import { BlocksContainerId } from "../../reducers/blocksContainers";
 import { ReactElement } from "react";
 import { ExpressionBlockId } from "../../reducers/expressionBlocks";
+import { useContext } from "react";
 
 const Container = styled(motion.div)`
     display: inline-flex;
@@ -130,43 +131,45 @@ function ExpandedFunctionBlock(props: { expressionBlock: ExpressionBlockId }) {
 
 export const BlocksContainerContext = React.createContext<{ container?: BlocksContainerId }>({});
 
-const Blocks = (container: BlocksContainerId, blocks: BlockId[], expandedExpressionBlocks: ExpandedExpressionBlocks, activeBlock?: ActiveBlock) => {
-    let elements: ReactElement[] = [];
+function ContainerBlock(props: { id: BlockId, index: number }) {
+    const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.newIndex === props.index ? state.temp.active : undefined);
+    const isActive = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.id === props.id);
+    const { container } = useContext(BlocksContainerContext);
+    if (!container) throw new Error(`Container for container block ${props.id} is undefined`);
+    const expandedExpressionBlocks = useSelector((state: State) => state.temp.expandedExpressionBlocks[props.id]);
 
-    blocks.forEach((id, index) => {
-        if (activeBlock && activeBlock.newIndex === index) {
-            elements.push(<ActiveBlockAndArrow id={activeBlock.id} container={container} key={activeBlock.id}/>);
-        }
-
-        if (expandedExpressionBlocks[id]) {
-            expandedExpressionBlocks[id].forEach((expressionBlock) => {
-                elements.push(<ExpandedFunctionBlock expressionBlock={expressionBlock} key={expressionBlock}/>)
-            })
-        }
-
-        if (!activeBlock || activeBlock.id !== id) {
-            elements.push(<BlockAndArrow id={id} container={container} index={index} key={id}/>);
-        }
-    });
-
-    if (activeBlock && activeBlock.newIndex === blocks.length) {
-        elements.push(<ActiveBlockAndArrow id={activeBlock.id} container={container} key={activeBlock.id}/>);
-    }
-
-    return elements;
+    return (
+        <>
+            { activeBlock ?
+                <ActiveBlockAndArrow id={activeBlock.id} container={container} key={activeBlock.id}/>
+            : null }
+            { expandedExpressionBlocks ?
+                expandedExpressionBlocks.map((expressionBlock) =>
+                    <ExpandedFunctionBlock expressionBlock={expressionBlock} key={expressionBlock}/>
+                )
+            : null }
+            { !isActive ?
+                <BlockAndArrow id={props.id} container={container} index={props.index} key={props.id}/>
+            : null }
+        </>
+    )
 }
 
 export default function BlocksContainer(props: { id: BlocksContainerId }) {
     const blocks = useSelector((state: State) => state.current.blocksContainers[props.id].blocks);
-    const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.container === props.id ? state.temp.active : undefined);
-    const expandedExpressionBlocks = useSelector((state: State) => state.temp.expandedExpressionBlocks);
+    const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.newIndex === blocks.length ? state.temp.active : undefined);
 
     return (
         <Container>
             <BlocksContainerContext.Provider value={{ container: props.id }}>
                 <BlocksContainerStart key="start"/>
                 <ArrowDroppable container={props.id} index={0} key="arrow-start"/>
-                { Blocks(props.id, blocks, expandedExpressionBlocks, activeBlock) }
+                { blocks.map((id, index) => 
+                    <ContainerBlock id={id} index={index}/>
+                ) }
+                { activeBlock ?
+                    <ActiveBlockAndArrow id={activeBlock.id} container={props.id} key={activeBlock.id}/>
+                : null }
             </BlocksContainerContext.Provider>
         </Container>
     )
