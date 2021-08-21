@@ -21,18 +21,10 @@ const Container = styled(motion.div)`
     border-radius: 20px;
 `;
 
-const StartSVG = styled.svg`
-    stroke: #3A3A3A;
-    height: 40px;
-    fill: none;
-`;
-
-const ArrowContainer = styled(motion.div)`
+const CenterContainer = styled(motion.div)`
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    
 `;
 
 const ArrowFixedContainer = styled.div`
@@ -50,13 +42,36 @@ const ArrowSVG = styled.svg`
     height: 41px;
 `;
 
-function BlocksContainerStart() {
-    return (
-        <StartSVG viewBox="0 0 501 40">
-            <path d="M1 1C1 1 1.00337 38.8055 45.0034 38.8096C89.0033 38.8136 410.503 38.781 455.003 38.8014C499.503 38.8218 499.5 1 499.5 1" strokeWidth="2" strokeLinecap="square" strokeLinejoin="round"/>
-        </StartSVG>
-    );
-}
+const ArrowHeadSVG = styled.svg`
+    fill: #919191;
+    width: 16px;
+    height: 35px;
+`;
+
+const StartContainer = styled(motion.div)`
+    display: inline-flex;
+    padding: 15px 50px;
+
+    border: 2px solid #919191;
+    box-sizing: border-box;
+    border-radius: 30px;
+
+    font-family: IBM Plex Mono;
+    font-weight: 600;
+    font-size: 10px;
+
+    color: #919191;
+
+    user-select: none;
+`;
+
+const StartText = styled.span`
+    font-family: IBM Plex Mono;
+    font-weight: 600;
+    font-size: 10px;
+
+    color: #919191;
+`;
 
 function Arrow() {
     return (
@@ -66,6 +81,14 @@ function Arrow() {
             </ArrowSVG>
         </ArrowFixedContainer>
     );
+}
+
+function ArrowHead() {
+    return (
+        <ArrowHeadSVG viewBox="0 0 16 35">
+            <path d="M7.29289 34.7071C7.68342 35.0976 8.31658 35.0976 8.70711 34.7071L15.0711 28.3431C15.4616 27.9526 15.4616 27.3195 15.0711 26.9289C14.6805 26.5384 14.0474 26.5384 13.6569 26.9289L8 32.5858L2.34315 26.9289C1.95262 26.5384 1.31946 26.5384 0.928932 26.9289C0.538408 27.3195 0.538408 27.9526 0.928932 28.3431L7.29289 34.7071ZM7 0V34H9V0H7Z" fill="#919191"/>
+        </ArrowHeadSVG>
+    )
 }
 
 function ArrowDroppable(props: { container: BlocksContainerId, index: number }) {
@@ -79,9 +102,9 @@ function ArrowDroppable(props: { container: BlocksContainerId, index: number }) 
     });
 
     return (
-        <ArrowContainer ref={setNodeRef}>
+        <CenterContainer ref={setNodeRef}>
             <Arrow/>
-        </ArrowContainer>
+        </CenterContainer>
     );
 }
 
@@ -98,9 +121,9 @@ function BlockAndArrow(props: { container: BlocksContainerId, id: BlockId, index
     return (
         <>
             <Block id={props.id} index={props.index}/>
-            <ArrowContainer ref={setNodeRef}>
+            <CenterContainer ref={setNodeRef} layoutId={`arrow-${props.id}`}>
                 <Arrow/>
-            </ArrowContainer>
+            </CenterContainer>
         </>
     );
 };
@@ -109,9 +132,9 @@ function ActiveBlockAndArrow(props: { container: BlocksContainerId, id: BlockId 
     return (
         <>
             <Block id={props.id}/>
-            <ArrowContainer layoutId={`arrow-${props.id}`}>
+            <CenterContainer layoutId={`arrow-${props.id}`}>
                 <Arrow/>
-            </ArrowContainer>
+            </CenterContainer>
         </>
     );
 };
@@ -152,6 +175,30 @@ function ContainerBlock(props: { id: BlockId, index: number }) {
     );
 }
 
+function Start(props: { container: BlocksContainerId }) {
+    const {setNodeRef} = useDroppable({
+        id: props.container,
+        data: {
+            droppableType: "Block",
+            container: props.container,
+            index: 0
+        }
+    });
+
+    return (
+        <>
+            <CenterContainer>
+                <StartContainer>
+                    START
+                </StartContainer>
+            </CenterContainer>
+            <CenterContainer ref={setNodeRef}>
+                <ArrowHead/>
+            </CenterContainer>
+        </>
+    )
+}
+
 export default function BlocksContainer(props: { id: BlocksContainerId }) {
     const blocks = useSelector((state: State) => state.current.blocksContainers[props.id].blocks);
     const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.newIndex === blocks.length ? state.temp.active : undefined);
@@ -159,8 +206,7 @@ export default function BlocksContainer(props: { id: BlocksContainerId }) {
     return (
         <Container>
             <BlocksContainerContext.Provider value={{ container: props.id }}>
-                <BlocksContainerStart key="start"/>
-                <ArrowDroppable container={props.id} index={0} key="arrow-start"/>
+                <Start container={props.id}/>
                 { blocks.map((id, index) => 
                     <ContainerBlock id={id} index={index} key={id}/>
                 ) }
