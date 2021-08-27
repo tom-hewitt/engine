@@ -1,15 +1,15 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { BlockId } from "./blocks";
 
-export type VariableId = string
+export type VariableId = string;
 
 export interface VariablesState {
-    [key: string]: VariableDefinition
-};
+  [key: string]: VariableDefinition;
+}
 
 export interface VariableDefinition {
-    name: string,
-    references: BlockId[]
-};
+  name: string;
+  references: BlockId[];
+}
 
-const variables = createReducer
+const variables = createReducer;

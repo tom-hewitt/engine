@@ -3,11 +3,11 @@ import { Story, Meta } from "@storybook/react";
 import Literal, { LiteralProps } from "../components/Literal/Literal";
 
 export default {
-    component: Literal,
-    title: "Components/Literal/Literal"
+  component: Literal,
+  title: "Components/Literal/Literal",
 } as Meta;
 
-const Template: Story<LiteralProps> = (args) => <Literal {...args}/>;
+const Template: Story<LiteralProps> = (args) => <Literal {...args} />;
 
 export const Boolean = Template.bind({});
 
