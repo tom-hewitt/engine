@@ -11,12 +11,10 @@ const color = typeColors["3D Vector"];
 const backgroundColor = hexToRGB(color, "0.1");
 const transparentBackgroundColor = hexToRGB(color, "0");
 
-const Container = styled(motion.div)`
+const Container = styled.div`
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-
-  padding: 10px;
 
   border: 1px solid ${typeColors["3D Vector"]};
   box-sizing: border-box;
@@ -35,6 +33,13 @@ let FieldName = styled.span`
   margin-right: 5px;
 
   color: ${typeColors["3D Vector"]};
+`;
+
+let Field = styled(motion.div)<{ border?: boolean }>`
+  padding: 10px 10px 10px 13px;
+
+  ${(props) =>
+    props.border ? `border-right: 1px solid ${typeColors["3D Vector"]};` : ""}
 `;
 
 export default function Literal3DVector(props: {
@@ -99,38 +104,51 @@ export default function Literal3DVector(props: {
 
   return (
     <div className="input" ref={setNodeRef} {...attributes} {...listeners}>
-      <Container
-        animate={{
-          background:
-            focus.x || focus.y || focus.z
-              ? backgroundColor
-              : transparentBackgroundColor,
-        }}
-      >
-        <FieldName>x:</FieldName>
-        <GrowingInput
-          color={color}
-          value={stringValue.x}
-          onFocus={() => onFocus("x")}
-          onChange={(value) => onChange(value, "x")}
-          onSubmit={() => onSubmit("x")}
-        />
-        <FieldName>, y:</FieldName>
-        <GrowingInput
-          color={color}
-          value={stringValue.y}
-          onFocus={() => onFocus("y")}
-          onChange={(value) => onChange(value, "y")}
-          onSubmit={() => onSubmit("y")}
-        />
-        <FieldName>, z:</FieldName>
-        <GrowingInput
-          color={color}
-          value={stringValue.z}
-          onFocus={() => onFocus("z")}
-          onChange={(value) => onChange(value, "z")}
-          onSubmit={() => onSubmit("z")}
-        />
+      <Container>
+        <Field
+          border
+          animate={{
+            background: focus.x ? backgroundColor : transparentBackgroundColor,
+          }}
+        >
+          <FieldName>x:</FieldName>
+          <GrowingInput
+            color={color}
+            value={stringValue.x}
+            onFocus={() => onFocus("x")}
+            onChange={(value) => onChange(value, "x")}
+            onSubmit={() => onSubmit("x")}
+          />
+        </Field>
+        <Field
+          border
+          animate={{
+            background: focus.y ? backgroundColor : transparentBackgroundColor,
+          }}
+        >
+          <FieldName>y:</FieldName>
+          <GrowingInput
+            color={color}
+            value={stringValue.y}
+            onFocus={() => onFocus("y")}
+            onChange={(value) => onChange(value, "y")}
+            onSubmit={() => onSubmit("y")}
+          />
+        </Field>
+        <Field
+          animate={{
+            background: focus.z ? backgroundColor : transparentBackgroundColor,
+          }}
+        >
+          <FieldName>z:</FieldName>
+          <GrowingInput
+            color={color}
+            value={stringValue.z}
+            onFocus={() => onFocus("z")}
+            onChange={(value) => onChange(value, "z")}
+            onSubmit={() => onSubmit("z")}
+          />
+        </Field>
       </Container>
     </div>
   );
