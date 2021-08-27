@@ -17,11 +17,17 @@ import ExpressionBlock, {
 import colors from "../../styles/colors";
 import hexToRGB from "../../utilities/hexToRGB";
 import { DragOverlayContext } from "../BlocksDndContext/BlocksDndContext";
-const Placeholder = styled(motion.div)`
+
+const Outline = styled(motion.div)`
   display: inline-flex;
 
   border-radius: 6px;
-  background-color: rgba(70, 70, 70, 1);
+`;
+
+const Placeholder = styled(motion.div)`
+  display: inline-flex;
+
+  border-radius: 5px;
 `;
 
 export interface ExpressionProps {
@@ -37,11 +43,23 @@ function DynamicExpressionView(props: {
       store.current.expressionBlocks[props.expression.expressionBlock]
   );
 
+  const isDragging = useSelector(
+    (state: State) => state.temp.active?.id === props.expression.expressionBlock
+  );
+
   return (
-    <ExpressionBlock
-      id={props.expression.expressionBlock}
-      expressionBlock={expressionBlock}
-    />
+    <Placeholder
+      animate={{
+        backgroundColor: isDragging
+          ? "rgba(70, 70, 70, 1)"
+          : "rgba(70, 70, 70, 0)",
+      }}
+    >
+      <ExpressionBlock
+        id={props.expression.expressionBlock}
+        expressionBlock={expressionBlock}
+      />
+    </Placeholder>
   );
 }
 
@@ -87,8 +105,10 @@ function DroppableExpression(props: {
     );
   }, [isOver, active]);
 
+  const isDragging = useSelector((state: State) => state.temp);
+
   return (
-    <Placeholder
+    <Outline
       ref={setNodeRef}
       animate={{
         border: isHovered
@@ -97,7 +117,7 @@ function DroppableExpression(props: {
       }}
     >
       <InnerExpression id={props.id} expression={props.expression} />
-    </Placeholder>
+    </Outline>
   );
 }
 
@@ -110,9 +130,9 @@ export default function ExpressionView(props: { expression: ExpressionId }) {
 
   if (isDragOverlay) {
     return (
-      <Placeholder style={{ border: "1px solid rgba(0, 0, 0, 0)" }}>
+      <Outline style={{ border: "1px solid rgba(0, 0, 0, 0)" }}>
         <InnerExpression id={props.expression} expression={expression} />
-      </Placeholder>
+      </Outline>
     );
   } else {
     return (
