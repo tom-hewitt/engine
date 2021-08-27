@@ -17,11 +17,27 @@ export const SetVariable = () => {
     produce(initialState, (draft) => {
       draft.current.blocks = {
         "1": {
+          parentType: "Blocks Container",
           parent: "0",
           block: {
             opcode: "Set Variable",
             variable: "2",
             to: "3",
+            type: "3D Vector",
+          },
+        },
+        "10": {
+          parentType: "Expression Block",
+          parent: "8",
+          block: {
+            opcode: "Built In Function",
+            name: "Normalise",
+            arguments: {
+              byId: {
+                a: "2",
+              },
+              order: ["a"],
+            },
             type: "3D Vector",
           },
         },
@@ -68,17 +84,7 @@ export const SetVariable = () => {
         "8": {
           expressionBlockType: "Function",
           type: "3D Vector",
-          block: {
-            opcode: "Built In Function",
-            name: "Normalise",
-            arguments: {
-              byId: {
-                a: "2",
-              },
-              order: ["a"],
-            },
-            type: "3D Vector",
-          },
+          block: "10",
           parent: "4",
         },
         "9": {
@@ -108,6 +114,7 @@ export const BuiltInFunction = () => {
     produce(initialState, (draft) => {
       draft.current.blocks = {
         "1": {
+          parentType: "Blocks Container",
           parent: "0",
           block: {
             opcode: "Built In Function",

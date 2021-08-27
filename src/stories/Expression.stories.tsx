@@ -174,17 +174,10 @@ export const StructMember = () => {
 export const Function = () => {
   const store = mockStore(
     produce(initialState, (draft) => {
-      draft.current.expressions = {
-        "0": {
-          type: "3D Vector",
-          expressionType: "Block",
-          expressionBlock: "0",
-        },
-      };
-      draft.current.expressionBlocks = {
-        "0": {
-          expressionBlockType: "Function",
-          type: "3D Vector",
+      draft.current.blocks = {
+        "2": {
+          parentType: "Expression Block",
+          parent: "1",
           block: {
             opcode: "Built In Function",
             name: "Normalise",
@@ -196,6 +189,20 @@ export const Function = () => {
             },
             type: "3D Vector",
           },
+        },
+      };
+      draft.current.expressions = {
+        "0": {
+          type: "3D Vector",
+          expressionType: "Block",
+          expressionBlock: "1",
+        },
+      };
+      draft.current.expressionBlocks = {
+        "1": {
+          expressionBlockType: "Function",
+          type: "3D Vector",
+          block: "2",
           parent: "0",
         },
       };
