@@ -3,6 +3,13 @@ import { BlockId } from "./blocks";
 import { BlocksContainerId } from "./blocksContainers";
 import { ExpressionBlockId } from "./expressionBlocks";
 
+export interface TempState {
+  active?: Active;
+  addingBlock?: AddingBlock;
+}
+
+export type Active = ActiveBlock | ActiveExpressionBlock;
+
 export interface ActiveBlock {
   draggableType: "Block";
   id: BlockId;
@@ -17,11 +24,10 @@ export interface ActiveExpressionBlock {
   blockParent?: BlockId;
 }
 
-export interface TempState {
-  active?: Active;
+export interface AddingBlock {
+  container: BlocksContainerId;
+  index: number;
 }
-
-export type Active = ActiveBlock | ActiveExpressionBlock;
 
 export const initialTempState: TempState = {};
 

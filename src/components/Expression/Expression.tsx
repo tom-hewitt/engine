@@ -105,8 +105,6 @@ function DroppableExpression(props: {
     );
   }, [isOver, active]);
 
-  const isDragging = useSelector((state: State) => state.temp);
-
   return (
     <Outline
       ref={setNodeRef}

@@ -10,6 +10,7 @@ import { BlocksContainerId } from "../../reducers/blocksContainers";
 import { ExpressionBlockId } from "../../reducers/expressionBlocks";
 import { useState } from "react";
 import produce from "immer";
+import AddBlock from "../AddBlock/AddBlock";
 
 const Container = styled(motion.div)`
   display: inline-flex;
@@ -32,16 +33,17 @@ const CenterContainer = styled(motion.div)`
 const ArrowFixedContainer = styled.div`
   display: fixed;
 
-  height: 34px;
+  height: 44px;
 `;
 
-const ArrowSVG = styled.svg`
+const ArrowSVG = styled.svg<{ button?: boolean }>`
   display: absolute;
 
   transform: translate(0px, -7px);
   fill: #919191;
   width: 16px;
-  height: 41px;
+  height: 51px;
+  ${(props) => (props.button ? "cursor: pointer;" : "")}
 `;
 
 const ArrowHeadSVG = styled.svg`
@@ -67,16 +69,30 @@ const StartContainer = styled(motion.div)`
   user-select: none;
 `;
 
-function Arrow() {
+function ArrowIcon(props: { onClick?: () => void }) {
   return (
-    <ArrowFixedContainer>
-      <ArrowSVG viewBox="0 0 16 41">
+    <ArrowFixedContainer onClick={props.onClick}>
+      <ArrowSVG viewBox="0 0 16 51" button={props.onClick !== undefined}>
         <path
-          d="M8 0.226497L2.2265 6L8 11.7735L13.7735 6L8 0.226497ZM7.29289 40.7071C7.68342 41.0976 8.31658 41.0976 8.70711 40.7071L15.0711 34.3431C15.4616 33.9526 15.4616 33.3195 15.0711 32.9289C14.6805 32.5384 14.0474 32.5384 13.6569 32.9289L8 38.5858L2.34315 32.9289C1.95262 32.5384 1.31946 32.5384 0.928932 32.9289C0.538408 33.3195 0.538408 33.9526 0.928932 34.3431L7.29289 40.7071ZM7 6V40H9V6H7Z"
+          d="M8 0.226497L2.2265 6L8 11.7735L13.7735 6L8 0.226497ZM7.29289 50.7071C7.68342 51.0976 8.31658 51.0976 8.70711 50.7071L15.0711 44.3431C15.4616 43.9526 15.4616 43.3195 15.0711 42.9289C14.6805 42.5384 14.0474 42.5384 13.6569 42.9289L8 48.5858L2.34315 42.9289C1.95262 42.5384 1.31946 42.5384 0.928932 42.9289C0.538408 43.3195 0.538408 43.9526 0.928932 44.3431L7.29289 50.7071ZM7 6V50H9V6H7Z"
           fill="#919191"
         />
       </ArrowSVG>
     </ArrowFixedContainer>
+  );
+}
+
+function Arrow(props: { index?: number }) {
+  const [isAdding, setIsAdding] = useState(false);
+
+  return isAdding ? (
+    <>
+      <ArrowIcon />
+      <AddBlock cancel={() => setIsAdding(false)} />
+      <ArrowIcon />
+    </>
+  ) : (
+    <ArrowIcon onClick={() => setIsAdding(true)} />
   );
 }
 
@@ -109,7 +125,7 @@ function BlockAndArrow(props: {
     <>
       <Block id={props.id} index={props.index} />
       <CenterContainer ref={setNodeRef} layoutId={`arrow-${props.id}`}>
-        <Arrow />
+        <Arrow index={props.index} />
       </CenterContainer>
     </>
   );
@@ -196,15 +212,20 @@ function ContainerBlock(props: { id: BlockId; index: number }) {
       ? state.temp.active
       : undefined
   );
+
   const isActive = useSelector(
     (state: State) =>
       state.temp.active?.draggableType === "Block" &&
       state.temp.active?.id === props.id
   );
+
   const { container } = useContext(BlocksContainerContext);
+
   const [expandedExpressionBlocks, toggle] = useExpandExpressionBlock();
-  if (!container)
+
+  if (!container) {
     throw new Error(`Container for container block ${props.id} is undefined`);
+  }
 
   return (
     <ExpandExpressionBlockContext.Provider value={{ toggle }}>

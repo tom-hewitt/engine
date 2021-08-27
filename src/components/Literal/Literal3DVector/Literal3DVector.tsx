@@ -6,7 +6,6 @@ import { useDraggable } from "@dnd-kit/core";
 import { GrowingInput } from "../InputField/InputField";
 import hexToRGB from "../../../utilities/hexToRGB";
 import { useEffect } from "react";
-import colors from "../../../styles/colors";
 
 const color = typeColors["3D Vector"];
 const backgroundColor = hexToRGB(color, "0.1");
