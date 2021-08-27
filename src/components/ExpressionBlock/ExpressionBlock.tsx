@@ -13,10 +13,9 @@ import Expression from "../Expression/Expression";
 import { useContext } from "react";
 import { BlockContext } from "../Block/Block";
 import { DragOverlayContext } from "../BlocksDndContext/BlocksDndContext";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { State } from "../../reducers/reducer";
-import { BlocksContainerContext } from "../BlocksContainer/BlocksContainer";
-import { toggleExpandExpressionBlock } from "../../reducers/temp";
+import { ExpandExpressionBlockContext } from "../BlocksContainer/BlocksContainer";
 
 const OuterContainer = styled(motion.div)`
     display: inline-flex;
@@ -198,14 +197,12 @@ function FunctionBlock(props: { expressionBlock: FunctionExpressionBlock, isDrag
     const color = typeColors[block.type];
     const backgroundColor = backgroundTypeColors[block.type];
 
-    const { container } = useContext(BlocksContainerContext);
-    const { id: blockParent } = useContext(BlockContext);
     const expressionBlock = useContext(ExpressionBlockIdContext);
-    const dispatch = useDispatch();
+    const { toggle } = useContext(ExpandExpressionBlockContext);
 
     const onClick = () => {
-        if (container && expressionBlock && blockParent !== undefined) {
-            dispatch(toggleExpandExpressionBlock({ block: blockParent, expressionBlock }))
+        if (toggle && expressionBlock !== undefined) {
+            toggle(expressionBlock);
         }
     };
 

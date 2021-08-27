@@ -5,9 +5,11 @@ import styled from "styled-components";
 import { useDroppable } from "@dnd-kit/core";
 import { BlockId } from "../../reducers/blocks";
 import { State } from "../../reducers/reducer";
-import Block, { FunctionBlockView } from "../Block/Block";
+import Block from "../Block/Block";
 import { BlocksContainerId } from "../../reducers/blocksContainers";
 import { ExpressionBlockId } from "../../reducers/expressionBlocks";
+import { useState } from "react";
+import produce from "immer";
 
 const Container = styled(motion.div)`
     display: inline-flex;
@@ -65,14 +67,6 @@ const StartContainer = styled(motion.div)`
     user-select: none;
 `;
 
-const StartText = styled.span`
-    font-family: IBM Plex Mono;
-    font-weight: 600;
-    font-size: 10px;
-
-    color: #919191;
-`;
-
 function Arrow() {
     return (
         <ArrowFixedContainer>
@@ -89,23 +83,6 @@ function ArrowHead() {
             <path d="M7.29289 34.7071C7.68342 35.0976 8.31658 35.0976 8.70711 34.7071L15.0711 28.3431C15.4616 27.9526 15.4616 27.3195 15.0711 26.9289C14.6805 26.5384 14.0474 26.5384 13.6569 26.9289L8 32.5858L2.34315 26.9289C1.95262 26.5384 1.31946 26.5384 0.928932 26.9289C0.538408 27.3195 0.538408 27.9526 0.928932 28.3431L7.29289 34.7071ZM7 0V34H9V0H7Z" fill="#919191"/>
         </ArrowHeadSVG>
     )
-}
-
-function ArrowDroppable(props: { container: BlocksContainerId, index: number }) {
-    const {setNodeRef} = useDroppable({
-        id: props.container,
-        data: {
-            droppableType: "Block",
-            container: props.container,
-            index: props.index,
-        }
-    });
-
-    return (
-        <CenterContainer ref={setNodeRef}>
-            <Arrow/>
-        </CenterContainer>
-    );
 }
 
 function BlockAndArrow(props: { container: BlocksContainerId, id: BlockId, index: number }) {
@@ -139,27 +116,56 @@ function ActiveBlockAndArrow(props: { container: BlocksContainerId, id: BlockId 
     );
 };
 
+const useExpandExpressionBlock: () => [ExpressionBlockId[], (id: ExpressionBlockId) => void] = () => {
+    const [expandedExpressionBlocks, setExpandedExpressionBlocks] = useState<ExpressionBlockId[]>([]);
+
+    const toggle = (id: ExpressionBlockId) => {
+        setExpandedExpressionBlocks(oldState => produce(oldState, (state) => {
+            const index = state.findIndex(value => value === id);
+
+            // If the id is not in the array add it
+            if (index === -1) {
+                state.push(id);
+            } else {
+                state.splice(index, 1);
+            }
+        }));
+    };
+
+    return [expandedExpressionBlocks, toggle];
+}
+
 function ExpandedFunctionBlock(props: { expressionBlock: ExpressionBlockId }) {
     const expressionBlock = useSelector((state: State) => state.current.expressionBlocks[props.expressionBlock]);
     if (expressionBlock.expressionBlockType !== "Function") throw new Error("Block passed to expanded function block must be a function");
-    
-    const { block } = useSelector((state: State) => state.current.blocks[expressionBlock.block]);
-    if (!(block.opcode === "Function" || block.opcode === "Built In Function")) throw new Error("Block passed to expanded function block must be a function");
 
-    return <FunctionBlockView block={block} expressionBlock/>;
+    const [expandedExpressionBlocks, toggle] = useExpandExpressionBlock();
+
+    return (
+        <ExpandExpressionBlockContext.Provider value={{ toggle }}>
+            { expandedExpressionBlocks ?
+                expandedExpressionBlocks.map((expressionBlock) =>
+                    <ExpandedFunctionBlock expressionBlock={expressionBlock} key={expressionBlock}/>
+                )
+            : null }
+            <Block id={expressionBlock.block}/>
+            </ExpandExpressionBlockContext.Provider>
+    );
 }
 
 export const BlocksContainerContext = createContext<{ container?: BlocksContainerId }>({});
+
+export const ExpandExpressionBlockContext = createContext<{ toggle?: (id: ExpressionBlockId) => void }>({});
 
 function ContainerBlock(props: { id: BlockId, index: number }) {
     const activeBlock = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.newIndex === props.index ? state.temp.active : undefined);
     const isActive = useSelector((state: State) => state.temp.active?.draggableType === "Block" && state.temp.active?.id === props.id);
     const { container } = useContext(BlocksContainerContext);
+    const [expandedExpressionBlocks, toggle] = useExpandExpressionBlock();
     if (!container) throw new Error(`Container for container block ${props.id} is undefined`);
-    const expandedExpressionBlocks = useSelector((state: State) => state.temp.expandedExpressionBlocks[props.id]);
 
     return (
-        <>
+        <ExpandExpressionBlockContext.Provider value={{ toggle }}>
             { activeBlock ?
                 <ActiveBlockAndArrow id={activeBlock.id} container={container} key={activeBlock.id}/>
             : null }
@@ -171,7 +177,7 @@ function ContainerBlock(props: { id: BlockId, index: number }) {
             { !isActive ?
                 <BlockAndArrow id={props.id} container={container} index={props.index} key={props.id}/>
             : null }
-        </>
+        </ExpandExpressionBlockContext.Provider>
     );
 }
 

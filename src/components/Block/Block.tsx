@@ -40,7 +40,7 @@ const OuterBlock = styled(motion.div)<{ color?: string }>`
     box-sizing: border-box;
     border-radius: 5px;
 
-    ${props => props.color ? "border: 1px solid #FFA215;": ""};
+    ${props => props.color ? `border: 1px solid ${props.color};`: ""}
 
     background-color: ${colors.Block};
 
@@ -138,11 +138,13 @@ function ArgumentView(props: { name: string, expression: ExpressionId, setIsDrag
     )
 }
 
-export function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock, expressionBlock?: boolean }) {
+export function FunctionBlockView(props: { block: FunctionBlock | BuiltInFunctionBlock }) {
     const color = props.block.type ? typeColors[props.block.type] : colors.Primary;
+    const { id } = useContext(BlockContext);
+    const expressionBlock = useSelector((state: State) => id ? state.current.blocks[id].parentType === "Expression Block" : undefined );
 
     return (
-        <OuterBlock color={props.expressionBlock ? color : undefined}>
+        <OuterBlock color={expressionBlock ? color : undefined}>
             <Opcode color={color}>FUNCTION</Opcode>
             <HorizontalContainer>
                 <FunctionIcon color={color}/>

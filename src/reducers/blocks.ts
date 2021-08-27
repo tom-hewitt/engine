@@ -33,7 +33,7 @@ export interface FunctionBlock {
         }
         order: string[]
     },
-    type?: Type
+    type?: Type,
 };
 
 export interface ReturnableFunctionBlock extends FunctionBlock {
@@ -63,7 +63,7 @@ export interface NormaliseBuiltInFunctionBlock extends BaseBuiltInFunctionBlock 
         },
         order: ["a"]
     },
-    type: "3D Vector"
+    type: "3D Vector",
 }
 
 export interface ModulusBuiltInFunctionBlock extends BaseBuiltInFunctionBlock {
