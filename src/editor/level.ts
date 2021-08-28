@@ -1,7 +1,12 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import { SceneObject, SceneObjectId } from "../reducers/levels";
+import {
+  Level,
+  LevelsState,
+  SceneObject,
+  SceneObjectId,
+} from "../reducers/levels";
 import { State } from "../reducers/reducer";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
@@ -46,6 +51,46 @@ const sceneObjectToObject3D = (
   }
 };
 
+/**
+ * Creates every object in the saved scene tree using a depth-first traversal
+ * @param {THREE.Scene} scene The THREE scene to add objects to
+ * @param {Level} level The level state
+ * @returns A hash table of Object3Ds
+ */
+export const populateScene = (
+  scene: THREE.Scene,
+  level: Level
+): { [key: string]: THREE.Object3D } => {
+  const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
+
+  if (level.children) {
+    const stack = new Stack<SceneObjectId>();
+
+    stack.push(...level.children);
+
+    while (true) {
+      const id = stack.pop();
+
+      // If the stack is empty, stop
+      if (id === undefined) break;
+
+      const object = level.scene[id];
+
+      if (object.children) stack.push(...object.children);
+
+      const object3D = sceneObjectToObject3D(object, scene);
+
+      // Every type of object has a position
+      setPosition(object3D, object.position);
+
+      sceneObject3Ds[id] = object3D;
+      scene.add(object3D);
+    }
+  }
+
+  return sceneObject3Ds;
+};
+
 // FOV, aspect, near, far
 const defaultCamera = [75, 2, 0.1, 5];
 
@@ -64,31 +109,7 @@ export const setupLevel = (
 
   const level = store.getState().current.levels[levelId];
 
-  const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
-
-  if (level.children) {
-    const stack = new Stack<SceneObjectId>();
-
-    stack.push(...level.children);
-
-    while (true) {
-      const id = stack.pop();
-      // If the stack is empty, stop
-      if (id === undefined) break;
-
-      const object = level.scene[id];
-
-      if (object.children) stack.push(...object.children);
-
-      const object3D = sceneObjectToObject3D(object, scene);
-
-      // Every type of object has a position
-      setPosition(object3D, object.position);
-
-      sceneObject3Ds[id] = object3D;
-      scene.add(object3D);
-    }
-  }
+  const sceneObject3Ds = populateScene(scene, level);
 
   const render = () => {
     renderer.render(scene, camera);
