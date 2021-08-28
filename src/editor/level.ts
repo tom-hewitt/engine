@@ -2,7 +2,7 @@ import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stack from "../algorithms/stack";
-import { Level, SceneObject, SceneObjectId } from "../reducers/levels";
+import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
@@ -55,14 +55,14 @@ const sceneObjectToObject3D = (
  */
 export const populateScene = (
   scene: THREE.Scene,
-  level: Level
+  state: Scene
 ): { [key: string]: THREE.Object3D } => {
   const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
 
-  if (level.children) {
+  if (state.children) {
     const stack = new Stack<SceneObjectId>();
 
-    stack.push(...level.children);
+    stack.push(...state.children);
 
     while (true) {
       const id = stack.pop();
@@ -70,7 +70,7 @@ export const populateScene = (
       // If the stack is empty, stop
       if (id === undefined) break;
 
-      const object = level.scene[id];
+      const object = state.objects[id];
 
       if (object.children) stack.push(...object.children);
 
@@ -91,13 +91,61 @@ export const populateScene = (
   return sceneObject3Ds;
 };
 
+const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
+  setPosition(object3D, object.position);
+  switch (object.objectType) {
+    case "Directional Light": {
+    }
+  }
+};
+
+const updateScene = (
+  state: Scene,
+  scene: THREE.Scene,
+  sceneObject3Ds: { [key: string]: THREE.Object3D }
+) => {
+  if (state.children) {
+    const stack = new Stack<SceneObjectId>();
+
+    stack.push(...state.children);
+
+    while (true) {
+      const id = stack.pop();
+
+      // If the stack is empty, stop
+      if (id === undefined) break;
+
+      const object = state.objects[id];
+      let object3D = sceneObject3Ds[id];
+
+      if (object.children) stack.push(...object.children);
+
+      if (object3D) {
+        updateObject3D(object, object3D);
+      } else {
+        object3D = sceneObjectToObject3D(object, scene);
+
+        // Every type of object has a position
+        setPosition(object3D, object.position);
+
+        sceneObject3Ds[id] = object3D;
+        if (object.parent) {
+          sceneObject3Ds[object.parent].add(object3D);
+        } else {
+          scene.add(object3D);
+        }
+      }
+    }
+  }
+};
+
 // FOV, aspect, near, far
 const defaultCamera = [75, 2, 0.1, 5];
 
 export const setupLevel = (
   canvas: HTMLCanvasElement,
   store: Store<State>,
-  levelId: string
+  sceneId: string
 ) => {
   const renderer = new THREE.WebGLRenderer({ canvas });
   resizeRendererToDisplaySize(renderer);
@@ -113,9 +161,9 @@ export const setupLevel = (
   controls.enableDamping = true;
   controls.update();
 
-  const level = store.getState().current.levels[levelId];
+  let state = store.getState().current.scenes[sceneId];
 
-  const sceneObject3Ds = populateScene(scene, level);
+  const sceneObject3Ds = populateScene(scene, state);
 
   let renderRequested = false;
 
@@ -141,6 +189,15 @@ export const setupLevel = (
 
   controls.addEventListener("change", requestRender);
   window.addEventListener("resize", requestRender);
+
+  const update = () => {
+    state = store.getState().current.scenes[sceneId];
+
+    updateScene(state, scene, sceneObject3Ds);
+    requestRender();
+  };
+
+  store.subscribe(update);
 
   render();
 };

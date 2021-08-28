@@ -1,10 +1,13 @@
 import React from "react";
 import { Meta } from "@storybook/react";
 import EditorScene from "../components/EditorScene/EditorScene";
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import mockStore from "./mockStore";
 import produce from "immer";
 import { initialState } from "../reducers/reducer";
+import Literal3DVector from "../components/Literal/Literal3DVector/Literal3DVector";
+import { State } from "../reducers/reducer";
+import { setObjectPosition } from "../reducers/scenes";
 
 export default {
   component: EditorScene,
@@ -14,9 +17,9 @@ export default {
 export const Default = () => {
   const store = mockStore(
     produce(initialState, (state) => {
-      state.current.levels["Level 1"] = {
+      state.current.scenes["Level 1"] = {
         children: ["0", "1"],
-        scene: {
+        objects: {
           "0": {
             objectType: "Directional Light",
             position: {
@@ -52,6 +55,70 @@ export const Default = () => {
   return (
     <Provider store={store}>
       <EditorScene id="Level 1" />
+    </Provider>
+  );
+};
+
+const Controls = (props: { sceneId: string; objectId: string }) => {
+  const value = useSelector(
+    (state: State) =>
+      state.current.scenes[props.sceneId].objects[props.objectId].position
+  );
+  const dispatch = useDispatch();
+
+  return (
+    <Literal3DVector
+      value={value}
+      onSubmit={(value) =>
+        dispatch(setObjectPosition(props.sceneId, props.objectId, value))
+      }
+    />
+  );
+};
+
+export const WithControls = () => {
+  const store = mockStore(
+    produce(initialState, (state) => {
+      state.current.scenes["Level 1"] = {
+        children: ["0", "1"],
+        objects: {
+          "0": {
+            objectType: "Directional Light",
+            position: {
+              x: -1,
+              y: 2,
+              z: 4,
+            },
+            lightTarget: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            color: 0xffffff,
+            intensity: 1,
+          },
+          "1": {
+            objectType: "Box",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            size: {
+              x: 1,
+              y: 1,
+              z: 1,
+            },
+          },
+        },
+      };
+    })
+  );
+
+  return (
+    <Provider store={store}>
+      <EditorScene id="Level 1" />
+      <Controls sceneId="Level 1" objectId="1" />
     </Provider>
   );
 };
