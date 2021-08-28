@@ -140,7 +140,7 @@ const updateScene = (
 };
 
 // FOV, aspect, near, far
-const defaultCamera = [75, 2, 0.1, 5];
+const defaultCamera = [75, 2, 0.1, 1000];
 
 export const setupLevel = (
   canvas: HTMLCanvasElement,
