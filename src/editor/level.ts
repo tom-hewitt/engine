@@ -80,7 +80,11 @@ export const populateScene = (
       setPosition(object3D, object.position);
 
       sceneObject3Ds[id] = object3D;
-      scene.add(object3D);
+      if (object.parent) {
+        sceneObject3Ds[object.parent].add(object3D);
+      } else {
+        scene.add(object3D);
+      }
     }
   }
 
