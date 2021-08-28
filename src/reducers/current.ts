@@ -17,9 +17,11 @@ import expressions, {
   ExpressionsState,
 } from "./expressions";
 import functions, { functionsInitialState, FunctionsState } from "./functions";
+import { levelsInitialState, LevelsState } from "./levels";
 import { State } from "./reducer";
 
 export interface CurrentState {
+  levels: LevelsState;
   blocksContainers: BlocksContainersState;
   blocks: BlocksState;
   expressions: ExpressionsState;
@@ -28,6 +30,7 @@ export interface CurrentState {
 }
 
 export const initialCurrentState: CurrentState = {
+  levels: levelsInitialState,
   blocksContainers: blocksContainersInitialState,
   blocks: blocksInitialState,
   expressions: expressionsInitialState,
