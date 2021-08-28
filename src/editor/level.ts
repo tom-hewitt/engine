@@ -1,12 +1,8 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stack from "../algorithms/stack";
-import {
-  Level,
-  LevelsState,
-  SceneObject,
-  SceneObjectId,
-} from "../reducers/levels";
+import { Level, SceneObject, SceneObjectId } from "../reducers/levels";
 import { State } from "../reducers/reducer";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
@@ -106,14 +102,41 @@ export const setupLevel = (
   camera.position.z = 2;
 
   const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xececec);
+
+  const controls = new OrbitControls(camera, canvas);
+  controls.target.set(0, 0, 0);
+  controls.enableDamping = true;
+  controls.update();
 
   const level = store.getState().current.levels[levelId];
 
   const sceneObject3Ds = populateScene(scene, level);
 
+  let renderRequested = false;
+
   const render = () => {
+    renderRequested = false;
+
+    if (resizeRendererToDisplaySize(renderer)) {
+      const canvas = renderer.domElement;
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
+    }
+
+    controls.update();
     renderer.render(scene, camera);
   };
+
+  const requestRender = () => {
+    if (!renderRequested) {
+      renderRequested = true;
+      requestAnimationFrame(render);
+    }
+  };
+
+  controls.addEventListener("change", requestRender);
+  window.addEventListener("resize", requestRender);
 
   render();
 };
