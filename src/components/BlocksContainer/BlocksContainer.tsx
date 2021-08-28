@@ -50,6 +50,7 @@ const ArrowHeadSVG = styled.svg`
   fill: #919191;
   width: 16px;
   height: 35px;
+  cursor: pointer;
 `;
 
 const StartContainer = styled(motion.div)`
@@ -82,6 +83,17 @@ function ArrowIcon(props: { onClick?: () => void }) {
   );
 }
 
+function ArrowHead(props: { onClick?: () => void }) {
+  return (
+    <ArrowHeadSVG viewBox="0 0 16 35" onClick={props.onClick}>
+      <path
+        d="M7.29289 34.7071C7.68342 35.0976 8.31658 35.0976 8.70711 34.7071L15.0711 28.3431C15.4616 27.9526 15.4616 27.3195 15.0711 26.9289C14.6805 26.5384 14.0474 26.5384 13.6569 26.9289L8 32.5858L2.34315 26.9289C1.95262 26.5384 1.31946 26.5384 0.928932 26.9289C0.538408 27.3195 0.538408 27.9526 0.928932 28.3431L7.29289 34.7071ZM7 0V34H9V0H7Z"
+        fill="#919191"
+      />
+    </ArrowHeadSVG>
+  );
+}
+
 function Arrow(props: { index?: number }) {
   const [isAdding, setIsAdding] = useState(false);
 
@@ -96,14 +108,33 @@ function Arrow(props: { index?: number }) {
   );
 }
 
-function ArrowHead() {
+function Start(props: { container: BlocksContainerId }) {
+  const { setNodeRef } = useDroppable({
+    id: props.container,
+    data: {
+      droppableType: "Block",
+      container: props.container,
+      index: 0,
+    },
+  });
+
+  const [isAdding, setIsAdding] = useState(false);
+
   return (
-    <ArrowHeadSVG viewBox="0 0 16 35">
-      <path
-        d="M7.29289 34.7071C7.68342 35.0976 8.31658 35.0976 8.70711 34.7071L15.0711 28.3431C15.4616 27.9526 15.4616 27.3195 15.0711 26.9289C14.6805 26.5384 14.0474 26.5384 13.6569 26.9289L8 32.5858L2.34315 26.9289C1.95262 26.5384 1.31946 26.5384 0.928932 26.9289C0.538408 27.3195 0.538408 27.9526 0.928932 28.3431L7.29289 34.7071ZM7 0V34H9V0H7Z"
-        fill="#919191"
-      />
-    </ArrowHeadSVG>
+    <>
+      <CenterContainer>
+        <StartContainer>START</StartContainer>
+      </CenterContainer>
+      <CenterContainer ref={setNodeRef}>
+        <ArrowHead onClick={() => setIsAdding(true)} />
+        {isAdding ? (
+          <>
+            <AddBlock cancel={() => setIsAdding(false)} />
+            <ArrowIcon />
+          </>
+        ) : null}
+      </CenterContainer>
+    </>
   );
 }
 
@@ -253,28 +284,6 @@ function ContainerBlock(props: { id: BlockId; index: number }) {
         />
       ) : null}
     </ExpandExpressionBlockContext.Provider>
-  );
-}
-
-function Start(props: { container: BlocksContainerId }) {
-  const { setNodeRef } = useDroppable({
-    id: props.container,
-    data: {
-      droppableType: "Block",
-      container: props.container,
-      index: 0,
-    },
-  });
-
-  return (
-    <>
-      <CenterContainer>
-        <StartContainer>START</StartContainer>
-      </CenterContainer>
-      <CenterContainer ref={setNodeRef}>
-        <ArrowHead />
-      </CenterContainer>
-    </>
   );
 }
 
