@@ -9,6 +9,10 @@ export default class Stack<T> {
     return this.array.pop();
   }
 
+  peek() {
+    return this.array[this.array.length - 1];
+  }
+
   get length() {
     return this.array.length;
   }

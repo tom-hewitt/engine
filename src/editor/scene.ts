@@ -53,7 +53,7 @@ const sceneObjectToObject3D = (
  * @param {Level} level The level state
  * @returns A hash table of Object3Ds
  */
-export const populateScene = (
+const populateScene = (
   scene: THREE.Scene,
   state: Scene
 ): { [key: string]: THREE.Object3D } => {
@@ -142,7 +142,7 @@ const updateScene = (
 // FOV, aspect, near, far
 const defaultCamera = [75, 2, 0.1, 1000];
 
-export const setupLevel = (
+export const setupScene = (
   canvas: HTMLCanvasElement,
   store: Store<State>,
   sceneId: string

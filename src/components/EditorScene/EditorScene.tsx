@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import { useStore } from "react-redux";
 import styled from "styled-components";
-import { setupLevel } from "../../editor/level";
+import { setupScene } from "../../editor/scene";
 
 const Canvas = styled.canvas`
   width: 100%;
@@ -17,7 +17,7 @@ export default function EditorScene(props: { id: string }) {
   useEffect(() => {
     if (!canvas.current) throw new Error("Canvas is null");
 
-    setupLevel(canvas.current, store, props.id);
+    setupScene(canvas.current, store, props.id);
   });
 
   return <Canvas ref={canvas} />;
