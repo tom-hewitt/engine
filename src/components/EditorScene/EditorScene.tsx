@@ -18,7 +18,7 @@ export default function EditorScene(props: { id: string }) {
     if (!canvas.current) throw new Error("Canvas is null");
 
     return setupScene(canvas.current, store, props.id);
-  });
+  }, [canvas, store, props.id]);
 
   return <Canvas ref={canvas} />;
 }
