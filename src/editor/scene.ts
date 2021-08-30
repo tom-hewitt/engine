@@ -225,6 +225,7 @@ export const setupScene = (
     camera.updateProjectionMatrix();
 
     renderer.setSize(width * pixelRatio, height * pixelRatio, false);
+    effectComposer.setSize(width * pixelRatio, height * pixelRatio);
 
     requestRender();
   };
