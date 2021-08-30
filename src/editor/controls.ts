@@ -33,6 +33,9 @@ const vectorFromDirections = (directions: Directions) => {
   };
 };
 
+/**
+ * Editor controls that can move, look around and select objects
+ */
 export default class Controls {
   camera: THREE.Camera;
   domElement: HTMLElement;
@@ -52,14 +55,12 @@ export default class Controls {
 
   isMoving = false;
 
-  rightClick = false;
-
   mouseDown = false;
 
-  mouseMoved = false;
+  private mouseMoved = false;
 
-  mouseMovementX = 0;
-  mouseMovementY = 0;
+  private mouseMovementX = 0;
+  private mouseMovementY = 0;
 
   private lon = 0;
   private lat = 0;
@@ -68,18 +69,17 @@ export default class Controls {
 
   private mouse = new THREE.Vector2();
 
-  onKeyDown: (event: KeyboardEvent) => void;
-  onKeyUp: (event: KeyboardEvent) => void;
-
-  onMouseDown: (event: MouseEvent) => void;
-  onMouseUp: (event: MouseEvent) => void;
-  onContextMenu: (event: MouseEvent) => void;
-  onMouseMove: (event: MouseEvent) => void;
-
   update: (delta: number) => void;
 
   dispose: () => void;
 
+  /**
+   * Create editor controls
+   * @param {THREE.Camera} camera The camera
+   * @param {HTMLElement} domElement The HTML element that the scene is being rendered onto
+   * @param {() => void} onUpdate Callback function for when there is a change in user input or otherwise
+   * @param {(mouse: THREE.Vector2) => void} onClick Callback function for when the user clicks
+   */
   constructor(
     camera: THREE.Camera,
     domElement: HTMLElement,
@@ -89,7 +89,7 @@ export default class Controls {
     this.camera = camera;
     this.domElement = domElement;
 
-    this.onKeyDown = (event) => {
+    const onKeyDown = (event: KeyboardEvent) => {
       if (this.mouseDown) {
         switch (event.code) {
           // Forwards
@@ -132,7 +132,7 @@ export default class Controls {
       }
     };
 
-    this.onKeyUp = (event) => {
+    const onKeyUp = (event: KeyboardEvent) => {
       if (this.mouseDown) {
         switch (event.code) {
           // Forwards
@@ -175,13 +175,13 @@ export default class Controls {
       }
     };
 
-    this.onMouseDown = (event) => {
+    const onMouseDown = (event: MouseEvent) => {
       this.domElement.focus();
 
       this.mouseDown = true;
     };
 
-    this.onMouseUp = (event) => {
+    const onMouseUp = (event: MouseEvent) => {
       this.mouseDown = false;
 
       if (this.mouseMoved) {
@@ -205,11 +205,11 @@ export default class Controls {
       }
     };
 
-    this.onContextMenu = (event) => {
+    const onContextMenu = (event: MouseEvent) => {
       event.preventDefault();
     };
 
-    this.onMouseMove = (event) => {
+    const onMouseMove = (event: MouseEvent) => {
       if (this.mouseDown) {
         if (!this.mouseMoved) {
           this.mouseMoved = true;
@@ -263,20 +263,20 @@ export default class Controls {
       }
     };
 
-    document.addEventListener("keydown", this.onKeyDown);
-    document.addEventListener("keyup", this.onKeyUp);
-    this.domElement.addEventListener("mousedown", this.onMouseDown);
-    this.domElement.addEventListener("mouseup", this.onMouseUp);
-    this.domElement.addEventListener("contextmenu", this.onContextMenu);
-    this.domElement.addEventListener("mousemove", this.onMouseMove);
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
+    this.domElement.addEventListener("mousedown", onMouseDown);
+    this.domElement.addEventListener("mouseup", onMouseUp);
+    this.domElement.addEventListener("contextmenu", onContextMenu);
+    this.domElement.addEventListener("mousemove", onMouseMove);
 
     this.dispose = () => {
-      document.removeEventListener("keydown", this.onKeyDown);
-      document.removeEventListener("keyup", this.onKeyUp);
-      this.domElement.removeEventListener("mousedown", this.onMouseDown);
-      this.domElement.removeEventListener("mouseup", this.onMouseUp);
-      this.domElement.removeEventListener("contextmenu", this.onContextMenu);
-      this.domElement.removeEventListener("mousemove", this.onMouseMove);
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keyup", onKeyUp);
+      this.domElement.removeEventListener("mousedown", onMouseDown);
+      this.domElement.removeEventListener("mouseup", onMouseUp);
+      this.domElement.removeEventListener("contextmenu", onContextMenu);
+      this.domElement.removeEventListener("mousemove", onMouseMove);
     };
   }
 }
