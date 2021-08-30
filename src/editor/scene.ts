@@ -139,6 +139,10 @@ const updateScene = (
   }
 };
 
+const onClick = (x: number, y: number) => {
+  console.log(x, y);
+};
+
 // FOV, aspect, near, far
 const defaultCamera = [75, 2, 0.1, 1000];
 
@@ -186,7 +190,7 @@ export const setupScene = (
     }
   };
 
-  const controls = new Controls(camera, canvas, requestRender);
+  const controls = new Controls(camera, canvas, requestRender, onClick);
 
   window.addEventListener("resize", requestRender);
 

@@ -81,7 +81,8 @@ export default class Controls {
   constructor(
     camera: THREE.Camera,
     domElement: HTMLElement,
-    onUpdate: () => void
+    onUpdate: () => void,
+    onClick: (x: number, y: number) => void
   ) {
     this.camera = camera;
     this.domElement = domElement;
@@ -179,20 +180,27 @@ export default class Controls {
     };
 
     this.onMouseUp = (event) => {
-      this.domElement.blur();
-
       this.mouseDown = false;
-      this.mouseMoved = false;
-      this.domElement.style.cursor = "default";
 
-      this.input = {
-        forwards: false,
-        backwards: false,
-        right: false,
-        left: false,
-        up: false,
-        down: false,
-      };
+      if (this.mouseMoved) {
+        this.domElement.blur();
+
+        this.mouseMoved = false;
+        this.domElement.style.cursor = "default";
+
+        this.input = {
+          forwards: false,
+          backwards: false,
+          right: false,
+          left: false,
+          up: false,
+          down: false,
+        };
+      } else {
+        const x = (event.clientX / this.domElement.clientWidth) * 2 - 1;
+        const y = -(event.clientY / this.domElement.clientHeight) * 2 + 1;
+        onClick(x, y);
+      }
     };
 
     this.onContextMenu = (event) => {
