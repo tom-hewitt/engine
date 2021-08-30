@@ -66,6 +66,8 @@ export default class Controls {
 
   private targetPosition = new THREE.Vector3();
 
+  private mouse = new THREE.Vector2();
+
   onKeyDown: (event: KeyboardEvent) => void;
   onKeyUp: (event: KeyboardEvent) => void;
 
@@ -82,7 +84,7 @@ export default class Controls {
     camera: THREE.Camera,
     domElement: HTMLElement,
     onUpdate: () => void,
-    onClick: (x: number, y: number) => void
+    onClick: (mouse: THREE.Vector2) => void
   ) {
     this.camera = camera;
     this.domElement = domElement;
@@ -197,9 +199,9 @@ export default class Controls {
           down: false,
         };
       } else {
-        const x = (event.clientX / this.domElement.clientWidth) * 2 - 1;
-        const y = -(event.clientY / this.domElement.clientHeight) * 2 + 1;
-        onClick(x, y);
+        this.mouse.x = (event.clientX / this.domElement.clientWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / this.domElement.clientHeight) * 2 + 1;
+        onClick(this.mouse);
       }
     };
 

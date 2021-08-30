@@ -1,7 +1,7 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
+import scene, { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 
@@ -21,9 +21,11 @@ const resizeRendererToDisplaySize = (renderer: THREE.WebGLRenderer) => {
 };
 
 const sceneObjectToObject3D = (
+  id: SceneObjectId,
   object: SceneObject,
   scene: THREE.Scene
 ): THREE.Object3D => {
+  let object3D: THREE.Object3D;
   switch (object.objectType) {
     case "Directional Light": {
       const light = new THREE.DirectionalLight(object.color, object.intensity);
@@ -31,7 +33,8 @@ const sceneObjectToObject3D = (
       scene.add(light.target);
       setPosition(light.target, object.lightTarget);
 
-      return light;
+      object3D = light;
+      break;
     }
     case "Box": {
       const geometry = new THREE.BoxGeometry(
@@ -42,9 +45,19 @@ const sceneObjectToObject3D = (
 
       const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 }); // greenish blue
 
-      return new THREE.Mesh(geometry, material);
+      object3D = new THREE.Mesh(geometry, material);
+      break;
     }
   }
+
+  object3D.name = id;
+  object3D.position.set(
+    object.position.x,
+    object.position.y,
+    object.position.z
+  );
+
+  return object3D;
 };
 
 /**
@@ -74,10 +87,7 @@ const populateScene = (
 
       if (object.children) stack.push(...object.children);
 
-      const object3D = sceneObjectToObject3D(object, scene);
-
-      // Every type of object has a position
-      setPosition(object3D, object.position);
+      const object3D = sceneObjectToObject3D(id, object, scene);
 
       sceneObject3Ds[id] = object3D;
       if (object.parent) {
@@ -99,10 +109,9 @@ const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
   }
 };
 
-const updateScene = (
+const dfs = (
   state: Scene,
-  scene: THREE.Scene,
-  sceneObject3Ds: { [key: string]: THREE.Object3D }
+  callback: (id: SceneObjectId, object: SceneObject) => void
 ) => {
   if (state.children) {
     const stack = new Stack<SceneObjectId>();
@@ -116,31 +125,35 @@ const updateScene = (
       if (id === undefined) break;
 
       const object = state.objects[id];
-      let object3D = sceneObject3Ds[id];
 
       if (object.children) stack.push(...object.children);
 
-      if (object3D) {
-        updateObject3D(object, object3D);
-      } else {
-        object3D = sceneObjectToObject3D(object, scene);
-
-        // Every type of object has a position
-        setPosition(object3D, object.position);
-
-        sceneObject3Ds[id] = object3D;
-        if (object.parent) {
-          sceneObject3Ds[object.parent].add(object3D);
-        } else {
-          scene.add(object3D);
-        }
-      }
+      callback(id, object);
     }
   }
 };
 
-const onClick = (x: number, y: number) => {
-  console.log(x, y);
+const updateScene = (
+  state: Scene,
+  scene: THREE.Scene,
+  sceneObject3Ds: { [key: string]: THREE.Object3D }
+) => {
+  dfs(state, (id, object) => {
+    let object3D = sceneObject3Ds[id];
+
+    if (object3D) {
+      updateObject3D(object, object3D);
+    } else {
+      object3D = sceneObjectToObject3D(id, object, scene);
+
+      sceneObject3Ds[id] = object3D;
+      if (object.parent) {
+        sceneObject3Ds[object.parent].add(object3D);
+      } else {
+        scene.add(object3D);
+      }
+    }
+  });
 };
 
 // FOV, aspect, near, far
@@ -159,6 +172,8 @@ export const setupScene = (
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xececec);
+
+  const raycaster = new THREE.Raycaster();
 
   const clock = new THREE.Clock();
 
@@ -188,6 +203,16 @@ export const setupScene = (
       renderRequested = true;
       requestAnimationFrame(render);
     }
+  };
+
+  const onClick = (mouse: THREE.Vector2) => {
+    raycaster.setFromCamera(mouse, camera);
+
+    const object3D = raycaster.intersectObjects(
+      Object.values(sceneObject3Ds)
+    )[0];
+
+    console.log(object3D.object.name);
   };
 
   const controls = new Controls(camera, canvas, requestRender, onClick);
