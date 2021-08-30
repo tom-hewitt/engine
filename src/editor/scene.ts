@@ -37,10 +37,13 @@ export const setupScene = (
   store: Store<State>,
   sceneId: string
 ) => {
+  const pixelRatio = window.devicePixelRatio;
+
   let width = canvas.clientWidth;
   let height = canvas.clientHeight;
 
   const renderer = new THREE.WebGLRenderer({ canvas });
+  renderer.setSize(width * pixelRatio, height * pixelRatio, false);
   let renderRequested = false;
 
   const camera = new THREE.PerspectiveCamera(...defaultCamera);
@@ -64,7 +67,10 @@ export const setupScene = (
   effectComposer.addPass(outlinePass);
 
   const antialiasPass = new ShaderPass(FXAAShader);
-  antialiasPass.uniforms.resolution.value.set(1 / width, 1 / height);
+  antialiasPass.uniforms.resolution.value.set(
+    (1 / width) * pixelRatio,
+    (1 / height) * pixelRatio
+  );
   effectComposer.addPass(antialiasPass);
 
   const raycaster = new THREE.Raycaster();
@@ -217,6 +223,8 @@ export const setupScene = (
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
+
+    renderer.setSize(width * pixelRatio, height * pixelRatio, false);
 
     requestRender();
   };
