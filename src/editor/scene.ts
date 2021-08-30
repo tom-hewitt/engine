@@ -37,8 +37,8 @@ export const setupScene = (
   store: Store<State>,
   sceneId: string
 ) => {
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
+  let width = canvas.clientWidth;
+  let height = canvas.clientHeight;
 
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setSize(width, height);
@@ -46,6 +46,8 @@ export const setupScene = (
 
   const camera = new THREE.PerspectiveCamera(...defaultCamera);
   camera.position.z = 2;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xececec);
