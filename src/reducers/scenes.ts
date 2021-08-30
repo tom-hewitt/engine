@@ -1,5 +1,4 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
-import { HexBase64BinaryEncoding } from "crypto";
 
 export interface ScenesState {
   [key: string]: Scene;

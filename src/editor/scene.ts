@@ -1,9 +1,9 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stack from "../algorithms/stack";
 import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
+import Controls from "./controls";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
   object.position.set(vector.x, vector.y, vector.z);
@@ -156,10 +156,7 @@ export const setupScene = (
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xececec);
 
-  const controls = new OrbitControls(camera, canvas);
-  controls.target.set(0, 0, 0);
-  controls.enableDamping = true;
-  controls.update();
+  const clock = new THREE.Clock();
 
   let state = store.getState().current.scenes[sceneId];
 
@@ -170,13 +167,15 @@ export const setupScene = (
   const render = () => {
     renderRequested = false;
 
+    const delta = clock.getDelta();
+
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
 
-    controls.update();
+    controls.update(delta);
     renderer.render(scene, camera);
   };
 
@@ -187,7 +186,8 @@ export const setupScene = (
     }
   };
 
-  controls.addEventListener("change", requestRender);
+  const controls = new Controls(camera, canvas, requestRender);
+
   window.addEventListener("resize", requestRender);
 
   const update = () => {
