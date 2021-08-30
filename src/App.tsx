@@ -1,16 +1,24 @@
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { createGlobalStyle } from "styled-components";
-import useUndoRedo from "./components/hooks/useUndoRedo";
+import Editor from "./components/Editor/Editor";
+import reducer from "./reducers/reducer";
+import defaultState from "./defaultState";
 
 createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap');
 `;
 
 export default function App() {
-  useUndoRedo();
+  const store = configureStore({
+    reducer: reducer,
+    preloadedState: defaultState,
+    devTools: true,
+  });
 
   return (
-    <div>
-      <h1>Hello, world!</h1>
-    </div>
+    <Provider store={store}>
+      <Editor />
+    </Provider>
   );
 }

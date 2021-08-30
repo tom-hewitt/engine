@@ -7,7 +7,9 @@ import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
+import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
   object.position.set(vector.x, vector.y, vector.z);
@@ -59,6 +61,10 @@ export const setupScene = (
     camera
   );
   effectComposer.addPass(outlinePass);
+
+  const antialiasPass = new ShaderPass(FXAAShader);
+  antialiasPass.uniforms.resolution.value.set(1 / width, 1 / height);
+  effectComposer.addPass(antialiasPass);
 
   const raycaster = new THREE.Raycaster();
 
