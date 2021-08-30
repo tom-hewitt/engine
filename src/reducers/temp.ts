@@ -2,10 +2,12 @@ import { createAction, createReducer } from "@reduxjs/toolkit";
 import { BlockId } from "./blocks";
 import { BlocksContainerId } from "./blocksContainers";
 import { ExpressionBlockId } from "./expressionBlocks";
+import { SceneId, SceneObjectId } from "./scenes";
 
 export interface TempState {
   active?: Active;
   addingBlock?: AddingBlock;
+  selectedSceneObject?: SceneObjectId;
 }
 
 export type Active = ActiveBlock | ActiveExpressionBlock;
@@ -49,6 +51,11 @@ export const startExpressionBlockDrag = createAction<{
   blockParent?: BlockId;
 }>("temp/START_EXPRESSION_BLOCK_DRAG");
 
+export const selectSceneObject = createAction<{
+  id?: SceneObjectId;
+  sceneId: SceneId;
+}>("temp/SELECT_SCENE_OBJECT");
+
 const temp = createReducer(initialTempState, (builder) => {
   builder
     .addCase(endDrag, (state) => {
@@ -78,7 +85,10 @@ const temp = createReducer(initialTempState, (builder) => {
           blockParent,
         };
       }
-    );
+    )
+    .addCase(selectSceneObject, (state, { payload: { id } }) => {
+      state.selectedSceneObject = id;
+    });
 });
 
 export default temp;

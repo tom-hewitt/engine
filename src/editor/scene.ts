@@ -4,6 +4,7 @@ import Stack from "../algorithms/stack";
 import scene, { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
+import { selectSceneObject } from "../reducers/temp";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
   object.position.set(vector.x, vector.y, vector.z);
@@ -212,7 +213,8 @@ export const setupScene = (
       Object.values(sceneObject3Ds)
     )[0];
 
-    console.log(object3D.object.name);
+    const id = object3D ? object3D.object.name : undefined;
+    store.dispatch(selectSceneObject({ id, sceneId }));
   };
 
   const controls = new Controls(camera, canvas, requestRender, onClick);
