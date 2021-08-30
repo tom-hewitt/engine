@@ -5,20 +5,14 @@ import scene, { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
+import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
   object.position.set(vector.x, vector.y, vector.z);
-};
-
-const resizeRendererToDisplaySize = (renderer: THREE.WebGLRenderer) => {
-  const canvas = renderer.domElement;
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-  const needResize = canvas.width !== width || canvas.height !== height;
-  if (needResize) {
-    renderer.setSize(width, height, false);
-  }
-  return needResize;
 };
 
 const sceneObjectToObject3D = (
@@ -165,14 +159,29 @@ export const setupScene = (
   store: Store<State>,
   sceneId: string
 ) => {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+
   const renderer = new THREE.WebGLRenderer({ canvas });
-  resizeRendererToDisplaySize(renderer);
+  renderer.setSize(width, height);
 
   const camera = new THREE.PerspectiveCamera(...defaultCamera);
   camera.position.z = 2;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xececec);
+
+  const effectComposer = new EffectComposer(renderer);
+
+  const renderPass = new RenderPass(scene, camera);
+  effectComposer.addPass(renderPass);
+
+  const outlinePass = new OutlinePass(
+    new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
+    scene,
+    camera
+  );
+  effectComposer.addPass(outlinePass);
 
   const raycaster = new THREE.Raycaster();
 
@@ -189,14 +198,8 @@ export const setupScene = (
 
     const delta = clock.getDelta();
 
-    if (resizeRendererToDisplaySize(renderer)) {
-      const canvas = renderer.domElement;
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
-    }
-
     controls.update(delta);
-    renderer.render(scene, camera);
+    effectComposer.render();
   };
 
   const requestRender = () => {
@@ -219,12 +222,39 @@ export const setupScene = (
 
   const controls = new Controls(camera, canvas, requestRender, onClick);
 
-  window.addEventListener("resize", requestRender);
+  const onWindowResize = () => {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(width, height);
+    effectComposer.setSize(width, height);
+
+    requestRender();
+  };
+
+  window.addEventListener("resize", onWindowResize);
+
+  let selectedObject: SceneObjectId | undefined = undefined;
+
+  const updateSelectedObject = (state: State) => {
+    const newSelectedObject = state.temp.selectedSceneObject;
+
+    if (newSelectedObject !== selectedObject) {
+      selectedObject = newSelectedObject;
+      outlinePass.selectedObjects = newSelectedObject
+        ? [sceneObject3Ds[newSelectedObject]]
+        : [];
+    }
+  };
 
   const update = () => {
     state = store.getState().current.scenes[sceneId];
 
     updateScene(state, scene, sceneObject3Ds);
+    updateSelectedObject(store.getState());
     requestRender();
   };
 
