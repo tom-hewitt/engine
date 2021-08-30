@@ -41,7 +41,6 @@ export const setupScene = (
   let height = canvas.clientHeight;
 
   const renderer = new THREE.WebGLRenderer({ canvas });
-  renderer.setSize(width, height);
   let renderRequested = false;
 
   const camera = new THREE.PerspectiveCamera(...defaultCamera);
@@ -213,14 +212,11 @@ export const setupScene = (
    * Updates the camera, renderer and postprocessor to fit the new window size
    */
   const onWindowResize = () => {
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-
-    renderer.setSize(width, height);
-    effectComposer.setSize(width, height);
 
     requestRender();
   };
