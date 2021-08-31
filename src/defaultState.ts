@@ -2,9 +2,15 @@ import { State } from "./reducers/reducer";
 
 const defaultState: State = {
   current: {
+    levels: {
+      "Level 1": {
+        name: "Level 1",
+        scene: "Level 1",
+      },
+    },
     scenes: {
       "Level 1": {
-        children: ["0", "1", "2"],
+        children: ["0", "2"],
         objects: {
           "0": {
             name: "Light",
@@ -24,6 +30,7 @@ const defaultState: State = {
           },
           "1": {
             name: "Box",
+            parent: "2",
             objectType: "Box",
             position: {
               x: 0,
@@ -42,6 +49,7 @@ const defaultState: State = {
           },
           "2": {
             name: "Plane",
+            children: ["1"],
             objectType: "Plane",
             position: {
               x: 0,

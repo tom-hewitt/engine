@@ -17,10 +17,12 @@ import expressions, {
   ExpressionsState,
 } from "./expressions";
 import functions, { functionsInitialState, FunctionsState } from "./functions";
+import { levelsInitialState, LevelsState } from "./levels";
 import { State } from "./reducer";
 import scenes, { scenesInitialState, ScenesState } from "./scenes";
 
 export interface CurrentState {
+  levels: LevelsState;
   scenes: ScenesState;
   blocksContainers: BlocksContainersState;
   blocks: BlocksState;
@@ -30,6 +32,7 @@ export interface CurrentState {
 }
 
 export const initialCurrentState: CurrentState = {
+  levels: levelsInitialState,
   scenes: scenesInitialState,
   blocksContainers: blocksContainersInitialState,
   blocks: blocksInitialState,

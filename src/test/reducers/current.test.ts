@@ -2,6 +2,7 @@ import { CurrentState, algorithms } from "../../reducers/current";
 
 it("inserts an expression block", () => {
   const initialState: CurrentState = {
+    levels: {},
     scenes: {},
     blocksContainers: {},
     blocks: {},
@@ -41,6 +42,7 @@ it("inserts an expression block", () => {
 
 it("undos an expression block insertion", () => {
   const initialState: CurrentState = {
+    levels: {},
     scenes: {},
     blocksContainers: {},
     blocks: {},

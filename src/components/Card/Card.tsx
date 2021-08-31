@@ -1,9 +1,12 @@
 import styled from "styled-components";
+import { motion } from "framer-motion";
 import colors from "../../styles/colors";
 
-export const Card = styled.div`
+export const Card = styled(motion.div)<{ width?: string }>`
   display: inline-flex;
   flex-direction: column;
+
+  ${(props) => (props.width ? `width: ${props.width};` : "")}
 
   padding: 30px;
 
@@ -38,6 +41,16 @@ export const SubTitle = styled.span<{ color: string }>`
   font-size: 12px;
 
   color: ${(props) => props.color};
+
+  margin-bottom: 20px;
+`;
+
+export const SubHeading = styled.span`
+  font-family: IBM Plex Mono;
+  font-weight: 600;
+  font-size: 12px;
+
+  color: ${colors.Secondary};
 `;
 
 const ButtonContainer = styled.button`
