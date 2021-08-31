@@ -5,7 +5,14 @@ import { State } from "../../reducers/reducer";
 import colors from "../../styles/colors";
 import typeColors from "../../styles/typeColors";
 import BlocksContainer from "../BlocksContainer/BlocksContainer";
-import { Card, SubTitle, Title } from "../Card/Card";
+import {
+  Card,
+  CloseButton,
+  Header,
+  HeaderBar,
+  SubTitle,
+  Title,
+} from "../Card/Card";
 import FunctionIcon from "../Icons/FunctionIcon/FunctionIcon";
 
 const HorizontalContainer = styled.div`
@@ -21,13 +28,18 @@ export default function FunctionCard(props: { id: FunctionId }) {
   const color = func.type ? typeColors[func.type] : colors.Secondary;
   return (
     <Card>
-      <Title>{func.name}</Title>
-      <HorizontalContainer>
-        <FunctionIcon color={color} />
-        <SubTitle color={color}>
-          {func.type ? func.type.toUpperCase() : "FUNCTION"}
-        </SubTitle>
-      </HorizontalContainer>
+      <HeaderBar>
+        <Header>
+          <Title>{func.name}</Title>
+          <HorizontalContainer>
+            <FunctionIcon color={color} />
+            <SubTitle color={color}>
+              {func.type ? func.type.toUpperCase() : "FUNCTION"}
+            </SubTitle>
+          </HorizontalContainer>
+        </Header>
+        <CloseButton onClick={() => {}} />
+      </HeaderBar>
       <BlocksContainer id={func.blocksContainer} />
     </Card>
   );

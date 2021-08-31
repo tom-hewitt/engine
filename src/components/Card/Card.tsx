@@ -12,6 +12,18 @@ export const Card = styled.div`
   border-radius: 20px;
 `;
 
+export const HeaderBar = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+export const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+`;
+
 export const Title = styled.span`
   font-family: IBM Plex Mono;
   font-weight: bold;
@@ -27,3 +39,35 @@ export const SubTitle = styled.span<{ color: string }>`
 
   color: ${(props) => props.color};
 `;
+
+const ButtonContainer = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  height: 32px;
+  width: 32px;
+
+  border: none;
+
+  cursor: pointer;
+
+  background: #292929;
+  border-radius: 10px;
+`;
+
+const CloseSVG = styled.svg`
+  width: 14px;
+  height: 14px;
+`;
+
+export const CloseButton = (props: { onClick: () => void }) => {
+  return (
+    <ButtonContainer onClick={props.onClick}>
+      <CloseSVG>
+        <path d="M1 1L13 13M1 13L13 1" stroke="#6D6D6D" stroke-width="2" />
+      </CloseSVG>
+    </ButtonContainer>
+  );
+};
