@@ -36,7 +36,7 @@ let FieldName = styled.span`
 `;
 
 let Field = styled(motion.div)<{ border?: boolean }>`
-  padding: 10px 10px 10px 13px;
+  padding: 8px 8px 10px 12px;
 
   ${(props) =>
     props.border ? `border-right: 1px solid ${typeColors["3D Vector"]};` : ""}
