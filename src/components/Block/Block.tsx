@@ -236,9 +236,7 @@ export default function DraggableBlock(props: { id: BlockId; index?: number }) {
     <Placeholder
       layoutId={`block-placeholder-${props.id}`}
       animate={{
-        border: isDragging
-          ? `1px solid ${colors.Primary}`
-          : `1px solid ${hexToRGB(colors.Primary, "0")}`,
+        backgroundColor: isDragging ? "#222222" : hexToRGB("#222222", "0"),
       }}
     >
       <DraggableContainer
