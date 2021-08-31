@@ -12,18 +12,6 @@ import { useState } from "react";
 import produce from "immer";
 import AddBlock from "../AddBlock/AddBlock";
 
-const Container = styled(motion.div)`
-  display: inline-flex;
-  flex-direction: column;
-
-  height: 100%;
-
-  padding: 30px;
-
-  background: #1e1e1e;
-  border-radius: 20px;
-`;
-
 const CenterContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
@@ -301,20 +289,18 @@ export default function BlocksContainer(props: { id: BlocksContainerId }) {
   );
 
   return (
-    <Container>
-      <BlocksContainerContext.Provider value={{ container: props.id }}>
-        <Start container={props.id} />
-        {blocks.map((id, index) => (
-          <ContainerBlock id={id} index={index} key={id} />
-        ))}
-        {activeBlock ? (
-          <ActiveBlockAndArrow
-            id={activeBlock.id}
-            container={props.id}
-            key={activeBlock.id}
-          />
-        ) : null}
-      </BlocksContainerContext.Provider>
-    </Container>
+    <BlocksContainerContext.Provider value={{ container: props.id }}>
+      <Start container={props.id} />
+      {blocks.map((id, index) => (
+        <ContainerBlock id={id} index={index} key={id} />
+      ))}
+      {activeBlock ? (
+        <ActiveBlockAndArrow
+          id={activeBlock.id}
+          container={props.id}
+          key={activeBlock.id}
+        />
+      ) : null}
+    </BlocksContainerContext.Provider>
   );
 }

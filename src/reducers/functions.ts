@@ -8,7 +8,7 @@ export interface Function {
   name: string;
   blocksContainer: BlockId;
   variables: VariableId[];
-  blockReferences: BlockId[];
+  type?: Type;
 }
 
 export interface FunctionsState {
