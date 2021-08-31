@@ -1,3 +1,8 @@
+interface vector2d {
+  x: number;
+  y: number;
+}
+
 interface vector3d {
   x: number;
   y: number;

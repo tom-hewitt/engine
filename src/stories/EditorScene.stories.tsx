@@ -51,6 +51,10 @@ export const Default = () => {
               y: 1,
               z: 1,
             },
+            material: {
+              type: "Phong",
+              color: 0x44aa88,
+            },
           },
         },
       };
@@ -113,6 +117,10 @@ export const WithControls = () => {
               y: 1,
               z: 1,
             },
+            material: {
+              type: "Phong",
+              color: 0x44aa88,
+            },
           },
         },
       };
@@ -147,6 +155,10 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
             x: 0.1,
             y: 0.1,
             z: 0.1,
+          },
+          material: {
+            type: "Phong",
+            color: 0x44aa88,
           },
         };
       }

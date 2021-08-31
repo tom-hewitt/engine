@@ -4,7 +4,7 @@ const defaultState: State = {
   current: {
     scenes: {
       "Level 1": {
-        children: ["0", "1"],
+        children: ["0", "1", "2"],
         objects: {
           "0": {
             objectType: "Directional Light",
@@ -32,6 +32,26 @@ const defaultState: State = {
               x: 1,
               y: 1,
               z: 1,
+            },
+            material: {
+              type: "Phong",
+              color: 0x44aa88,
+            },
+          },
+          "2": {
+            objectType: "Plane",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            size: {
+              x: 5,
+              y: 5,
+            },
+            material: {
+              type: "Phong",
+              color: 0x8c8c8c,
             },
           },
         },

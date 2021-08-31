@@ -1,7 +1,12 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
+import {
+  Material,
+  Scene,
+  SceneObject,
+  SceneObjectId,
+} from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
@@ -79,6 +84,14 @@ export const setupScene = (
 
   let state = store.getState().current.scenes[sceneId];
 
+  const createMaterial = (material: Material) => {
+    switch (material.type) {
+      case "Phong": {
+        return new THREE.MeshPhongMaterial({ color: material.color });
+      }
+    }
+  };
+
   /**
    * Turns a scene object from the saved state into a 3D object that
    * can be rendered
@@ -112,7 +125,15 @@ export const setupScene = (
           object.size.z
         );
 
-        const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 }); // greenish blue
+        const material = createMaterial(object.material);
+
+        object3D = new THREE.Mesh(geometry, material);
+        break;
+      }
+      case "Plane": {
+        const geometry = new THREE.PlaneGeometry(object.size.x, object.size.y);
+
+        const material = createMaterial(object.material);
 
         object3D = new THREE.Mesh(geometry, material);
         break;

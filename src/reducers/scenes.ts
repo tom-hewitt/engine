@@ -17,7 +17,7 @@ export type SceneId = string;
 
 export type SceneObjectId = string;
 
-export type SceneObject = DirectionalLight | Box;
+export type SceneObject = DirectionalLight | Box | Plane;
 
 interface BaseSceneObject {
   parent?: string;
@@ -35,6 +35,20 @@ export interface DirectionalLight extends BaseSceneObject {
 export interface Box extends BaseSceneObject {
   objectType: "Box";
   size: vector3d;
+  material: Material;
+}
+
+export interface Plane extends BaseSceneObject {
+  objectType: "Plane";
+  size: vector2d;
+  material: Material;
+}
+
+export type Material = PhongMaterial;
+
+export interface PhongMaterial {
+  type: "Phong";
+  color: number;
 }
 
 export const scenesInitialState: ScenesState = {};
