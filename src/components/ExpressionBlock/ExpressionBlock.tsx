@@ -159,7 +159,7 @@ function Member(props: {
         animate={{
           boxShadow: props.isDragging
             ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-            : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
+            : "0px 4px 4px 0 rgba(0, 0, 0, 0.25)",
           backgroundColor: props.isDragging
             ? hexToRGB(backgroundColor, "0.9")
             : backgroundColor,
@@ -200,7 +200,7 @@ export function VariableBlock(props: {
         animate={{
           boxShadow: props.isDragging
             ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-            : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
+            : "0px 4px 4px 0 rgba(0, 0, 0, 0.25)",
           backgroundColor: props.isDragging
             ? hexToRGB(backgroundColor, "0.9")
             : backgroundColor,
@@ -261,7 +261,7 @@ function FunctionBlock(props: {
       animate={{
         boxShadow: props.isDragging
           ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-          : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
+          : "0px 4px 4px 0 rgba(0, 0, 0, 0.25)",
         backgroundColor: props.isDragging
           ? hexToRGB(backgroundColor, "0.9")
           : backgroundColor,
@@ -291,7 +291,7 @@ function OperatorExpressionBlockView(props: {
       animate={{
         boxShadow: props.isDragging
           ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-          : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
+          : "0px 4px 4px 0 rgba(0, 0, 0, 0.25)",
         backgroundColor: props.isDragging
           ? hexToRGB(backgroundColor, "0.9")
           : backgroundColor,
@@ -322,7 +322,7 @@ function Vector3DExpressionBlockView(props: {
       animate={{
         boxShadow: props.isDragging
           ? "0px 10px 10px 0 rgba(0, 0, 0, 0.25)"
-          : "0px 0px 0px 0 rgba(0, 0, 0, 0.25)",
+          : "0px 4px 4px 0 rgba(0, 0, 0, 0.25)",
         backgroundColor: props.isDragging
           ? hexToRGB(backgroundColor, "0.9")
           : backgroundColor,

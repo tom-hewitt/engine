@@ -61,6 +61,8 @@ const StartContainer = styled(motion.div)`
   box-sizing: border-box;
   border-radius: 30px;
 
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
   font-family: IBM Plex Mono;
   font-weight: 600;
   font-size: 10px;
