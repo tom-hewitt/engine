@@ -20,6 +20,7 @@ export type SceneObjectId = string;
 export type SceneObject = DirectionalLight | Box | Plane;
 
 interface BaseSceneObject {
+  name: string;
   parent?: string;
   children?: SceneObjectId[];
   position: vector3d;

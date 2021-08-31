@@ -7,6 +7,7 @@ const defaultState: State = {
         children: ["0", "1", "2"],
         objects: {
           "0": {
+            name: "Light",
             objectType: "Directional Light",
             position: {
               x: -1,
@@ -22,6 +23,7 @@ const defaultState: State = {
             intensity: 1,
           },
           "1": {
+            name: "Box",
             objectType: "Box",
             position: {
               x: 0,
@@ -39,6 +41,7 @@ const defaultState: State = {
             },
           },
           "2": {
+            name: "Plane",
             objectType: "Plane",
             position: {
               x: 0,

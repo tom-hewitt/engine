@@ -25,6 +25,7 @@ export const Default = () => {
         children: ["0", "1"],
         objects: {
           "0": {
+            name: "Light",
             objectType: "Directional Light",
             position: {
               x: -1,
@@ -40,6 +41,7 @@ export const Default = () => {
             intensity: 1,
           },
           "1": {
+            name: "Box",
             objectType: "Box",
             position: {
               x: 0,
@@ -91,6 +93,7 @@ export const WithControls = () => {
         children: ["0", "1"],
         objects: {
           "0": {
+            name: "Light",
             objectType: "Directional Light",
             position: {
               x: -1,
@@ -106,6 +109,7 @@ export const WithControls = () => {
             intensity: 1,
           },
           "1": {
+            name: "Box",
             objectType: "Box",
             position: {
               x: 0,
@@ -145,6 +149,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
         const id = `${x}, ${y}, ${z}`;
         cubeIds.push(id);
         cubes[id] = {
+          name: id.toString(),
           objectType: "Box",
           position: {
             x: x * 0.2,
@@ -171,6 +176,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
         children: ["light", ...cubeIds],
         objects: {
           light: {
+            name: "Light",
             objectType: "Directional Light",
             position: {
               x: -1,
