@@ -13,7 +13,7 @@ export default function LevelCard(props: { id: LevelId }) {
 
   return (
     <Card
-      width="400px"
+      width="350px"
       animate={{
         scale: isItemSelected ? 0.95 : 1,
         opacity: isItemSelected ? 0.97 : 1,
