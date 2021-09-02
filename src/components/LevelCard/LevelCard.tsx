@@ -1,15 +1,7 @@
 import { useSelector } from "react-redux";
 import { LevelId } from "../../reducers/levels";
 import { State } from "../../reducers/reducer";
-import {
-  Card,
-  CloseButton,
-  Header,
-  HeaderBar,
-  SubHeading,
-  SubTitle,
-  Title,
-} from "../Card/Card";
+import { Card, Header, SubHeading, SubTitle, Title } from "../Card/Card";
 import SceneTree from "../SceneTree/SceneTree";
 
 export default function LevelCard(props: { id: LevelId }) {

@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useContext } from "react";
 import { useSelector } from "react-redux";
@@ -89,7 +89,7 @@ const SceneSubtree = (props: { rootId: SceneObjectId }) => {
       <SceneObject objectId={props.rootId} />
       <ChildrenContainer>
         {children?.map((id) => (
-          <SceneSubtree rootId={id} />
+          <SceneSubtree rootId={id} key={id} />
         ))}
       </ChildrenContainer>
     </>
@@ -103,7 +103,9 @@ export default function SceneTree(props: { id: SceneId }) {
 
   return (
     <SceneTreeContext.Provider value={{ sceneId: props.id }}>
-      {children ? children.map((id) => <SceneSubtree rootId={id} />) : null}
+      {children
+        ? children.map((id) => <SceneSubtree rootId={id} key={id} />)
+        : null}
     </SceneTreeContext.Provider>
   );
 }
