@@ -177,6 +177,11 @@ export const setupScene = (
       }
       case "Mesh": {
         object3D = createMesh(object.mesh);
+        object3D.rotation.set(
+          object.rotation.x,
+          object.rotation.y,
+          object.rotation.z
+        );
         object3D.scale.set(object.size.x, object.size.y, object.size.z);
         break;
       }
