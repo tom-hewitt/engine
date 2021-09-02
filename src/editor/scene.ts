@@ -13,12 +13,18 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { MaterialId } from "../reducers/materials";
 import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
 
-const setPosition = (object: THREE.Object3D, vector: vector3d) => {
-  object.position.set(vector.x, vector.y, vector.z);
-};
-
+// Constants
 // [FOV, aspect, near, far]
 const defaultCamera = [75, 2, 0.1, 1000];
+
+/**
+ * Set the position of the given 3D object to the given saved vector
+ * @param {THREE.Object3D} object3D The 3D object to move
+ * @param {vector3d} vector The vector to move the 3D object to
+ */
+const setPosition = (object3D: THREE.Object3D, vector: vector3d) => {
+  object3D.position.set(vector.x, vector.y, vector.z);
+};
 
 /**
  * Sets up an editor scene to render
@@ -366,7 +372,7 @@ export const setupScene = (
   render();
 
   // Return dispose function to cleanup
-  return function dispose() {
+  return () => {
     renderer.dispose();
     outlinePass.dispose();
     controls.dispose();
