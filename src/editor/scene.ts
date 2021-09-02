@@ -1,7 +1,7 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
+import { SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
