@@ -10,19 +10,11 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
-import { Material, MaterialId } from "../reducers/materials";
+import { MaterialId } from "../reducers/materials";
 import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
   object.position.set(vector.x, vector.y, vector.z);
-};
-
-const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
-  setPosition(object3D, object.position);
-  switch (object.type) {
-    case "Directional Light": {
-    }
-  }
 };
 
 // [FOV, aspect, near, far]
@@ -39,35 +31,40 @@ export const setupScene = (
   store: Store<State>,
   sceneId: string
 ) => {
+  // The ratio of physical pixels to CSS pixels. Larger than 1 on HD-DPI displays
   const pixelRatio = window.devicePixelRatio;
 
   let width = canvas.clientWidth;
   let height = canvas.clientHeight;
 
+  // Setup the renderer
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setSize(width * pixelRatio, height * pixelRatio, false);
   let renderRequested = false;
 
+  // Setup the camera
   const camera = new THREE.PerspectiveCamera(...defaultCamera);
   camera.position.z = 2;
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
+  // Setup the scene
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xececec);
 
+  // Setup the postprocessing effect chain
   const effectComposer = new EffectComposer(renderer);
-
+  // Setup the render pass
   const renderPass = new RenderPass(scene, camera);
   effectComposer.addPass(renderPass);
-
+  // Setup the outline effect pass, which is used to highlight the selected object
   const outlinePass = new OutlinePass(
     new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
     scene,
     camera
   );
   effectComposer.addPass(outlinePass);
-
+  // Setup the antialias pass
   const antialiasPass = new ShaderPass(FXAAShader);
   antialiasPass.uniforms.resolution.value.set(
     (1 / width) * pixelRatio,
@@ -75,14 +72,25 @@ export const setupScene = (
   );
   effectComposer.addPass(antialiasPass);
 
+  // Setup the raycaster, which lets the user interact with 3D objects with their cursor
   const raycaster = new THREE.Raycaster();
 
+  // Setup the clock, which keeps track of the time between frames
   const clock = new THREE.Clock();
 
+  // Get the state of the application
   let state = store.getState();
 
+  /**
+   * @returns The current state of the scene
+   */
   const sceneState = () => state.current.scenes[sceneId];
 
+  /**
+   * Helper function to create primitive geometries
+   * @param {PrimitiveGeometry} geometry The saved geometry
+   * @returns {THREE.BufferGeometry} A THREE geometry representing the save geometry
+   */
   const createPrimitiveGeometry = (geometry: PrimitiveGeometry) => {
     switch (geometry.primitive) {
       case "Box": {
@@ -94,6 +102,11 @@ export const setupScene = (
     }
   };
 
+  /**
+   * Creates a THREE geometry from the given saved geometry
+   * @param {Geometry} geometry The saved geometry
+   * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
+   */
   const createGeometry = (geometry: Geometry) => {
     switch (geometry.type) {
       case "Primitive": {
@@ -102,6 +115,11 @@ export const setupScene = (
     }
   };
 
+  /**
+   * Creates a THREE material from a saved material
+   * @param {MaterialId} materialId The id of the saved material
+   * @returns {THREE.Material} A THREE material representing the saved material
+   */
   const createMaterial = (materialId: MaterialId) => {
     const material = state.current.materials[materialId];
 
@@ -112,6 +130,11 @@ export const setupScene = (
     }
   };
 
+  /**
+   * Creates a mesh 3D object from a saved mesh
+   * @param {MeshId} meshId The id of the mesh
+   * @returns {THREE.Mesh} A 3D object representing the saved mesh
+   */
   const createMesh = (meshId: MeshId) => {
     const mesh = state.current.meshes[meshId];
 
@@ -179,7 +202,7 @@ export const setupScene = (
       while (true) {
         const id = stack.pop();
 
-        // If the stack is empty, stop
+        // If there are no more items on the stack, stop
         if (id === undefined) break;
 
         const object = state.objects[id];
@@ -194,13 +217,9 @@ export const setupScene = (
   /**
    * Creates every object in the saved scene tree using a depth-first
    * traversal
-   * @param {THREE.Scene} scene The THREE scene to add objects to
-   * @param {Level} level The level state
    * @returns A hash table of Object3Ds
    */
-  const populateScene = (
-    scene: THREE.Scene
-  ): { [key: string]: THREE.Object3D } => {
+  const populateScene = () => {
     const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
 
     dfs((id, object) => {
@@ -217,7 +236,7 @@ export const setupScene = (
     return sceneObject3Ds;
   };
 
-  const sceneObject3Ds = populateScene(scene);
+  const sceneObject3Ds = populateScene();
 
   /**
    * Renders the scene and updates the controls
@@ -281,8 +300,21 @@ export const setupScene = (
   let selectedObject: SceneObjectId | undefined = undefined;
 
   /**
-   * Reacts to a change in the app's state by performing a depth first traversal
-   * of the scene tree
+   * Updates the given 3D object according to it's saved object
+   * @param {SceneObject} object The saved object
+   * @param {THREE.Object3D} object3D The 3D object to update
+   */
+  const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
+    setPosition(object3D, object.position);
+    switch (object.type) {
+      case "Directional Light": {
+      }
+    }
+  };
+
+  /**
+   * Performs a depth first traversal of the scene tree, updating existing
+   * 3D objects and creating new ones
    */
   const updateScene = () => {
     dfs((id, object) => {
