@@ -20,7 +20,7 @@ const ObjectContainer = styled(motion.div)<{ margin?: boolean }>`
   flex-direction: row;
   align-items: center;
 
-  ${(props) => (props.margin ? "margin-top: 5px;" : "")}
+  ${(props) => (props.margin ? "margin-top: 3px;" : "")}
 
   padding: 7px;
 
@@ -34,7 +34,7 @@ const ChildrenHorizontalContainer = styled.div`
   display: flex;
   flex-direction: row;
 
-  margin-top: 5px;
+  margin-top: 3px;
 `;
 
 const ChildrenContainer = styled.div`
