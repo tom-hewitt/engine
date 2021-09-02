@@ -18,6 +18,7 @@ export default function LevelCard(props: { id: LevelId }) {
         scale: isItemSelected ? 0.95 : 1,
         opacity: isItemSelected ? 0.97 : 1,
       }}
+      transition={{ ease: "easeOut" }}
     >
       <Header>
         <Title>{level.name}</Title>
