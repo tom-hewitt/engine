@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-import styled from "styled-components";
 import { State } from "../../reducers/reducer";
 import { SceneId, SceneObjectId } from "../../reducers/scenes";
 import {
@@ -10,13 +9,6 @@ import {
   SubTitle,
   Title,
 } from "../Card/Card";
-
-const HorizontalContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-
-  margin-bottom: 30px;
-`;
 
 export default function SceneObjectCard(props: {
   id: SceneObjectId;
