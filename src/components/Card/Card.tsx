@@ -53,7 +53,7 @@ export const SubHeading = styled.span`
   color: ${colors.Secondary};
 `;
 
-const ButtonContainer = styled.button`
+const ButtonContainer = styled(motion.button)`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -77,7 +77,11 @@ const CloseSVG = styled.svg`
 
 export const CloseButton = (props: { onClick: () => void }) => {
   return (
-    <ButtonContainer onClick={props.onClick}>
+    <ButtonContainer
+      onClick={props.onClick}
+      animate={{ scale: 1 }}
+      whileTap={{ scale: 0.9 }}
+    >
       <CloseSVG>
         <path d="M1 1L13 13M1 13L13 1" stroke="#6D6D6D" stroke-width="2" />
       </CloseSVG>
