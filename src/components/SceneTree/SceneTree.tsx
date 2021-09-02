@@ -65,7 +65,7 @@ const SceneObject = (props: { objectId: SceneObjectId }) => {
       <SceneObjectIcon object={object} />
       <ObjectDetails>
         <ObjectName>{object.name}</ObjectName>
-        <ObjectType>{object.objectType.toUpperCase()}</ObjectType>
+        <ObjectType>{object.type.toUpperCase()}</ObjectType>
       </ObjectDetails>
     </ObjectContainer>
   );

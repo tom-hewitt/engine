@@ -35,7 +35,7 @@ export default function SceneObjectCard(props: {
       <HeaderBar>
         <Header>
           <Title>{object.name}</Title>
-          <SubTitle color={color}>{object.objectType.toUpperCase()}</SubTitle>
+          <SubTitle color={color}>{object.type.toUpperCase()}</SubTitle>
         </Header>
         <CloseButton onClick={() => {}} />
       </HeaderBar>

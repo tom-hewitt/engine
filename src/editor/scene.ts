@@ -1,12 +1,7 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import {
-  Material,
-  Scene,
-  SceneObject,
-  SceneObjectId,
-} from "../reducers/scenes";
+import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
@@ -15,6 +10,8 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
+import { Material, MaterialId } from "../reducers/materials";
+import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
 
 const setPosition = (object: THREE.Object3D, vector: vector3d) => {
   object.position.set(vector.x, vector.y, vector.z);
@@ -22,7 +19,7 @@ const setPosition = (object: THREE.Object3D, vector: vector3d) => {
 
 const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
   setPosition(object3D, object.position);
-  switch (object.objectType) {
+  switch (object.type) {
     case "Directional Light": {
     }
   }
@@ -82,9 +79,32 @@ export const setupScene = (
 
   const clock = new THREE.Clock();
 
-  let state = store.getState().current.scenes[sceneId];
+  let state = store.getState();
 
-  const createMaterial = (material: Material) => {
+  const sceneState = () => state.current.scenes[sceneId];
+
+  const createPrimitiveGeometry = (geometry: PrimitiveGeometry) => {
+    switch (geometry.primitive) {
+      case "Box": {
+        return new THREE.BoxGeometry(1, 1, 1);
+      }
+      case "Plane": {
+        return new THREE.PlaneGeometry(1, 1);
+      }
+    }
+  };
+
+  const createGeometry = (geometry: Geometry) => {
+    switch (geometry.type) {
+      case "Primitive": {
+        return createPrimitiveGeometry(geometry);
+      }
+    }
+  };
+
+  const createMaterial = (materialId: MaterialId) => {
+    const material = state.current.materials[materialId];
+
     switch (material.type) {
       case "Phong": {
         return new THREE.MeshPhongMaterial({ color: material.color });
@@ -92,20 +112,28 @@ export const setupScene = (
     }
   };
 
+  const createMesh = (meshId: MeshId) => {
+    const mesh = state.current.meshes[meshId];
+
+    const geometry = createGeometry(mesh.geometry);
+    const material = createMaterial(mesh.material);
+
+    return new THREE.Mesh(geometry, material);
+  };
+
   /**
-   * Turns a scene object from the saved state into a 3D object that
-   * can be rendered
+   * Creates a 3d object from a saved scene object
    * @param {SceneObjectId} id The id of the scene object, so it can be
    * added to the 3D object
    * @param {SceneObject} object The scene object as it is saved in state
    * @returns {THREE.Object3D} The 3D object representation of the scene object
    */
-  const sceneObjectToObject3D = (
+  const createObject3D = (
     id: SceneObjectId,
     object: SceneObject
   ): THREE.Object3D => {
     let object3D: THREE.Object3D;
-    switch (object.objectType) {
+    switch (object.type) {
       case "Directional Light": {
         const light = new THREE.DirectionalLight(
           object.color,
@@ -118,24 +146,9 @@ export const setupScene = (
         object3D = light;
         break;
       }
-      case "Box": {
-        const geometry = new THREE.BoxGeometry(
-          object.size.x,
-          object.size.y,
-          object.size.z
-        );
-
-        const material = createMaterial(object.material);
-
-        object3D = new THREE.Mesh(geometry, material);
-        break;
-      }
-      case "Plane": {
-        const geometry = new THREE.PlaneGeometry(object.size.x, object.size.y);
-
-        const material = createMaterial(object.material);
-
-        object3D = new THREE.Mesh(geometry, material);
+      case "Mesh": {
+        object3D = createMesh(object.mesh);
+        object3D.scale.set(object.size.x, object.size.y, object.size.z);
         break;
       }
     }
@@ -178,7 +191,7 @@ export const setupScene = (
 
         if (object.children) stack.push(...object.children);
 
-        const object3D = sceneObjectToObject3D(id, object);
+        const object3D = createObject3D(id, object);
 
         sceneObject3Ds[id] = object3D;
         if (object.parent) {
@@ -192,7 +205,7 @@ export const setupScene = (
     return sceneObject3Ds;
   };
 
-  const sceneObject3Ds = populateScene(scene, state);
+  const sceneObject3Ds = populateScene(scene, sceneState());
 
   /**
    * Renders the scene and updates the controls
@@ -260,6 +273,8 @@ export const setupScene = (
    * @param callback The function to be performed on each item in order
    */
   const dfs = (callback: (id: SceneObjectId, object: SceneObject) => void) => {
+    const state = sceneState();
+
     if (state.children) {
       const stack = new Stack<SceneObjectId>();
 
@@ -291,7 +306,7 @@ export const setupScene = (
       if (object3D) {
         updateObject3D(object, object3D);
       } else {
-        object3D = sceneObjectToObject3D(id, object);
+        object3D = createObject3D(id, object);
 
         sceneObject3Ds[id] = object3D;
         if (object.parent) {
@@ -322,7 +337,7 @@ export const setupScene = (
    * Reacts to an update in the app's state
    */
   const update = () => {
-    state = store.getState().current.scenes[sceneId];
+    state = store.getState();
 
     updateScene();
     updateSelectedObject();

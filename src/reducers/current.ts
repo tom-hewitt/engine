@@ -18,12 +18,16 @@ import expressions, {
 } from "./expressions";
 import functions, { functionsInitialState, FunctionsState } from "./functions";
 import { levelsInitialState, LevelsState } from "./levels";
+import { materialsIntitialState, MaterialsState } from "./materials";
+import { meshesInitialState, MeshesState } from "./meshes";
 import { State } from "./reducer";
 import scenes, { scenesInitialState, ScenesState } from "./scenes";
 
 export interface CurrentState {
   levels: LevelsState;
   scenes: ScenesState;
+  meshes: MeshesState;
+  materials: MaterialsState;
   blocksContainers: BlocksContainersState;
   blocks: BlocksState;
   expressions: ExpressionsState;
@@ -34,6 +38,8 @@ export interface CurrentState {
 export const initialCurrentState: CurrentState = {
   levels: levelsInitialState,
   scenes: scenesInitialState,
+  meshes: meshesInitialState,
+  materials: materialsIntitialState,
   blocksContainers: blocksContainersInitialState,
   blocks: blocksInitialState,
   expressions: expressionsInitialState,

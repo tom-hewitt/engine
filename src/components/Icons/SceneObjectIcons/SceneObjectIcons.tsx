@@ -35,11 +35,11 @@ export const MeshIcon = () => {
 };
 
 export function InnerSceneObjectIcon(props: { object: SceneObject }) {
-  switch (props.object.objectType) {
+  switch (props.object.type) {
     case "Directional Light": {
       return <LightIcon />;
     }
-    default: {
+    case "Mesh": {
       return <MeshIcon />;
     }
   }

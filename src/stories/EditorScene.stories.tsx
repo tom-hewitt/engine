@@ -26,11 +26,16 @@ export const Default = () => {
         objects: {
           "0": {
             name: "Light",
-            objectType: "Directional Light",
+            type: "Directional Light",
             position: {
               x: -1,
               y: 2,
               z: 4,
+            },
+            rotation: {
+              x: 0,
+              y: 0,
+              z: 0,
             },
             lightTarget: {
               x: 0,
@@ -42,8 +47,13 @@ export const Default = () => {
           },
           "1": {
             name: "Box",
-            objectType: "Box",
+            type: "Mesh",
             position: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            rotation: {
               x: 0,
               y: 0,
               z: 0,
@@ -53,12 +63,20 @@ export const Default = () => {
               y: 1,
               z: 1,
             },
-            material: {
-              type: "Phong",
-              color: 0x44aa88,
-            },
+            mesh: "Box",
           },
         },
+      };
+      state.current.meshes["Box"] = {
+        geometry: {
+          type: "Primitive",
+          primitive: "Box",
+        },
+        material: "Blue",
+      };
+      state.current.materials["Blue"] = {
+        type: "Phong",
+        color: 0x44aa88,
       };
     })
   );
@@ -94,11 +112,16 @@ export const WithControls = () => {
         objects: {
           "0": {
             name: "Light",
-            objectType: "Directional Light",
+            type: "Directional Light",
             position: {
               x: -1,
               y: 2,
               z: 4,
+            },
+            rotation: {
+              x: 0,
+              y: 0,
+              z: 0,
             },
             lightTarget: {
               x: 0,
@@ -110,8 +133,13 @@ export const WithControls = () => {
           },
           "1": {
             name: "Box",
-            objectType: "Box",
+            type: "Mesh",
             position: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            rotation: {
               x: 0,
               y: 0,
               z: 0,
@@ -121,12 +149,20 @@ export const WithControls = () => {
               y: 1,
               z: 1,
             },
-            material: {
-              type: "Phong",
-              color: 0x44aa88,
-            },
+            mesh: "Box",
           },
         },
+      };
+      state.current.meshes["Box"] = {
+        geometry: {
+          type: "Primitive",
+          primitive: "Box",
+        },
+        material: "Blue",
+      };
+      state.current.materials["Blue"] = {
+        type: "Phong",
+        color: 0x44aa88,
       };
     })
   );
@@ -150,21 +186,23 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
         cubeIds.push(id);
         cubes[id] = {
           name: id.toString(),
-          objectType: "Box",
+          type: "Mesh",
           position: {
             x: x * 0.2,
             y: y * 0.2,
             z: z * 0.2,
+          },
+          rotation: {
+            x: 0,
+            y: 0,
+            z: 0,
           },
           size: {
             x: 0.1,
             y: 0.1,
             z: 0.1,
           },
-          material: {
-            type: "Phong",
-            color: 0x44aa88,
-          },
+          mesh: "Box",
         };
       }
     }
@@ -177,11 +215,16 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
         objects: {
           light: {
             name: "Light",
-            objectType: "Directional Light",
+            type: "Directional Light",
             position: {
               x: -1,
               y: 2,
               z: 4,
+            },
+            rotation: {
+              x: 0,
+              y: 0,
+              z: 0,
             },
             lightTarget: {
               x: 0,
@@ -193,6 +236,17 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
           },
           ...cubes,
         },
+      };
+      state.current.meshes["Box"] = {
+        geometry: {
+          type: "Primitive",
+          primitive: "Box",
+        },
+        material: "Blue",
+      };
+      state.current.materials["Blue"] = {
+        type: "Phong",
+        color: 0x44aa88,
       };
     })
   );

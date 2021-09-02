@@ -17,39 +17,36 @@ export type SceneId = string;
 
 export type SceneObjectId = string;
 
-export type SceneObject = DirectionalLight | Box | Plane;
+export type SceneObject = DirectionalLight | Mesh;
 
-interface BaseSceneObject {
+interface Object {
   name: string;
   parent?: string;
   children?: SceneObjectId[];
+}
+
+interface Position {
   position: vector3d;
 }
 
-export interface DirectionalLight extends BaseSceneObject {
-  objectType: "Directional Light";
+interface Rotation {
+  rotation: vector3d;
+}
+
+interface Size {
+  size: vector3d;
+}
+
+export interface DirectionalLight extends Object, Position, Rotation {
+  type: "Directional Light";
   lightTarget: vector3d;
   color: number;
   intensity: number;
 }
 
-export interface Box extends BaseSceneObject {
-  objectType: "Box";
-  size: vector3d;
-  material: Material;
-}
-
-export interface Plane extends BaseSceneObject {
-  objectType: "Plane";
-  size: vector2d;
-  material: Material;
-}
-
-export type Material = PhongMaterial;
-
-export interface PhongMaterial {
-  type: "Phong";
-  color: number;
+export interface Mesh extends Object, Position, Rotation, Size {
+  type: "Mesh";
+  mesh: string;
 }
 
 export const scenesInitialState: ScenesState = {};

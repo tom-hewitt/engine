@@ -4,6 +4,8 @@ it("inserts an expression block", () => {
   const initialState: CurrentState = {
     levels: {},
     scenes: {},
+    meshes: {},
+    materials: {},
     blocksContainers: {},
     blocks: {},
     functions: {},
@@ -44,6 +46,8 @@ it("undos an expression block insertion", () => {
   const initialState: CurrentState = {
     levels: {},
     scenes: {},
+    meshes: {},
+    materials: {},
     blocksContainers: {},
     blocks: {},
     functions: {},
