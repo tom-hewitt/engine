@@ -16,6 +16,8 @@ import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
 // Constants
 // [FOV, aspect, near, far]
 const defaultCamera = [75, 2, 0.1, 1000];
+const defaultCameraPosition: [number, number, number] = [0, 1, 2];
+const backgroundColor = 0xdcdcdc;
 
 /**
  * Sets up an editor scene to render
@@ -41,13 +43,13 @@ export const setupScene = (
 
   // Setup the camera
   const camera = new THREE.PerspectiveCamera(...defaultCamera);
-  camera.position.z = 2;
+  camera.position.set(...defaultCameraPosition);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
   // Setup the scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xececec);
+  scene.background = new THREE.Color(backgroundColor);
 
   // Setup the postprocessing effect chain
   const effectComposer = new EffectComposer(renderer);
@@ -60,6 +62,10 @@ export const setupScene = (
     scene,
     camera
   );
+  outlinePass.setSize(width * pixelRatio, height * pixelRatio);
+  outlinePass.edgeThickness = 3;
+  outlinePass.edgeStrength = 5;
+  outlinePass.hiddenEdgeColor = new THREE.Color(0xb1b1b1);
   effectComposer.addPass(outlinePass);
   // Setup the antialias pass
   const antialiasPass = new ShaderPass(FXAAShader);
@@ -173,9 +179,9 @@ export const setupScene = (
       case "Mesh": {
         object3D = createMesh(object.mesh);
         object3D.rotation.set(
-          object.rotation.x,
-          object.rotation.y,
-          object.rotation.z
+          THREE.MathUtils.degToRad(object.rotation.x),
+          THREE.MathUtils.degToRad(object.rotation.y),
+          THREE.MathUtils.degToRad(object.rotation.z)
         );
         object3D.scale.set(object.size.x, object.size.y, object.size.z);
         break;

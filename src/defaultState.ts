@@ -43,7 +43,7 @@ const defaultState: State = {
               z: 0,
             },
             rotation: {
-              x: 0,
+              x: -90,
               y: 0,
               z: 0,
             },
@@ -59,12 +59,12 @@ const defaultState: State = {
             type: "Mesh",
             position: {
               x: 0,
-              y: 0,
+              y: 0.5,
               z: 0,
             },
             rotation: {
               x: 0,
-              y: 0,
+              y: 90,
               z: 0,
             },
             size: {

@@ -7,8 +7,18 @@ import SceneTree from "../SceneTree/SceneTree";
 export default function LevelCard(props: { id: LevelId }) {
   const level = useSelector((state: State) => state.current.levels[props.id]);
 
+  const isItemSelected = useSelector(
+    (state: State) => state.temp.selectedSceneObject !== undefined
+  );
+
   return (
-    <Card width="400px">
+    <Card
+      width="400px"
+      animate={{
+        scale: isItemSelected ? 0.95 : 1,
+        opacity: isItemSelected ? 0.97 : 1,
+      }}
+    >
       <Header>
         <Title>{level.name}</Title>
         <SubTitle color={"#FF6A6A"}>LEVEL</SubTitle>
