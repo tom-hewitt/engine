@@ -164,17 +164,12 @@ export const setupScene = (
   };
 
   /**
-   * Creates every object in the saved scene tree using a depth-first
-   * traversal
-   * @param {THREE.Scene} scene The THREE scene to add objects to
-   * @param {Level} level The level state
-   * @returns A hash table of Object3Ds
+   * Performs a depth first traversal of the scene tree
+   * @param callback The function to be performed on each item in order.
+   * Gives id and object as parameters
    */
-  const populateScene = (
-    scene: THREE.Scene,
-    state: Scene
-  ): { [key: string]: THREE.Object3D } => {
-    const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
+  const dfs = (callback: (id: SceneObjectId, object: SceneObject) => void) => {
+    const state = sceneState();
 
     if (state.children) {
       const stack = new Stack<SceneObjectId>();
@@ -191,21 +186,38 @@ export const setupScene = (
 
         if (object.children) stack.push(...object.children);
 
-        const object3D = createObject3D(id, object);
-
-        sceneObject3Ds[id] = object3D;
-        if (object.parent) {
-          sceneObject3Ds[object.parent].add(object3D);
-        } else {
-          scene.add(object3D);
-        }
+        callback(id, object);
       }
     }
+  };
+
+  /**
+   * Creates every object in the saved scene tree using a depth-first
+   * traversal
+   * @param {THREE.Scene} scene The THREE scene to add objects to
+   * @param {Level} level The level state
+   * @returns A hash table of Object3Ds
+   */
+  const populateScene = (
+    scene: THREE.Scene
+  ): { [key: string]: THREE.Object3D } => {
+    const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
+
+    dfs((id, object) => {
+      const object3D = createObject3D(id, object);
+
+      sceneObject3Ds[id] = object3D;
+      if (object.parent) {
+        sceneObject3Ds[object.parent].add(object3D);
+      } else {
+        scene.add(object3D);
+      }
+    });
 
     return sceneObject3Ds;
   };
 
-  const sceneObject3Ds = populateScene(scene, sceneState());
+  const sceneObject3Ds = populateScene(scene);
 
   /**
    * Renders the scene and updates the controls
@@ -267,33 +279,6 @@ export const setupScene = (
   window.addEventListener("resize", onWindowResize);
 
   let selectedObject: SceneObjectId | undefined = undefined;
-
-  /**
-   * Performs a depth first traversal of the scene tree
-   * @param callback The function to be performed on each item in order
-   */
-  const dfs = (callback: (id: SceneObjectId, object: SceneObject) => void) => {
-    const state = sceneState();
-
-    if (state.children) {
-      const stack = new Stack<SceneObjectId>();
-
-      stack.push(...state.children);
-
-      while (true) {
-        const id = stack.pop();
-
-        // If the stack is empty, stop
-        if (id === undefined) break;
-
-        const object = state.objects[id];
-
-        if (object.children) stack.push(...object.children);
-
-        callback(id, object);
-      }
-    }
-  };
 
   /**
    * Reacts to a change in the app's state by performing a depth first traversal
