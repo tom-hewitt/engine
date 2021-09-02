@@ -34,6 +34,27 @@ const defaultState: State = {
             intensity: 1,
           },
           "1": {
+            name: "Floor",
+            children: ["2"],
+            type: "Mesh",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            rotation: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+            size: {
+              x: 1,
+              y: 1,
+              z: 1,
+            },
+            mesh: "Plane",
+          },
+          "2": {
             name: "Box",
             type: "Mesh",
             position: {
