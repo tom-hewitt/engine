@@ -1,22 +1,32 @@
 import React from "react";
 import styled from "styled-components";
 import { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { State } from "../../reducers/reducer";
 import { SceneId, SceneObjectId } from "../../reducers/scenes";
 import colors from "../../styles/colors";
 import { SceneObjectIcon } from "../Icons/SceneObjectIcons/SceneObjectIcons";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { selectSceneObject } from "../../reducers/temp";
 
 const SceneTreeContext = React.createContext<{
   sceneId?: SceneId;
 }>({});
 
-const ObjectContainer = styled.div`
+const ObjectContainer = styled(motion.div)`
   display: flex;
   flex-direction: row;
   align-items: center;
 
-  margin-top: 10px;
+  padding: 5px 5px 5px 7px;
+
+  margin-top: 7px;
+
+  border-radius: 5px;
+
+  user-select: none;
+  cursor: pointer;
 `;
 
 const ChildrenContainer = styled.div`
@@ -49,6 +59,7 @@ const ObjectType = styled.span`
 `;
 
 const SceneObject = (props: { objectId: SceneObjectId }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const { sceneId } = useContext(SceneTreeContext);
   if (!sceneId) {
     throw new Error(
@@ -56,12 +67,31 @@ const SceneObject = (props: { objectId: SceneObjectId }) => {
     );
   }
 
+  const dispatch = useDispatch();
+
   const object = useSelector(
     (state: State) => state.current.scenes[sceneId].objects[props.objectId]
   );
 
+  const isSelected = useSelector(
+    (state: State) => state.temp.selectedSceneObject === props.objectId
+  );
+
   return (
-    <ObjectContainer>
+    <ObjectContainer
+      animate={{
+        backgroundColor: isSelected
+          ? "rgba(255, 255, 255, 0.2)"
+          : isHovered
+          ? "rgba(255, 255, 255, 0.1)"
+          : "rgba(255, 255, 255, 0)",
+      }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      onClick={() =>
+        dispatch(selectSceneObject({ id: props.objectId, sceneId }))
+      }
+    >
       <SceneObjectIcon object={object} />
       <ObjectDetails>
         <ObjectName>{object.name}</ObjectName>
