@@ -18,15 +18,6 @@ import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
 const defaultCamera = [75, 2, 0.1, 1000];
 
 /**
- * Set the position of the given 3D object to the given saved vector
- * @param {THREE.Object3D} object3D The 3D object to move
- * @param {vector3d} vector The vector to move the 3D object to
- */
-const setPosition = (object3D: THREE.Object3D, vector: vector3d) => {
-  object3D.position.set(vector.x, vector.y, vector.z);
-};
-
-/**
  * Sets up an editor scene to render
  * @param {HTMLCanvasElement} canvas The canvas element to render the scene on
  * @param store The app redux store
@@ -170,7 +161,11 @@ export const setupScene = (
         );
 
         scene.add(light.target);
-        setPosition(light.target, object.lightTarget);
+        light.target.position.set(
+          object.lightTarget.x,
+          object.lightTarget.y,
+          object.lightTarget.z
+        );
 
         object3D = light;
         break;
@@ -316,7 +311,11 @@ export const setupScene = (
    * @param {THREE.Object3D} object3D The 3D object to update
    */
   const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
-    setPosition(object3D, object.position);
+    object3D.position.set(
+      object.position.x,
+      object.position.y,
+      object.position.z
+    );
     switch (object.type) {
       case "Directional Light": {
       }
