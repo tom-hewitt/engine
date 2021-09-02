@@ -48,8 +48,8 @@ const defaultState: State = {
               z: 0,
             },
             size: {
-              x: 1,
-              y: 1,
+              x: 5,
+              y: 5,
               z: 1,
             },
             mesh: "Plane",
@@ -85,11 +85,22 @@ const defaultState: State = {
         },
         material: "Blue",
       },
+      Plane: {
+        geometry: {
+          type: "Primitive",
+          primitive: "Plane",
+        },
+        material: "Grey",
+      },
     },
     materials: {
       Blue: {
         type: "Phong",
         color: 0x44aa88,
+      },
+      Grey: {
+        type: "Phong",
+        color: 0xc4c4c4,
       },
     },
     blocksContainers: {},
