@@ -30,7 +30,14 @@ export default function SelectedSceneObject(props: { level: LevelId }) {
             key={selectedSceneObject}
             initial={{ y: 200, scale: 0.9, opacity: 0 }}
             animate={{ y: -25, scale: 1, opacity: 1 }}
-            exit={{ y: 200, scale: 0.9, opacity: 0 }}
+            exit={{
+              y: 0,
+              scale: 0.9,
+              opacity: 0,
+              transition: {
+                delay: 0.05,
+              },
+            }}
             transition={{ ease: "easeOut", duration: 0.25 }}
           >
             <SceneObjectCard
