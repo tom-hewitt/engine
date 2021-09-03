@@ -75,7 +75,7 @@ const CloseSVG = styled.svg`
   height: 14px;
 `;
 
-export const CloseButton = (props: { onClick: () => void }) => {
+export const CloseButton = (props: { onClick?: () => void }) => {
   return (
     <ButtonContainer
       onClick={props.onClick}

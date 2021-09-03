@@ -32,11 +32,7 @@ export default function SceneObjectCard(props: {
           <Title>{object.name}</Title>
           <SubTitle color={color}>{object.type.toUpperCase()}</SubTitle>
         </Header>
-        <CloseButton
-          onClick={() => {
-            if (props.onClose) props.onClose();
-          }}
-        />
+        <CloseButton onClick={props.onClose} />
       </HeaderBar>
     </Card>
   );
