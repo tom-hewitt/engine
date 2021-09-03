@@ -336,6 +336,7 @@ export const setupScene = (
         object.attributes.Position.value.y,
         object.attributes.Position.value.z
       );
+
       switch (object.type) {
         case "Directional Light": {
           if (object3D instanceof THREE.DirectionalLight) {
@@ -347,6 +348,19 @@ export const setupScene = (
             object3D.color.set(object.attributes.Color.value);
             object3D.intensity = object.attributes.Intensity.value;
           }
+          break;
+        }
+        case "Mesh": {
+          object3D.rotation.set(
+            object.attributes.Rotation.value.x,
+            object.attributes.Rotation.value.y,
+            object.attributes.Rotation.value.z
+          );
+          object3D.scale.set(
+            object.attributes.Size.value.x,
+            object.attributes.Size.value.y,
+            object.attributes.Size.value.z
+          );
         }
       }
     }
