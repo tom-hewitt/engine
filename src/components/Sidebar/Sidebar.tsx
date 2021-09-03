@@ -1,5 +1,4 @@
 import { AnimatePresence } from "framer-motion";
-import { ProxyTypeSet } from "immer/dist/internal";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { State } from "../../reducers/reducer";

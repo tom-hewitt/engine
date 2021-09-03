@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import EditorScene from "../EditorScene/EditorScene";
 import useUndoRedo from "../hooks/useUndoRedo";
-import LevelCard from "../LevelCard/LevelCard";
 import Sidebar from "../Sidebar/Sidebar";
 
 const Container = styled.div`

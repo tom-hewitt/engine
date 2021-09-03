@@ -129,6 +129,7 @@ export default function SceneObjectCard(props: {
       <Attributes>
         {order.map((attribute) => (
           <Attribute
+            key={attribute}
             sceneId={props.sceneId}
             objectId={props.id}
             attribute={attribute}
