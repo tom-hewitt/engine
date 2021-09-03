@@ -1,7 +1,7 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import { SceneObject, SceneObjectId } from "../reducers/scenes";
+import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
@@ -83,6 +83,9 @@ export const setupScene = (
 
   // Get the state of the application
   let state = store.getState();
+
+  // Used to diff new state
+  let oldSceneState: Scene;
 
   /**
    * @returns The current state of the scene
@@ -320,14 +323,22 @@ export const setupScene = (
    * @param {SceneObject} object The saved object
    * @param {THREE.Object3D} object3D The 3D object to update
    */
-  const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
-    object3D.position.set(
-      object.attributes.Position.value.x,
-      object.attributes.Position.value.y,
-      object.attributes.Position.value.z
-    );
-    switch (object.type) {
-      case "Directional Light": {
+  const updateObject3D = (
+    id: SceneObjectId,
+    object: SceneObject,
+    object3D: THREE.Object3D
+  ) => {
+    const oldObject = oldSceneState.objects[id];
+
+    if (object !== oldObject) {
+      object3D.position.set(
+        object.attributes.Position.value.x,
+        object.attributes.Position.value.y,
+        object.attributes.Position.value.z
+      );
+      switch (object.type) {
+        case "Directional Light": {
+        }
       }
     }
   };
@@ -337,22 +348,24 @@ export const setupScene = (
    * 3D objects and creating new ones
    */
   const updateScene = () => {
-    dfs((id, object) => {
-      let object3D = sceneObject3Ds[id];
+    if (sceneState() !== oldSceneState) {
+      dfs((id, object) => {
+        let object3D = sceneObject3Ds[id];
 
-      if (object3D) {
-        updateObject3D(object, object3D);
-      } else {
-        object3D = createObject3D(id, object);
-
-        sceneObject3Ds[id] = object3D;
-        if (object.parent) {
-          sceneObject3Ds[object.parent].add(object3D);
+        if (object3D) {
+          updateObject3D(id, object, object3D);
         } else {
-          scene.add(object3D);
+          object3D = createObject3D(id, object);
+
+          sceneObject3Ds[id] = object3D;
+          if (object.parent) {
+            sceneObject3Ds[object.parent].add(object3D);
+          } else {
+            scene.add(object3D);
+          }
         }
-      }
-    });
+      });
+    }
   };
 
   /**
@@ -374,6 +387,7 @@ export const setupScene = (
    * Reacts to an update in the app's state
    */
   const update = () => {
+    oldSceneState = sceneState();
     state = store.getState();
 
     updateScene();
