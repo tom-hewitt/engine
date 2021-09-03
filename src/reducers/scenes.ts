@@ -25,16 +25,20 @@ interface Object {
   children?: SceneObjectId[];
 }
 
+interface Attributes {
+  [key: string]: Literal;
+}
+
 interface Position {
-  ["Position"]: Literal3DVector;
+  Position: Literal3DVector;
 }
 
 interface Rotation {
-  ["Rotation"]: Literal3DVector;
+  Rotation: Literal3DVector;
 }
 
 interface Size {
-  ["Size"]: Literal3DVector;
+  Size: Literal3DVector;
 }
 
 export interface DirectionalLight extends Object {
@@ -42,7 +46,7 @@ export interface DirectionalLight extends Object {
   attributes: DirectionalLightAttributes;
 }
 
-export interface DirectionalLightAttributes extends Position {
+export interface DirectionalLightAttributes extends Attributes, Position {
   "Light Target": Literal3DVector;
   Color: LiteralColor;
   Intensity: LiteralFloat;
@@ -53,7 +57,7 @@ export interface Mesh extends Object {
   attributes: MeshAttributes;
 }
 
-export interface MeshAttributes extends Position, Rotation, Size {
+export interface MeshAttributes extends Attributes, Position, Rotation, Size {
   Mesh: LiteralMesh;
 }
 
@@ -80,7 +84,9 @@ export const setObjectAttribute = createAction(
 const scene = createReducer(scenesInitialState, (builder) => {
   builder.addCase(
     setObjectAttribute,
-    (state, { payload: { undo, sceneId, objectId, attribute, literal } }) => {}
+    (state, { payload: { undo, sceneId, objectId, attribute, literal } }) => {
+      state[sceneId].objects[objectId].attributes[attribute] = literal;
+    }
   );
 });
 

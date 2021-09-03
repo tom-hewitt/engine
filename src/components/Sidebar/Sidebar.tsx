@@ -31,6 +31,7 @@ export default function Sidebar() {
       <AnimatePresence>
         {selectedSceneObject ? (
           <SceneObjectCard
+            key={selectedSceneObject}
             id={selectedSceneObject}
             sceneId="Level 1"
             onClose={() =>
