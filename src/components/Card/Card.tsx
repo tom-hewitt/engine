@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import colors from "../../styles/colors";
 
-export const Card = styled(motion.div)<{ width?: string }>`
-  display: inline-flex;
+export const Card = styled(motion.div)<{ width?: string; inline?: boolean }>`
+  display: ${(props) => (props.inline ? "inline-flex" : "flex")};
   flex-direction: column;
 
   ${(props) => (props.width ? `width: ${props.width};` : "")}

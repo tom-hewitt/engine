@@ -113,12 +113,7 @@ export default function SceneObjectCard(props: {
   const color = "#6adbff";
 
   return (
-    <Card
-      initial={{ y: 200, scale: 0.9, opacity: 0 }}
-      animate={{ y: -25, scale: 1, opacity: 1 }}
-      exit={{ y: 200, scale: 0.9, opacity: 0 }}
-      transition={{ ease: "easeOut", duration: 0.25 }}
-    >
+    <Card>
       <HeaderBar>
         <Header>
           <Title>{object.name}</Title>
