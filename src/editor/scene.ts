@@ -338,6 +338,15 @@ export const setupScene = (
       );
       switch (object.type) {
         case "Directional Light": {
+          if (object3D instanceof THREE.DirectionalLight) {
+            object3D.target.position.set(
+              object.attributes["Light Target"].value.x,
+              object.attributes["Light Target"].value.y,
+              object.attributes["Light Target"].value.z
+            );
+            object3D.color.set(object.attributes.Color.value);
+            object3D.intensity = object.attributes.Intensity.value;
+          }
         }
       }
     }
