@@ -23,6 +23,14 @@ const defaultLiterals: Record<ValueType, Literal> = {
       z: 0,
     },
   },
+  Color: {
+    type: "Color",
+    value: 0xffffff,
+  },
+  Mesh: {
+    type: "Mesh",
+    value: "",
+  },
 };
 
 export default defaultLiterals;

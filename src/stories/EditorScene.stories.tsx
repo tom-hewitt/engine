@@ -7,11 +7,8 @@ import produce from "immer";
 import { initialState } from "../reducers/reducer";
 import Literal3DVector from "../components/Literal/Literal3DVector/Literal3DVector";
 import { State } from "../reducers/reducer";
-import {
-  SceneObject,
-  SceneObjectId,
-  setObjectPosition,
-} from "../reducers/scenes";
+import { SceneObject, SceneObjectId } from "../reducers/scenes";
+import defaultState from "../defaultState";
 
 export default {
   component: EditorScene,
@@ -19,67 +16,7 @@ export default {
 } as Meta;
 
 export const Default = () => {
-  const store = mockStore(
-    produce(initialState, (state) => {
-      state.current.scenes["Level 1"] = {
-        children: ["0", "1"],
-        objects: {
-          "0": {
-            name: "Light",
-            type: "Directional Light",
-            position: {
-              x: -1,
-              y: 2,
-              z: 4,
-            },
-            rotation: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            lightTarget: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            color: 0xffffff,
-            intensity: 1,
-          },
-          "1": {
-            name: "Box",
-            type: "Mesh",
-            position: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            rotation: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            size: {
-              x: 1,
-              y: 1,
-              z: 1,
-            },
-            mesh: "Box",
-          },
-        },
-      };
-      state.current.meshes["Box"] = {
-        geometry: {
-          type: "Primitive",
-          primitive: "Box",
-        },
-        material: "Blue",
-      };
-      state.current.materials["Blue"] = {
-        type: "Phong",
-        color: 0x44aa88,
-      };
-    })
-  );
+  const store = mockStore(defaultState);
   return (
     <Provider store={store}>
       <EditorScene id="Level 1" />
@@ -90,87 +27,29 @@ export const Default = () => {
 const Controls = (props: { sceneId: string; objectId: string }) => {
   const value = useSelector(
     (state: State) =>
-      state.current.scenes[props.sceneId].objects[props.objectId].position
+      state.current.scenes[props.sceneId].objects[props.objectId].attributes
+        .Position
   );
   const dispatch = useDispatch();
 
   return (
     <Literal3DVector
-      value={value}
-      onSubmit={(value) =>
-        dispatch(setObjectPosition(props.sceneId, props.objectId, value))
+      value={value.value}
+      onSubmit={
+        (value) => {}
+        // Dispatch set object position
       }
     />
   );
 };
 
 export const WithControls = () => {
-  const store = mockStore(
-    produce(initialState, (state) => {
-      state.current.scenes["Level 1"] = {
-        children: ["0", "1"],
-        objects: {
-          "0": {
-            name: "Light",
-            type: "Directional Light",
-            position: {
-              x: -1,
-              y: 2,
-              z: 4,
-            },
-            rotation: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            lightTarget: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            color: 0xffffff,
-            intensity: 1,
-          },
-          "1": {
-            name: "Box",
-            type: "Mesh",
-            position: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            rotation: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            size: {
-              x: 1,
-              y: 1,
-              z: 1,
-            },
-            mesh: "Box",
-          },
-        },
-      };
-      state.current.meshes["Box"] = {
-        geometry: {
-          type: "Primitive",
-          primitive: "Box",
-        },
-        material: "Blue",
-      };
-      state.current.materials["Blue"] = {
-        type: "Phong",
-        color: 0x44aa88,
-      };
-    })
-  );
+  const store = mockStore(defaultState);
 
   return (
     <Provider store={store}>
       <EditorScene id="Level 1" />
-      <Controls sceneId="Level 1" objectId="1" />
+      <Controls sceneId="Level 1" objectId="2" />
     </Provider>
   );
 };
@@ -187,22 +66,36 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
         cubes[id] = {
           name: id.toString(),
           type: "Mesh",
-          position: {
-            x: x * 0.2,
-            y: y * 0.2,
-            z: z * 0.2,
+          attributes: {
+            Position: {
+              type: "3D Vector",
+              value: {
+                x: x * 0.2,
+                y: y * 0.2,
+                z: z * 0.2,
+              },
+            },
+            Rotation: {
+              type: "3D Vector",
+              value: {
+                x: 0,
+                y: 0,
+                z: 0,
+              },
+            },
+            Size: {
+              type: "3D Vector",
+              value: {
+                x: 0.1,
+                y: 0.1,
+                z: 0.1,
+              },
+            },
+            Mesh: {
+              type: "Mesh",
+              value: "Box",
+            },
           },
-          rotation: {
-            x: 0,
-            y: 0,
-            z: 0,
-          },
-          size: {
-            x: 0.1,
-            y: 0.1,
-            z: 0.1,
-          },
-          mesh: "Box",
         };
       }
     }
@@ -216,23 +109,32 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
           light: {
             name: "Light",
             type: "Directional Light",
-            position: {
-              x: -1,
-              y: 2,
-              z: 4,
+            attributes: {
+              Position: {
+                type: "3D Vector",
+                value: {
+                  x: -1,
+                  y: 2,
+                  z: 4,
+                },
+              },
+              "Light Target": {
+                type: "3D Vector",
+                value: {
+                  x: 0,
+                  y: 0,
+                  z: 0,
+                },
+              },
+              Color: {
+                type: "Color",
+                value: 0xffffff,
+              },
+              Intensity: {
+                type: "Float",
+                value: 1,
+              },
             },
-            rotation: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            lightTarget: {
-              x: 0,
-              y: 0,
-              z: 0,
-            },
-            color: 0xffffff,
-            intensity: 1,
           },
           ...cubes,
         },

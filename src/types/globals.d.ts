@@ -11,7 +11,14 @@ interface vector3d {
 
 type Type = ValueType | ReferenceType;
 
-type ValueType = "Boolean" | "String" | "Integer" | "Float" | "3D Vector";
+type ValueType =
+  | "Boolean"
+  | "String"
+  | "Integer"
+  | "Float"
+  | "3D Vector"
+  | "Color"
+  | "Mesh";
 
 type ReferenceType =
   | "Boolean Reference"
@@ -25,7 +32,9 @@ type Literal =
   | LiteralString
   | LiteralInteger
   | LiteralFloat
-  | Literal3DVector;
+  | Literal3DVector
+  | LiteralColor
+  | LiteralMesh;
 
 interface BaseLiteral {
   expressionType?: "Literal";
@@ -54,4 +63,14 @@ interface LiteralFloat extends BaseLiteral {
 interface Literal3DVector extends BaseLiteral {
   type: "3D Vector";
   value: vector3d;
+}
+
+interface LiteralColor extends BaseLiteral {
+  type: "Color";
+  value: number;
+}
+
+interface LiteralMesh extends BaseLiteral {
+  type: "Mesh";
+  value: string;
 }

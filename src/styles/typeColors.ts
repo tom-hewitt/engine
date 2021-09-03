@@ -4,6 +4,8 @@ const baseTypeColors: Record<ValueType, string> = {
   Integer: "#1BA9A9",
   Float: "#84DA9C",
   "3D Vector": "#FFA115",
+  Color: "#FFFFFF",
+  Mesh: "#FFFFFF",
 };
 
 const referenceTypeColors: Record<ReferenceType, string> = {

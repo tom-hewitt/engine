@@ -26,49 +26,61 @@ interface Object {
 }
 
 interface Position {
-  position: vector3d;
+  ["Position"]: Literal3DVector;
 }
 
 interface Rotation {
-  rotation: vector3d;
+  ["Rotation"]: Literal3DVector;
 }
 
 interface Size {
-  size: vector3d;
+  ["Size"]: Literal3DVector;
 }
 
-export interface DirectionalLight extends Object, Position, Rotation {
+export interface DirectionalLight extends Object {
   type: "Directional Light";
-  lightTarget: vector3d;
-  color: number;
-  intensity: number;
+  attributes: DirectionalLightAttributes;
 }
 
-export interface Mesh extends Object, Position, Rotation, Size {
+export interface DirectionalLightAttributes extends Position {
+  "Light Target": Literal3DVector;
+  Color: LiteralColor;
+  Intensity: LiteralFloat;
+}
+
+export interface Mesh extends Object {
   type: "Mesh";
-  mesh: string;
+  attributes: MeshAttributes;
+}
+
+export interface MeshAttributes extends Position, Rotation, Size {
+  Mesh: LiteralMesh;
 }
 
 export const scenesInitialState: ScenesState = {};
 
-export const setObjectPosition = createAction(
+export const setObjectAttribute = createAction(
   "scenes/SET_OBJECT_POSITION",
-  (sceneId: SceneId, objectId: SceneObjectId, position: vector3d) => ({
+  (
+    sceneId: SceneId,
+    objectId: SceneObjectId,
+    attribute: string,
+    literal: Literal
+  ) => ({
     payload: {
       undo: false,
       sceneId,
       objectId,
-      position,
+      attribute,
+      literal,
     },
   })
 );
 
 const scene = createReducer(scenesInitialState, (builder) => {
   builder.addCase(
-    setObjectPosition,
-    (state, { payload: { undo, sceneId, objectId, position } }) => {
-      state[sceneId].objects[objectId].position = position;
-    }
+    setObjectAttribute,
+    (state, { payload: { undo, sceneId, objectId, attribute, literal } }) => {}
   );
 });
 

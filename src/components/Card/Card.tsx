@@ -83,7 +83,7 @@ export const CloseButton = (props: { onClick: () => void }) => {
       whileTap={{ scale: 0.9 }}
     >
       <CloseSVG>
-        <path d="M1 1L13 13M1 13L13 1" stroke="#6D6D6D" stroke-width="2" />
+        <path d="M1 1L13 13M1 13L13 1" stroke="#6D6D6D" strokeWidth="2" />
       </CloseSVG>
     </ButtonContainer>
   );

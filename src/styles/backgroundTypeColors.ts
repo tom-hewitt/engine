@@ -6,6 +6,8 @@ const backgroundTypeColors: Record<Type, string> = {
   Integer: "#374545",
   Float: "#414A44",
   "3D Vector": "#4E4436",
+  Color: "#000000",
+  Mesh: "#000000",
   "Boolean Reference": colors.Block,
   "String Reference": colors.Block,
   "Integer Reference": colors.Block,

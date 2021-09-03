@@ -162,37 +162,41 @@ export const setupScene = (
     switch (object.type) {
       case "Directional Light": {
         const light = new THREE.DirectionalLight(
-          object.color,
-          object.intensity
+          object.attributes.Color.value,
+          object.attributes.Intensity.value
         );
 
         scene.add(light.target);
         light.target.position.set(
-          object.lightTarget.x,
-          object.lightTarget.y,
-          object.lightTarget.z
+          object.attributes["Light Target"].value.x,
+          object.attributes["Light Target"].value.y,
+          object.attributes["Light Target"].value.z
         );
 
         object3D = light;
         break;
       }
       case "Mesh": {
-        object3D = createMesh(object.mesh);
+        object3D = createMesh(object.attributes.Mesh.value);
         object3D.rotation.set(
-          THREE.MathUtils.degToRad(object.rotation.x),
-          THREE.MathUtils.degToRad(object.rotation.y),
-          THREE.MathUtils.degToRad(object.rotation.z)
+          THREE.MathUtils.degToRad(object.attributes.Rotation.value.x),
+          THREE.MathUtils.degToRad(object.attributes.Rotation.value.y),
+          THREE.MathUtils.degToRad(object.attributes.Rotation.value.z)
         );
-        object3D.scale.set(object.size.x, object.size.y, object.size.z);
+        object3D.scale.set(
+          object.attributes.Size.value.x,
+          object.attributes.Size.value.y,
+          object.attributes.Size.value.z
+        );
         break;
       }
     }
 
     object3D.name = id;
     object3D.position.set(
-      object.position.x,
-      object.position.y,
-      object.position.z
+      object.attributes.Position.value.x,
+      object.attributes.Position.value.y,
+      object.attributes.Position.value.z
     );
 
     return object3D;
@@ -318,9 +322,9 @@ export const setupScene = (
    */
   const updateObject3D = (object: SceneObject, object3D: THREE.Object3D) => {
     object3D.position.set(
-      object.position.x,
-      object.position.y,
-      object.position.z
+      object.attributes.Position.value.x,
+      object.attributes.Position.value.y,
+      object.attributes.Position.value.z
     );
     switch (object.type) {
       case "Directional Light": {
