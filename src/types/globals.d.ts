@@ -22,7 +22,7 @@ type ValueType =
   | "String"
   | "Integer"
   | "Float"
-  | "3D Vector"
+  | "Vector3D"
   | "Color"
   | "Mesh";
 
@@ -31,14 +31,14 @@ type ReferenceType =
   | "String Reference"
   | "Integer Reference"
   | "Float Reference"
-  | "3D Vector Reference";
+  | "Vector3D Reference";
 
 type Literal =
   | LiteralBoolean
   | LiteralString
   | LiteralInteger
   | LiteralFloat
-  | Literal3DVector
+  | LiteralVector3D
   | LiteralColor
   | LiteralMesh;
 
@@ -66,8 +66,8 @@ interface LiteralFloat extends BaseLiteral {
   value: number;
 }
 
-interface Literal3DVector extends BaseLiteral {
-  type: "3D Vector";
+interface LiteralVector3D extends BaseLiteral {
+  type: "Vector3D";
   value: vector3d;
 }
 

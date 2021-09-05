@@ -15,8 +15,8 @@ const defaultLiterals: Record<ValueType, Literal> = {
     type: "Float",
     value: 0,
   },
-  "3D Vector": {
-    type: "3D Vector",
+  Vector3D: {
+    type: "Vector3D",
     value: {
       x: 0,
       y: 0,

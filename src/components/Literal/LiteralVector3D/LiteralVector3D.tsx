@@ -7,7 +7,7 @@ import { GrowingInput } from "../InputField/InputField";
 import hexToRGB from "../../../utilities/hexToRGB";
 import { useEffect } from "react";
 
-const color = typeColors["3D Vector"];
+const color = typeColors.Vector3D;
 const backgroundColor = hexToRGB(color, "0.1");
 const transparentBackgroundColor = hexToRGB(color, "0");
 

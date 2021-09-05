@@ -17,7 +17,7 @@ const defaultState: State = {
             type: "Directional Light",
             attributes: {
               Position: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: -1,
                   y: 2,
@@ -25,7 +25,7 @@ const defaultState: State = {
                 },
               },
               "Light Target": {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: 0,
                   y: 0,
@@ -52,7 +52,7 @@ const defaultState: State = {
             type: "Mesh",
             attributes: {
               Position: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: 0,
                   y: 0,
@@ -60,7 +60,7 @@ const defaultState: State = {
                 },
               },
               Rotation: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: -90,
                   y: 0,
@@ -68,7 +68,7 @@ const defaultState: State = {
                 },
               },
               Size: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: 5,
                   y: 5,
@@ -86,7 +86,7 @@ const defaultState: State = {
             type: "Mesh",
             attributes: {
               Position: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: 0,
                   y: 0.5,
@@ -94,7 +94,7 @@ const defaultState: State = {
                 },
               },
               Rotation: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: -90,
                   y: 0,
@@ -102,7 +102,7 @@ const defaultState: State = {
                 },
               },
               Size: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: 1,
                   y: 1,

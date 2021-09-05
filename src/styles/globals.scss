@@ -1,0 +1,7 @@
+@use "typeColors";
+
+@each $type, $color in typeColors.$map {
+  .#{$type} {
+    color: $color !important;
+  }
+}

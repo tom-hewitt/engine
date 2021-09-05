@@ -63,8 +63,8 @@ export interface OperatorExpressionBlock extends BaseExpressionBlock {
 }
 
 export interface Vector3DExpressionBlock extends BaseExpressionBlock {
-  expressionBlockType: "3D Vector";
-  type: "3D Vector";
+  expressionBlockType: "Vector3D";
+  type: "Vector3D";
   arguments: [ExpressionId, ExpressionId, ExpressionId];
 }
 

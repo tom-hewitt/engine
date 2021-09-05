@@ -23,7 +23,7 @@ export const SetVariable = () => {
             opcode: "Set Variable",
             variable: "2",
             to: "3",
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
         "10": {
@@ -38,24 +38,24 @@ export const SetVariable = () => {
               },
               order: ["a"],
             },
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
       };
       draft.current.expressions = {
         "2": {
           expressionType: "Block",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           expressionBlock: "6",
         },
         "3": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "7",
         },
         "4": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "8",
         },
         "5": {
@@ -67,23 +67,23 @@ export const SetVariable = () => {
       draft.current.expressionBlocks = {
         "6": {
           expressionBlockType: "Variable Reference",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           variable: {
             variable: "New Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
           },
           parent: "2",
         },
         "7": {
           expressionBlockType: "Operator",
-          type: "3D Vector",
+          type: "Vector3D",
           operation: "*",
           arguments: ["4", "5"],
           parent: "3",
         },
         "8": {
           expressionBlockType: "Function",
-          type: "3D Vector",
+          type: "Vector3D",
           block: "10",
           parent: "4",
         },
@@ -125,14 +125,14 @@ export const BuiltInFunction = () => {
               },
               order: ["a"],
             },
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
       };
       draft.current.expressions = {
         "2": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "3",
         },
       };
@@ -141,9 +141,9 @@ export const BuiltInFunction = () => {
           expressionBlockType: "Variable",
           variable: {
             variable: "Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
           },
-          type: "3D Vector",
+          type: "Vector3D",
           parent: "2",
         },
       };

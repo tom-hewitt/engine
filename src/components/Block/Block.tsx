@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useDraggable } from "@dnd-kit/core";
 import {
@@ -20,112 +19,20 @@ import TypeText from "../TypeText/TypeText";
 import { ExpressionId } from "../../reducers/expressions";
 import { useContext } from "react";
 import { BlocksContainerContext } from "../BlocksContainer/BlocksContainer";
-
-const Placeholder = styled(motion.div)`
-  display: inline-block;
-  padding: 0;
-
-  border-radius: 5px;
-`;
-
-const DraggableContainer = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-
-  cursor: grab;
-
-  outline: none;
-`;
-
-const OuterBlock = styled(motion.div)<{ color?: string }>`
-  display: flex;
-  flex-direction: column;
-
-  padding: 15px;
-
-  box-sizing: border-box;
-  border-radius: 5px;
-
-  ${(props) => (props.color ? `border: 1px solid ${props.color};` : "")}
-
-  background-color: ${colors.Block};
-
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-  user-select: none;
-
-  outline: none;
-`;
-
-const HorizontalContainer = styled.div`
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const VerticalContainer = styled.div`
-  display: inline-flex;
-  flex-direction: column;
-`;
-
-const Opcode = styled.span<{ color: string }>`
-  margin: 0px 0px 10px 0px;
-
-  font-family: IBM Plex Mono;
-  font-weight: 600;
-  font-size: 10px;
-
-  color: ${(props) => props.color};
-`;
-
-const Text = styled.span`
-  margin: 10px;
-
-  font-family: IBM Plex Mono;
-  font-weight: 600;
-  font-size: 10px;
-
-  color: ${colors.Primary};
-`;
-
-const Title = styled.span`
-  font-family: IBM Plex Mono;
-  font-weight: 700;
-  font-size: 12px;
-
-  color: ${colors.Primary};
-`;
-
-const ParametersText = styled.span`
-  margin-top: 10px;
-
-  font-family: IBM Plex Mono;
-  font-weight: 700;
-  font-size: 10px;
-
-  color: ${colors.Secondary};
-`;
-
-const ParameterName = styled.span`
-  font-family: IBM Plex Mono;
-  font-weight: 700;
-  font-size: 10px;
-
-  color: ${colors.Primary};
-`;
+import "./block.scss";
 
 export const BlockContext = React.createContext<{ id?: BlockId }>({});
 
 function SetVariableBlockView(props: { block: SetVariableBlock }) {
   return (
-    <OuterBlock>
-      <Opcode color={typeColors[props.block.type]}>SET VARIABLE</Opcode>
-      <HorizontalContainer>
+    <motion.div className="block">
+      <span className={`opcode ${props.block.type}`}>SET VARIABLE</span>
+      <div className="setVariableContainer">
         <Expression expression={props.block.variable} />
-        <Text>=</Text>
+        <span className="blockEquals">=</span>
         <Expression expression={props.block.to} />
-      </HorizontalContainer>
-    </OuterBlock>
+      </div>
+    </motion.div>
   );
 }
 
@@ -139,14 +46,14 @@ function ArgumentView(props: {
   );
 
   return (
-    <HorizontalContainer>
-      <VerticalContainer>
-        <ParameterName>{props.name}</ParameterName>
+    <>
+      <div className="argumentDetails">
+        <span className="functionParameterName">{props.name}</span>
         <TypeText type={type} />
-      </VerticalContainer>
-      <Text>=</Text>
+      </div>
+      <span className="blockEquals">=</span>
       <Expression expression={props.expression} />
-    </HorizontalContainer>
+    </>
   );
 }
 
@@ -162,30 +69,36 @@ export function FunctionBlockView(props: {
   );
 
   return (
-    <OuterBlock color={expressionBlock ? color : undefined}>
-      <Opcode color={color}>FUNCTION</Opcode>
-      <HorizontalContainer>
+    <motion.div className="block">
+      <span className={`opcode ${props.block.type ? props.block.type : ""}`}>
+        FUNCTION
+      </span>
+      <div className="functionHeader">
         <FunctionIcon color={color} />
-        <VerticalContainer>
-          <Title>{props.block.name}</Title>
+        <div className="functionDetails">
+          <span className="blockTitle">{props.block.name}</span>
           {props.block.type ? <TypeText type={props.block.type} /> : null}
-        </VerticalContainer>
-      </HorizontalContainer>
+        </div>
+      </div>
       {props.block.arguments.order ? (
-        <ParametersText>PARAMETERS</ParametersText>
+        <>
+          <span className="blockSubheading">PARAMETERS</span>
+          <div className="arguments">
+            {props.block.arguments.order.map((name) => (
+              <ArgumentView
+                name={name}
+                expression={
+                  props.block.arguments.byId[
+                    name as keyof typeof props.block.arguments.byId
+                  ]
+                }
+                key={name}
+              />
+            ))}
+          </div>
+        </>
       ) : null}
-      {props.block.arguments.order.map((name) => (
-        <ArgumentView
-          name={name}
-          expression={
-            props.block.arguments.byId[
-              name as keyof typeof props.block.arguments.byId
-            ]
-          }
-          key={name}
-        />
-      ))}
-    </OuterBlock>
+    </motion.div>
   );
 }
 
@@ -233,13 +146,15 @@ export default function DraggableBlock(props: { id: BlockId; index?: number }) {
   });
 
   return (
-    <Placeholder
+    <motion.div
+      className="blockPlaceholder"
       layoutId={`block-placeholder-${props.id}`}
       animate={{
         backgroundColor: isDragging ? "#222222" : hexToRGB("#222222", "0"),
       }}
     >
-      <DraggableContainer
+      <motion.div
+        className="draggableBlock"
         ref={setNodeRef}
         layoutId={`block-${props.id}`}
         animate={{
@@ -252,7 +167,7 @@ export default function DraggableBlock(props: { id: BlockId; index?: number }) {
         {...attributes}
       >
         <BlockNode id={props.id} />
-      </DraggableContainer>
-    </Placeholder>
+      </motion.div>
+    </motion.div>
   );
 }

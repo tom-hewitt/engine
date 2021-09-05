@@ -3,7 +3,7 @@ import LiteralBooleanView from "./LiteralBoolean/LiteralBoolean";
 import LiteralStringView from "./LiteralString/LiteralString";
 import LiteralIntegerView from "./LiteralInteger/LiteralInteger";
 import LiteralFloatView from "./LiteralFloat/LiteralFloat";
-import Literal3DVectorView from "./Literal3DVector/Literal3DVector";
+import Literal3DVectorView from "./LiteralVector3D/LiteralVector3D";
 import LiteralColor from "./LiteralColor/LiteralColor";
 
 export type LiteralProps =
@@ -11,7 +11,7 @@ export type LiteralProps =
   | LiteralStringProps
   | LiteralIntegerProps
   | LiteralFloatProps
-  | Literal3DVectorProps
+  | LiteralVector3DProps
   | LiteralColorProps
   | LiteralMeshProps;
 
@@ -31,8 +31,8 @@ interface LiteralFloatProps extends LiteralFloat {
   onSubmit: (literal: LiteralFloat) => void;
 }
 
-interface Literal3DVectorProps extends Literal3DVector {
-  onSubmit: (literal: Literal3DVector) => void;
+interface LiteralVector3DProps extends LiteralVector3D {
+  onSubmit: (literal: LiteralVector3D) => void;
 }
 
 interface LiteralColorProps extends LiteralColor {
@@ -73,11 +73,11 @@ export default function Literal(props: LiteralProps) {
           onSubmit={(value) => props.onSubmit({ type: "Float", value })}
         />
       );
-    case "3D Vector":
+    case "Vector3D":
       return (
         <Literal3DVectorView
           {...props}
-          onSubmit={(value) => props.onSubmit({ type: "3D Vector", value })}
+          onSubmit={(value) => props.onSubmit({ type: "Vector3D", value })}
         />
       );
     case "Color":

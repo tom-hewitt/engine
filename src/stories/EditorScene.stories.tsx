@@ -5,7 +5,7 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import mockStore from "./mockStore";
 import produce from "immer";
 import { initialState } from "../reducers/reducer";
-import Literal3DVector from "../components/Literal/Literal3DVector/Literal3DVector";
+import Literal3DVector from "../components/Literal/LiteralVector3D/LiteralVector3D";
 import { State } from "../reducers/reducer";
 import { SceneObject, SceneObjectId } from "../reducers/scenes";
 import defaultState from "../defaultState";
@@ -68,7 +68,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
           type: "Mesh",
           attributes: {
             Position: {
-              type: "3D Vector",
+              type: "Vector3D",
               value: {
                 x: x * 0.2,
                 y: y * 0.2,
@@ -76,7 +76,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
               },
             },
             Rotation: {
-              type: "3D Vector",
+              type: "Vector3D",
               value: {
                 x: 0,
                 y: 0,
@@ -84,7 +84,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
               },
             },
             Size: {
-              type: "3D Vector",
+              type: "Vector3D",
               value: {
                 x: 0.1,
                 y: 0.1,
@@ -111,7 +111,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
             type: "Directional Light",
             attributes: {
               Position: {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: -1,
                   y: 2,
@@ -119,7 +119,7 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
                 },
               },
               "Light Target": {
-                type: "3D Vector",
+                type: "Vector3D",
                 value: {
                   x: 0,
                   y: 0,

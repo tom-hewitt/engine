@@ -19,7 +19,7 @@ export const Default = () => {
         name: "Calculate Velocity",
         blocksContainer: "0",
         variables: [],
-        type: "3D Vector",
+        type: "Vector3D",
       };
 
       draft.current.blocksContainers = {
@@ -35,7 +35,7 @@ export const Default = () => {
             opcode: "Set Variable",
             variable: "2",
             to: "4",
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
         "11": {
@@ -45,7 +45,7 @@ export const Default = () => {
             opcode: "Set Variable",
             variable: "12",
             to: "14",
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
         "22": {
@@ -80,7 +80,7 @@ export const Default = () => {
               },
               order: ["a"],
             },
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
         "41": {
@@ -102,12 +102,12 @@ export const Default = () => {
       draft.current.expressions = {
         "2": {
           expressionType: "Block",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           expressionBlock: "3",
         },
         "4": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "5",
         },
         "6": {
@@ -126,22 +126,22 @@ export const Default = () => {
         },
         "12": {
           expressionType: "Block",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           expressionBlock: "13",
         },
         "14": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "15",
         },
         "16": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "17",
         },
         "18": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "19",
         },
         "20": {
@@ -186,7 +186,7 @@ export const Default = () => {
         },
         "38": {
           expressionType: "Block",
-          type: "3D Vector",
+          type: "Vector3D",
           expressionBlock: "39",
         },
         "40": {
@@ -198,16 +198,16 @@ export const Default = () => {
       draft.current.expressionBlocks = {
         "3": {
           expressionBlockType: "Variable Reference",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           variable: {
             variable: "New Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
           },
           parent: "2",
         },
         "5": {
-          expressionBlockType: "3D Vector",
-          type: "3D Vector",
+          expressionBlockType: "Vector3D",
+          type: "Vector3D",
           arguments: ["6", "8", "10"],
           parent: "4",
         },
@@ -231,32 +231,32 @@ export const Default = () => {
         },
         "13": {
           expressionBlockType: "Variable Reference",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           variable: {
             variable: "New Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
           },
           parent: "12",
         },
         "15": {
           expressionBlockType: "Operator",
-          type: "3D Vector",
+          type: "Vector3D",
           operation: "*",
           arguments: ["16", "20"],
           parent: "14",
         },
         "17": {
           expressionBlockType: "Function",
-          type: "3D Vector",
+          type: "Vector3D",
           block: "40",
           parent: "16",
         },
         "19": {
           expressionBlockType: "Variable",
-          type: "3D Vector",
+          type: "Vector3D",
           variable: {
             variable: "Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
           },
           parent: "18",
         },
@@ -274,7 +274,7 @@ export const Default = () => {
           type: "Float Reference",
           variable: {
             variable: "New Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
             member: {
               variable: "y",
               type: "Float",
@@ -294,7 +294,7 @@ export const Default = () => {
           type: "Float",
           variable: {
             variable: "New Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
             member: {
               variable: "y",
               type: "Float",
@@ -335,10 +335,10 @@ export const Default = () => {
         },
         "39": {
           expressionBlockType: "Variable",
-          type: "3D Vector",
+          type: "Vector3D",
           variable: {
             variable: "New Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
           },
           parent: "38",
         },

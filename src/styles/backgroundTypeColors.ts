@@ -5,14 +5,14 @@ const backgroundTypeColors: Record<Type, string> = {
   String: "#4A4148",
   Integer: "#374545",
   Float: "#414A44",
-  "3D Vector": "#4E4436",
+  Vector3D: "#4E4436",
   Color: "#000000",
   Mesh: "#000000",
   "Boolean Reference": colors.Block,
   "String Reference": colors.Block,
   "Integer Reference": colors.Block,
   "Float Reference": colors.Block,
-  "3D Vector Reference": colors.Block,
+  "Vector3D Reference": colors.Block,
 };
 
 export default backgroundTypeColors;

@@ -30,15 +30,15 @@ interface Attributes {
 }
 
 interface Position {
-  Position: Literal3DVector;
+  Position: LiteralVector3D;
 }
 
 interface Rotation {
-  Rotation: Literal3DVector;
+  Rotation: LiteralVector3D;
 }
 
 interface Size {
-  Size: Literal3DVector;
+  Size: LiteralVector3D;
 }
 
 export interface DirectionalLight extends Object {
@@ -47,7 +47,7 @@ export interface DirectionalLight extends Object {
 }
 
 export interface DirectionalLightAttributes extends Attributes, Position {
-  "Light Target": Literal3DVector;
+  "Light Target": LiteralVector3D;
   Color: LiteralColor;
   Intensity: LiteralFloat;
 }

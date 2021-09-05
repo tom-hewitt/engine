@@ -66,7 +66,7 @@ export interface NormaliseBuiltInFunctionBlock
     };
     order: ["a"];
   };
-  type: "3D Vector";
+  type: "Vector3D";
 }
 
 export interface ModulusBuiltInFunctionBlock extends BaseBuiltInFunctionBlock {

@@ -102,7 +102,7 @@ export const StructMemberReference = () => {
     produce(initialState, (draft) => {
       draft.current.expressions = {
         "0": {
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           expressionType: "Block",
           expressionBlock: "0",
         },
@@ -110,10 +110,10 @@ export const StructMemberReference = () => {
       draft.current.expressionBlocks = {
         "0": {
           expressionBlockType: "Variable Reference",
-          type: "3D Vector Reference",
+          type: "Vector3D Reference",
           variable: {
             variable: "Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
             member: {
               variable: "y",
               type: "Float",
@@ -150,7 +150,7 @@ export const StructMember = () => {
           type: "Float",
           variable: {
             variable: "Velocity",
-            type: "3D Vector",
+            type: "Vector3D",
             member: {
               variable: "y",
               type: "Float",
@@ -187,13 +187,13 @@ export const Function = () => {
               },
               order: ["a"],
             },
-            type: "3D Vector",
+            type: "Vector3D",
           },
         },
       };
       draft.current.expressions = {
         "0": {
-          type: "3D Vector",
+          type: "Vector3D",
           expressionType: "Block",
           expressionBlock: "1",
         },
@@ -201,7 +201,7 @@ export const Function = () => {
       draft.current.expressionBlocks = {
         "1": {
           expressionBlockType: "Function",
-          type: "3D Vector",
+          type: "Vector3D",
           block: "2",
           parent: "0",
         },
@@ -282,7 +282,7 @@ export const Vector3D = () => {
     produce(initialState, (draft) => {
       draft.current.expressions = {
         "0": {
-          type: "3D Vector",
+          type: "Vector3D",
           expressionType: "Block",
           expressionBlock: "5",
         },
@@ -303,8 +303,8 @@ export const Vector3D = () => {
       };
       draft.current.expressionBlocks = {
         "5": {
-          expressionBlockType: "3D Vector",
-          type: "3D Vector",
+          expressionBlockType: "Vector3D",
+          type: "Vector3D",
           arguments: ["2", "3", "4"],
           parent: "0",
         },

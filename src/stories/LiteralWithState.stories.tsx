@@ -54,7 +54,7 @@ export const Vector3D = () => {
   const [value, setValue] = useState({ x: 5.6, y: 0.1, z: 10.4 });
   return (
     <Literal
-      type="3D Vector"
+      type="Vector3D"
       value={value}
       onSubmit={(literal) => setValue(literal.value)}
     />

@@ -27,4 +27,4 @@ Float.args = { type: "Float", value: 2.5 };
 
 export const Vector3 = Template.bind({});
 
-Vector3.args = { type: "3D Vector", value: { x: 5.6, y: 0.1, z: 10.4 } };
+Vector3.args = { type: "Vector3D", value: { x: 5.6, y: 0.1, z: 10.4 } };

@@ -310,7 +310,7 @@ function Vector3DExpressionBlockView(props: {
   expressionBlock: Vector3DExpressionBlock;
   isDragging: boolean;
 }) {
-  const color = typeColors["3D Vector"];
+  const color = typeColors["Vector3D"];
   const backgroundColor = colors.Block;
 
   return (
@@ -382,7 +382,7 @@ function InnerExpressionBlock(props: {
         />
       );
     }
-    case "3D Vector": {
+    case "Vector3D": {
       return (
         <Vector3DExpressionBlockView
           expressionBlock={props.expressionBlock}

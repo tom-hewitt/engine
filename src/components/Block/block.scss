@@ -1,0 +1,113 @@
+@use "../../styles/colors";
+
+$blockColor: #2e2e2e;
+
+.block {
+  display: flex;
+  flex-direction: column;
+
+  padding: 15px;
+
+  box-sizing: border-box;
+  border-radius: 5px;
+
+  background-color: $blockColor;
+
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  user-select: none;
+
+  outline: none;
+}
+
+.blockTitle {
+  font-family: IBM Plex Mono;
+  font-weight: 700;
+  font-size: 12px;
+
+  color: colors.$primary;
+}
+
+.opcode {
+  margin: 0px 0px 10px 0px;
+
+  font-family: IBM Plex Mono;
+  font-weight: 600;
+  font-size: 10px;
+
+  color: colors.$primary;
+}
+
+.blockSubheading {
+  margin-top: 10px;
+
+  font-family: IBM Plex Mono;
+  font-weight: 700;
+  font-size: 10px;
+
+  color: colors.$secondary;
+}
+
+.blockPlaceholder {
+  display: inline-block;
+  padding: 0;
+
+  border-radius: 5px;
+}
+
+.draggableBlock {
+  cursor: grab;
+
+  outline: none;
+}
+
+.setVariableContainer {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.functionHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.functionDetails {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.functionParameterName {
+  font-family: IBM Plex Mono;
+  font-weight: 700;
+  font-size: 10px;
+
+  color: colors.$primary;
+}
+
+.arguments {
+  display: grid;
+  grid-template-columns: fit-content(100px) fit-content(50px) fit-content(250px);
+  gap: 10px;
+}
+
+.argumentDetails {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+.blockEquals {
+  display: flex;
+  flex-direction: row;
+
+  font-family: IBM Plex Mono;
+  font-weight: 600;
+  font-size: 10px;
+
+  align-items: center;
+
+  color: colors.$primary;
+}

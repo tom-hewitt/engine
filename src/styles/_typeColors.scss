@@ -1,0 +1,17 @@
+$boolean: #da8484;
+$string: #da84c7;
+$integer: #1ba9a9;
+$float: #84da9c;
+$vector3d: #ffa115;
+$color: #ffffff;
+$mesh: #ffffff;
+
+$map: (
+  "Boolean": $boolean,
+  "String": $string,
+  "Integer": $string,
+  "Float": $float,
+  "Vector3D": $vector3d,
+  "Color": $color,
+  "Mesh": $mesh,
+);
