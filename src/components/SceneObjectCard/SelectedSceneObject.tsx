@@ -36,6 +36,7 @@ export default function SelectedSceneObject(props: { level: LevelId }) {
               opacity: 0,
               transition: {
                 delay: 0.05,
+                duration: 0.2,
               },
             }}
             transition={{ ease: "easeOut", duration: 0.25 }}
