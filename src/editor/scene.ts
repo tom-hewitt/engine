@@ -12,6 +12,7 @@ import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { MaterialId } from "../reducers/materials";
 import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
+import { rgbToInt } from "../utils/colorUtils";
 
 // Constants
 // [FOV, aspect, near, far]
@@ -165,7 +166,7 @@ export const setupScene = (
     switch (object.type) {
       case "Directional Light": {
         const light = new THREE.DirectionalLight(
-          object.attributes.Color.value,
+          rgbToInt(object.attributes.Color.value),
           object.attributes.Intensity.value
         );
 
@@ -345,7 +346,7 @@ export const setupScene = (
               object.attributes["Light Target"].value.y,
               object.attributes["Light Target"].value.z
             );
-            object3D.color.set(object.attributes.Color.value);
+            object3D.color.set(rgbToInt(object.attributes.Color.value));
             object3D.intensity = object.attributes.Intensity.value;
           }
           break;

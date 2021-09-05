@@ -16,7 +16,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
 
-  border: 1px solid ${typeColors["3D Vector"]};
+  border: 1px solid ${color};
   box-sizing: border-box;
   border-radius: 5px;
 
@@ -32,14 +32,13 @@ let FieldName = styled.span`
 
   margin-right: 5px;
 
-  color: ${typeColors["3D Vector"]};
+  color: ${color};
 `;
 
 let Field = styled(motion.div)<{ border?: boolean }>`
   padding: 8px 8px 10px 12px;
 
-  ${(props) =>
-    props.border ? `border-right: 1px solid ${typeColors["3D Vector"]};` : ""}
+  ${(props) => (props.border ? `border-right: 1px solid ${color};` : "")}
 `;
 
 export default function Literal3DVector(props: {
@@ -62,21 +61,21 @@ export default function Literal3DVector(props: {
 
   useEffect(() => setStringValue(vectorToStrings(props.value)), [props.value]);
 
-  const onFocus = (field: "x" | "y" | "z") => {
+  const onFocus = (field: keyof vector3d) => {
     setFocus((oldFocus) => ({
       ...oldFocus,
       [field]: true,
     }));
   };
 
-  const onChange = (value: string, field: "x" | "y" | "z") => {
+  const onChange = (value: string, field: keyof vector3d) => {
     setStringValue((oldValue) => ({
       ...oldValue,
       [field]: value,
     }));
   };
 
-  const onSubmit = (field: "x" | "y" | "z") => {
+  const onSubmit = (field: keyof vector3d) => {
     const newValue = parseFloat(stringValue[field]);
     if (!isNaN(newValue) && newValue !== props.value[field]) {
       if (newValue !== props.value[field]) {

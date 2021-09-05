@@ -4,6 +4,7 @@ import LiteralStringView from "./LiteralString/LiteralString";
 import LiteralIntegerView from "./LiteralInteger/LiteralInteger";
 import LiteralFloatView from "./LiteralFloat/LiteralFloat";
 import Literal3DVectorView from "./Literal3DVector/Literal3DVector";
+import LiteralColor from "./LiteralColor/LiteralColor";
 
 export type LiteralProps =
   | LiteralBooleanProps
@@ -80,7 +81,12 @@ export default function Literal(props: LiteralProps) {
         />
       );
     case "Color":
-      return <p>LITERAL COLOR</p>;
+      return (
+        <LiteralColor
+          {...props}
+          onSubmit={(value) => props.onSubmit({ type: "Color", value })}
+        />
+      );
     case "Mesh":
       return <p>LITERAL MESH</p>;
   }

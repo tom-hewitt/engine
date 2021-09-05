@@ -25,7 +25,11 @@ const defaultLiterals: Record<ValueType, Literal> = {
   },
   Color: {
     type: "Color",
-    value: 0xffffff,
+    value: {
+      r: 255,
+      g: 255,
+      b: 255,
+    },
   },
   Mesh: {
     type: "Mesh",

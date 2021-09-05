@@ -9,6 +9,12 @@ interface vector3d {
   z: number;
 }
 
+interface rgb {
+  r: number;
+  g: number;
+  b: number;
+}
+
 type Type = ValueType | ReferenceType;
 
 type ValueType =
@@ -67,7 +73,7 @@ interface Literal3DVector extends BaseLiteral {
 
 interface LiteralColor extends BaseLiteral {
   type: "Color";
-  value: number;
+  value: rgb;
 }
 
 interface LiteralMesh extends BaseLiteral {

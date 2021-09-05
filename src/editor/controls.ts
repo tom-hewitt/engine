@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { normalise, multiply, modulus } from "../math/vectorMath";
+import { normalise, multiply, modulus } from "../utils/vectorMath";
 
 interface Directions {
   forwards: boolean;
