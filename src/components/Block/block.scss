@@ -89,7 +89,6 @@ $blockColor: #2e2e2e;
 .arguments {
   display: grid;
   grid-template-columns: fit-content(100px) fit-content(50px) fit-content(250px);
-  gap: 10px;
 }
 
 .argumentDetails {
@@ -102,6 +101,8 @@ $blockColor: #2e2e2e;
 .blockEquals {
   display: flex;
   flex-direction: row;
+
+  margin: 10px;
 
   font-family: IBM Plex Mono;
   font-weight: 600;
