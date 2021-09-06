@@ -108,6 +108,13 @@ abstract class BaseEditorScene {
     this.requestRender();
   };
 
+  /**
+   * Cleanup resources
+   */
+  protected dispose = () => {
+    this.renderer.dispose();
+  };
+
   protected render() {
     this.renderRequested = false;
     this.renderer.render(this.scene, this.camera);
