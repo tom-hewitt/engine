@@ -11,7 +11,6 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { MaterialId } from "../reducers/materials";
-import { Geometry, MeshId, PrimitiveGeometry } from "../reducers/meshes";
 import { rgbToInt } from "../utils/colorUtils";
 
 // Constants
@@ -21,129 +20,225 @@ const defaultCameraPosition: [number, number, number] = [0, 1, 2];
 const backgroundColor = 0xdcdcdc;
 
 /**
- * Sets up an editor scene to render
- * @param {HTMLCanvasElement} canvas The canvas element to render the scene on
- * @param store The app redux store
- * @param sceneId The id of the scene to render
+ * Creates a THREE geometry from the given saved geometry
+ * @param {string} geometry The saved geometry
+ * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
  */
-export const setupScene = (
-  canvas: HTMLCanvasElement,
-  store: Store<State>,
-  sceneId: string
-) => {
-  // The ratio of physical pixels to CSS pixels. Larger than 1 on HD-DPI displays
-  const pixelRatio = window.devicePixelRatio;
+const createGeometry = (geometry: string) => {
+  switch (geometry) {
+    case "Box": {
+      return new THREE.BoxGeometry(1, 1, 1);
+    }
+    case "Plane": {
+      return new THREE.PlaneGeometry(1, 1);
+    }
+    default: {
+      throw new Error(`Can't find geometry ${geometry}`);
+    }
+  }
+};
 
-  let width = canvas.clientWidth;
-  let height = canvas.clientHeight;
+class BaseEditorScene {
+  // Constants
+  defaultCamera = [75, 2, 0.1, 1000];
+  defaultCameraPosition: [number, number, number] = [0, 1, 2];
+  backgroundColor = 0xdcdcdc;
 
-  // Setup the renderer
-  const renderer = new THREE.WebGLRenderer({ canvas });
-  renderer.setSize(width * pixelRatio, height * pixelRatio, false);
-  let renderRequested = false;
+  canvas: HTMLCanvasElement;
 
-  // Setup the camera
-  const camera = new THREE.PerspectiveCamera(...defaultCamera);
-  camera.position.set(...defaultCameraPosition);
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
+  pixelRatio: number;
 
-  // Setup the scene
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(backgroundColor);
+  width: number;
+  height: number;
 
-  // Setup the postprocessing effect chain
-  const effectComposer = new EffectComposer(renderer);
-  // Setup the render pass
-  const renderPass = new RenderPass(scene, camera);
-  effectComposer.addPass(renderPass);
-  // Setup the outline effect pass, which is used to highlight the selected object
-  const outlinePass = new OutlinePass(
-    new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
-    scene,
-    camera
-  );
-  outlinePass.setSize(width * pixelRatio, height * pixelRatio);
-  outlinePass.edgeThickness = 3;
-  outlinePass.edgeStrength = 5;
-  outlinePass.hiddenEdgeColor = new THREE.Color(0xb1b1b1);
-  effectComposer.addPass(outlinePass);
-  // Setup the antialias pass
-  const antialiasPass = new ShaderPass(FXAAShader);
-  antialiasPass.uniforms.resolution.value.set(
-    (1 / width) * pixelRatio,
-    (1 / height) * pixelRatio
-  );
-  effectComposer.addPass(antialiasPass);
+  renderer: THREE.WebGLRenderer;
+  renderRequested = false;
 
-  // Setup the raycaster, which lets the user interact with 3D objects with their cursor
-  const raycaster = new THREE.Raycaster();
+  camera: THREE.PerspectiveCamera;
 
-  // Setup the clock, which keeps track of the time between frames
-  const clock = new THREE.Clock();
+  scene: THREE.Scene;
 
-  // Get the state of the application
-  let state = store.getState();
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    // The ratio of physical pixels to CSS pixels. Larger than 1 on HD-DPI displays
+    this.pixelRatio = window.devicePixelRatio;
 
-  // Used to diff new state
-  let oldSceneState: Scene;
+    this.width = canvas.clientWidth;
+    this.height = canvas.clientHeight;
+
+    // Setup the renderer
+    this.renderer = new THREE.WebGLRenderer({ canvas });
+    this.renderer.setSize(
+      this.width * this.pixelRatio,
+      this.height * this.pixelRatio,
+      false
+    );
+
+    // Setup the camera
+    this.camera = new THREE.PerspectiveCamera(...this.defaultCamera);
+    this.camera.position.set(...this.defaultCameraPosition);
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
+
+    // Setup the scene
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(this.backgroundColor);
+
+    window.addEventListener("resize", this.onWindowResize);
+  }
+
+  /**
+   * Updates the camera and renderer to fit the new window size
+   */
+  onWindowResize = () => {
+    this.width = this.canvas.clientWidth;
+    this.height = this.canvas.clientHeight;
+
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(
+      this.width * this.pixelRatio,
+      this.height * this.pixelRatio,
+      false
+    );
+
+    this.requestRender();
+  };
+
+  render() {
+    this.renderRequested = false;
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  /**
+   * Requests for the scene to be rerendered after the current frame has
+   * finished
+   */
+  requestRender = () => {
+    if (!this.renderRequested) {
+      this.renderRequested = true;
+      requestAnimationFrame(this.render);
+    }
+  };
+}
+
+export class EditorScene extends BaseEditorScene {
+  private effectComposer: EffectComposer;
+
+  private outlinePass: OutlinePass;
+
+  private raycaster: THREE.Raycaster;
+
+  private clock: THREE.Clock;
+
+  private state: State;
+
+  private store: Store<State>;
+
+  private sceneId: string;
+
+  private controls: Controls;
+
+  private oldSceneState: Scene | undefined = undefined;
+
+  private geometries: { [key: string]: THREE.BufferGeometry } = {};
+
+  private materials: { [key: string]: THREE.MeshStandardMaterial } = {};
+
+  private sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
+
+  private selectedObject: SceneObjectId | undefined = undefined;
+
+  constructor(canvas: HTMLCanvasElement, store: Store<State>, sceneId: string) {
+    super(canvas);
+
+    // Setup the postprocessing effect chain
+    this.effectComposer = new EffectComposer(this.renderer);
+    // Setup the render pass
+    const renderPass = new RenderPass(this.scene, this.camera);
+    this.effectComposer.addPass(renderPass);
+    // Setup the outline effect pass, which is used to highlight the selected object
+    this.outlinePass = new OutlinePass(
+      new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
+      this.scene,
+      this.camera
+    );
+    this.outlinePass.setSize(
+      this.width * this.pixelRatio,
+      this.height * this.pixelRatio
+    );
+    this.outlinePass.edgeThickness = 3;
+    this.outlinePass.edgeStrength = 5;
+    this.outlinePass.hiddenEdgeColor = new THREE.Color(0xb1b1b1);
+    this.effectComposer.addPass(this.outlinePass);
+    // Setup the antialias pass
+    const antialiasPass = new ShaderPass(FXAAShader);
+    antialiasPass.uniforms.resolution.value.set(
+      (1 / this.width) * this.pixelRatio,
+      (1 / this.height) * this.pixelRatio
+    );
+    this.effectComposer.addPass(antialiasPass);
+
+    // Setup the raycaster, which lets the user interact with 3D objects with their cursor
+    this.raycaster = new THREE.Raycaster();
+
+    // Setup the clock, which keeps track of the time between frames
+    this.clock = new THREE.Clock();
+
+    // Get the state of the application
+    this.state = store.getState();
+    this.store = store;
+
+    this.sceneId = sceneId;
+
+    this.sceneObject3Ds = this.populateScene();
+
+    this.controls = new Controls(
+      this.camera,
+      canvas,
+      this.requestRender,
+      this.onClick
+    );
+
+    this.store.subscribe(this.update);
+
+    this.render();
+  }
 
   /**
    * @returns The current state of the scene
    */
-  const sceneState = () => state.current.scenes[sceneId];
-
-  let geometries: { [key: string]: THREE.BufferGeometry } = {};
-
-  /**
-   * Creates a THREE geometry from the given saved geometry
-   * @param {string} geometry The saved geometry
-   * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
-   */
-  const createGeometry = (geometry: string) => {
-    switch (geometry) {
-      case "Box": {
-        return new THREE.BoxGeometry(1, 1, 1);
-      }
-      case "Plane": {
-        return new THREE.PlaneGeometry(1, 1);
-      }
-      default: {
-        throw new Error(`Can't find geometry ${geometry}`);
-      }
-    }
-  };
+  sceneState = () => this.state.current.scenes[this.sceneId];
 
   /**
    * Gets a THREE geometry from the given saved geometry, or creates on if it doesn't exist
    * @param {string} geometryId The saved geometry
    * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
    */
-  const getGeometry = (geometryId: string) => {
-    if (geometries[geometryId]) {
-      return geometries[geometryId];
+  getGeometry = (geometryId: string) => {
+    if (this.geometries[geometryId]) {
+      return this.geometries[geometryId];
     }
 
     const geometry = createGeometry(geometryId);
 
-    geometries[geometryId] = geometry;
+    this.geometries[geometryId] = geometry;
 
     return geometry;
   };
-
-  let materials: { [key: string]: THREE.MeshStandardMaterial } = {};
 
   /**
    * Gets a THREE material from a saved material, or creates one if it doesn't exist
    * @param {MaterialId} materialId The id of the saved material
    * @returns {THREE.Material} A THREE material representing the saved material
    */
-  const getMaterial = (materialId: MaterialId) => {
-    if (materials[materialId]) {
-      return materials[materialId];
+  getMaterial = (materialId: MaterialId) => {
+    if (this.materials[materialId]) {
+      return this.materials[materialId];
     }
 
-    const materialData = state.current.materials[materialId];
+    const materialData = this.state.current.materials[materialId];
 
     const material = new THREE.MeshStandardMaterial({
       color: rgbToInt(materialData.color),
@@ -154,7 +249,7 @@ export const setupScene = (
       flatShading: materialData.flatShading,
     });
 
-    materials[materialId] = material;
+    this.materials[materialId] = material;
 
     return material;
   };
@@ -164,8 +259,11 @@ export const setupScene = (
    * @param {MeshId} meshId The id of the mesh
    * @returns {THREE.Mesh} A 3D object representing the saved mesh
    */
-  const createMesh = (geometry: string, materialId: string) => {
-    return new THREE.Mesh(getGeometry(geometry), getMaterial(materialId));
+  createMesh = (geometry: string, materialId: string) => {
+    return new THREE.Mesh(
+      this.getGeometry(geometry),
+      this.getMaterial(materialId)
+    );
   };
 
   /**
@@ -175,10 +273,7 @@ export const setupScene = (
    * @param {SceneObject} object The scene object as it is saved in state
    * @returns {THREE.Object3D} The 3D object representation of the scene object
    */
-  const createObject3D = (
-    id: SceneObjectId,
-    object: SceneObject
-  ): THREE.Object3D => {
+  createObject3D = (id: SceneObjectId, object: SceneObject): THREE.Object3D => {
     let object3D: THREE.Object3D;
     switch (object.type) {
       case "Directional Light": {
@@ -187,7 +282,7 @@ export const setupScene = (
           object.attributes.Intensity.value
         );
 
-        scene.add(light.target);
+        this.scene.add(light.target);
         light.target.position.set(
           object.attributes["Light Target"].value.x,
           object.attributes["Light Target"].value.y,
@@ -198,7 +293,7 @@ export const setupScene = (
         break;
       }
       case "Mesh": {
-        object3D = createMesh(
+        object3D = this.createMesh(
           object.attributes.Geometry.value,
           object.attributes.Material.value
         );
@@ -231,8 +326,8 @@ export const setupScene = (
    * @param callback The function to be performed on each item in order.
    * Gives id and object as parameters
    */
-  const dfs = (callback: (id: SceneObjectId, object: SceneObject) => void) => {
-    const state = sceneState();
+  dfs = (callback: (id: SceneObjectId, object: SceneObject) => void) => {
+    const state = this.sceneState();
 
     if (state.children) {
       const stack = new Stack<SceneObjectId>();
@@ -259,46 +354,21 @@ export const setupScene = (
    * traversal
    * @returns A hash table of Object3Ds
    */
-  const populateScene = () => {
+  populateScene = () => {
     const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
 
-    dfs((id, object) => {
-      const object3D = createObject3D(id, object);
+    this.dfs((id, object) => {
+      const object3D = this.createObject3D(id, object);
 
       sceneObject3Ds[id] = object3D;
       if (object.parent) {
         sceneObject3Ds[object.parent].add(object3D);
       } else {
-        scene.add(object3D);
+        this.scene.add(object3D);
       }
     });
 
     return sceneObject3Ds;
-  };
-
-  const sceneObject3Ds = populateScene();
-
-  /**
-   * Renders the scene and updates the controls
-   */
-  const render = () => {
-    renderRequested = false;
-
-    const delta = clock.getDelta();
-
-    controls.update(delta);
-    effectComposer.render();
-  };
-
-  /**
-   * Requests for the scene to be rerendered after the current frame has
-   * finished
-   */
-  const requestRender = () => {
-    if (!renderRequested) {
-      renderRequested = true;
-      requestAnimationFrame(render);
-    }
   };
 
   /**
@@ -306,50 +376,52 @@ export const setupScene = (
    * @param {THREE.Vector2} mouse The coordinates of the click on a scale of
    * -1 to 1
    */
-  const onClick = (mouse: THREE.Vector2) => {
-    raycaster.setFromCamera(mouse, camera);
+  onClick = (mouse: THREE.Vector2) => {
+    this.raycaster.setFromCamera(mouse, this.camera);
 
-    const object3D = raycaster.intersectObjects(
-      Object.values(sceneObject3Ds)
+    const object3D = this.raycaster.intersectObjects(
+      Object.values(this.sceneObject3Ds)
     )[0];
 
     const id = object3D ? object3D.object.name : undefined;
-    store.dispatch(selectSceneObject({ id, sceneId }));
+    this.store.dispatch(selectSceneObject({ id, sceneId: this.sceneId }));
   };
-
-  const controls = new Controls(camera, canvas, requestRender, onClick);
 
   /**
    * Updates the camera, renderer and postprocessor to fit the new window size
    */
-  const onWindowResize = () => {
-    width = canvas.clientWidth;
-    height = canvas.clientHeight;
+  onWindowResize = () => {
+    this.width = this.canvas.clientWidth;
+    this.height = this.canvas.clientHeight;
 
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
 
-    renderer.setSize(width * pixelRatio, height * pixelRatio, false);
-    effectComposer.setSize(width * pixelRatio, height * pixelRatio);
+    this.renderer.setSize(
+      this.width * this.pixelRatio,
+      this.height * this.pixelRatio,
+      false
+    );
 
-    requestRender();
+    this.effectComposer.setSize(
+      this.width * this.pixelRatio,
+      this.height * this.pixelRatio
+    );
+
+    this.requestRender();
   };
-
-  window.addEventListener("resize", onWindowResize);
-
-  let selectedObject: SceneObjectId | undefined = undefined;
 
   /**
    * Updates the given 3D object according to it's saved object
    * @param {SceneObject} object The saved object
    * @param {THREE.Object3D} object3D The 3D object to update
    */
-  const updateObject3D = (
+  updateObject3D = (
     id: SceneObjectId,
     object: SceneObject,
     object3D: THREE.Object3D
   ) => {
-    const oldObject = oldSceneState.objects[id];
+    const oldObject = this.oldSceneState?.objects[id];
 
     if (object !== oldObject) {
       object3D.position.set(
@@ -391,21 +463,21 @@ export const setupScene = (
    * Performs a depth first traversal of the scene tree, updating existing
    * 3D objects and creating new ones
    */
-  const updateScene = () => {
-    if (sceneState() !== oldSceneState) {
-      dfs((id, object) => {
-        let object3D = sceneObject3Ds[id];
+  updateScene = () => {
+    if (this.sceneState() !== this.oldSceneState) {
+      this.dfs((id, object) => {
+        let object3D = this.sceneObject3Ds[id];
 
         if (object3D) {
-          updateObject3D(id, object, object3D);
+          this.updateObject3D(id, object, object3D);
         } else {
-          object3D = createObject3D(id, object);
+          object3D = this.createObject3D(id, object);
 
-          sceneObject3Ds[id] = object3D;
+          this.sceneObject3Ds[id] = object3D;
           if (object.parent) {
-            sceneObject3Ds[object.parent].add(object3D);
+            this.sceneObject3Ds[object.parent].add(object3D);
           } else {
-            scene.add(object3D);
+            this.scene.add(object3D);
           }
         }
       });
@@ -416,13 +488,13 @@ export const setupScene = (
    * If the object that is currently selected by the user has changed, update the
    * outline effect to reflect the change
    */
-  const updateSelectedObject = () => {
-    const newSelectedObject = store.getState().temp.selectedSceneObject;
+  updateSelectedObject = () => {
+    const newSelectedObject = this.state.temp.selectedSceneObject;
 
-    if (newSelectedObject !== selectedObject) {
-      selectedObject = newSelectedObject;
-      outlinePass.selectedObjects = newSelectedObject
-        ? [sceneObject3Ds[newSelectedObject]]
+    if (newSelectedObject !== this.selectedObject) {
+      this.selectedObject = newSelectedObject;
+      this.outlinePass.selectedObjects = newSelectedObject
+        ? [this.sceneObject3Ds[newSelectedObject]]
         : [];
     }
   };
@@ -430,23 +502,34 @@ export const setupScene = (
   /**
    * Reacts to an update in the app's state
    */
-  const update = () => {
-    oldSceneState = sceneState();
-    state = store.getState();
+  update = () => {
+    this.oldSceneState = this.sceneState();
+    this.state = this.store.getState();
 
-    updateScene();
-    updateSelectedObject();
-    requestRender();
+    this.updateScene();
+    this.updateSelectedObject();
+    this.requestRender();
   };
 
-  store.subscribe(update);
-
-  render();
-
-  // Return dispose function to cleanup
-  return () => {
-    renderer.dispose();
-    outlinePass.dispose();
-    controls.dispose();
+  /**
+   * Cleanup resources
+   */
+  dispose = () => {
+    this.renderer.dispose();
+    this.outlinePass.dispose();
+    this.controls.dispose();
   };
-};
+
+  /**
+   * Renders the scene and updates the controls
+   */
+  render = () => {
+    super.render();
+    this.renderRequested = false;
+
+    const delta = this.clock.getDelta();
+
+    this.controls.update(delta);
+    this.effectComposer.render();
+  };
+}
