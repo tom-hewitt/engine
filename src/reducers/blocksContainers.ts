@@ -25,8 +25,8 @@ export const reorderBlock = createAction(
   })
 );
 
-export const blocksContainerAlgorithms = {
-  reorderBlock: (
+export namespace Algorithms {
+  export const reorderBlock = (
     state: BlocksContainersState,
     container: BlocksContainerId,
     oldIndex: number,
@@ -39,8 +39,8 @@ export const blocksContainerAlgorithms = {
     );
 
     return state;
-  },
-};
+  };
+}
 
 const blocksContainers = createReducer(
   blocksContainersInitialState,
@@ -49,19 +49,9 @@ const blocksContainers = createReducer(
       reorderBlock,
       (state, { payload: { undo, container, oldIndex, newIndex } }) => {
         if (undo) {
-          blocksContainerAlgorithms.reorderBlock(
-            state,
-            container,
-            newIndex,
-            oldIndex
-          );
+          Algorithms.reorderBlock(state, container, newIndex, oldIndex);
         } else {
-          blocksContainerAlgorithms.reorderBlock(
-            state,
-            container,
-            oldIndex,
-            newIndex
-          );
+          Algorithms.reorderBlock(state, container, oldIndex, newIndex);
         }
       }
     );

@@ -68,8 +68,8 @@ export const insertExpressionBlock = createAsyncThunk(
   }
 );
 
-export const algorithms = {
-  insertExpressionBlock: (
+export namespace Algorithms {
+  export const insertExpressionBlock = (
     state: CurrentState,
     expressionId: ExpressionId,
     expressionBlockId: ExpressionBlockId,
@@ -102,8 +102,8 @@ export const algorithms = {
     }
 
     return state;
-  },
-  undoInsertExpressionBlock: (
+  };
+  export const undoInsertExpressionBlock = (
     state: CurrentState,
     expressionId: ExpressionId,
     expressionBlockId: ExpressionBlockId,
@@ -137,8 +137,8 @@ export const algorithms = {
     }
 
     return state;
-  },
-};
+  };
+}
 
 export const current = createReducer(initialCurrentState, (builder) => {
   builder
@@ -157,7 +157,7 @@ export const current = createReducer(initialCurrentState, (builder) => {
         }
       ) => {
         if (undo) {
-          algorithms.undoInsertExpressionBlock(
+          Algorithms.undoInsertExpressionBlock(
             state,
             expressionId,
             expressionBlockId,
@@ -165,7 +165,7 @@ export const current = createReducer(initialCurrentState, (builder) => {
             replacedExpression
           );
         } else {
-          algorithms.insertExpressionBlock(
+          Algorithms.insertExpressionBlock(
             state,
             expressionId,
             expressionBlockId,
