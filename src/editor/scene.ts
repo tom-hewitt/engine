@@ -1,7 +1,7 @@
 import { Store } from "@reduxjs/toolkit";
 import * as THREE from "three";
 import Stack from "../algorithms/stack";
-import { Scene, SceneObject, SceneObjectId } from "../reducers/scenes";
+import { Scene, SceneId, SceneObject, SceneObjectId } from "../reducers/scenes";
 import { State } from "../reducers/reducer";
 import Controls from "./controls";
 import { selectSceneObject } from "../reducers/temp";
@@ -32,7 +32,11 @@ const createGeometry = (geometry: string) => {
   }
 };
 
-class BaseEditorScene {
+/**
+ * An editor scene
+ * NOTE: extending classes should call render() in the constructor!
+ */
+abstract class BaseEditorScene {
   // Constants
   protected static defaultCamera = [75, 2, 0.1, 1000];
   protected static defaultCameraPosition: [number, number, number] = [0, 1, 2];
@@ -52,6 +56,10 @@ class BaseEditorScene {
 
   protected scene: THREE.Scene;
 
+  /**
+   * Sets up an editor scene
+   * @param {HTMLCanvasElement} canvas The canvas element to render the scene onto
+   */
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     // The ratio of physical pixels to CSS pixels. Larger than 1 on HD-DPI displays
@@ -117,6 +125,9 @@ class BaseEditorScene {
   };
 }
 
+/**
+ * An editor scene that responds to state updates
+ */
 export class EditorScene extends BaseEditorScene {
   protected effectComposer: EffectComposer;
 
@@ -144,7 +155,17 @@ export class EditorScene extends BaseEditorScene {
 
   protected selectedObject: SceneObjectId | undefined = undefined;
 
-  constructor(canvas: HTMLCanvasElement, store: Store<State>, sceneId: string) {
+  /**
+   * Sets up an editor scene that responds to state updates
+   * @param {HTMLCanvasElement} canvas The canvas element to render the scene onto
+   * @param {Store<State>} store The redux store
+   * @param {SceneId} sceneId The id of the scene to render
+   */
+  constructor(
+    canvas: HTMLCanvasElement,
+    store: Store<State>,
+    sceneId: SceneId
+  ) {
     super(canvas);
 
     // Setup the postprocessing effect chain
