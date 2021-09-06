@@ -35,7 +35,6 @@ export default function SelectedSceneObject(props: { level: LevelId }) {
               scale: 0.9,
               opacity: 0,
               transition: {
-                delay: 0.05,
                 duration: 0.2,
               },
             }}

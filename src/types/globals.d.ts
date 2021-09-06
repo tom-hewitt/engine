@@ -76,7 +76,12 @@ interface LiteralColor extends BaseLiteral {
   value: rgb;
 }
 
-interface LiteralMesh extends BaseLiteral {
-  type: "Mesh";
+interface LiteralGeometry extends BaseLiteral {
+  type: "Geometry";
+  value: string;
+}
+
+interface LiteralMaterial extends BaseLiteral {
+  type: "Material";
   value: string;
 }

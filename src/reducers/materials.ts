@@ -6,11 +6,13 @@ export interface MaterialsState {
 
 export type MaterialId = string;
 
-export type Material = PhongMaterial;
-
-export interface PhongMaterial {
-  type: "Phong";
-  color: number;
+export interface Material {
+  color: rgb;
+  opacity: number;
+  emissive: rgb;
+  roughness: number;
+  metalness: number;
+  flatShading?: boolean;
 }
 
 export const materialsIntitialState: MaterialsState = {};

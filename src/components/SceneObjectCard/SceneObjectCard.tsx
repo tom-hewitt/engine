@@ -54,7 +54,7 @@ const getAttributeOrder = (object: SceneObject) => {
     case "Directional Light":
       return ["Position", "Light Target", "Color", "Intensity"];
     case "Mesh":
-      return ["Position", "Rotation", "Size", "Mesh"];
+      return ["Position", "Rotation", "Size", "Geometry", "Material"];
   }
 };
 
@@ -69,6 +69,8 @@ function Attribute(props: {
         props.attribute
       ]
   );
+
+  if (!literal) throw new Error(`${props.attribute} is not defined`);
 
   const dispatch = useDispatch();
 

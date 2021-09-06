@@ -75,9 +75,13 @@ const defaultState: State = {
                   z: 1,
                 },
               },
-              Mesh: {
-                type: "Mesh",
+              Geometry: {
+                type: "Geometry",
                 value: "Plane",
+              },
+              Material: {
+                type: "Material",
+                value: "Grey",
               },
             },
           },
@@ -109,39 +113,49 @@ const defaultState: State = {
                   z: 1,
                 },
               },
-              Mesh: {
-                type: "Mesh",
+              Geometry: {
+                type: "Geometry",
                 value: "Box",
+              },
+              Material: {
+                type: "Material",
+                value: "Blue",
               },
             },
           },
         },
       },
     },
-    meshes: {
-      Box: {
-        geometry: {
-          type: "Primitive",
-          primitive: "Box",
-        },
-        material: "Blue",
-      },
-      Plane: {
-        geometry: {
-          type: "Primitive",
-          primitive: "Plane",
-        },
-        material: "Grey",
-      },
-    },
     materials: {
       Blue: {
-        type: "Phong",
-        color: 0x44aa88,
+        color: {
+          r: 0,
+          g: 0,
+          b: 255,
+        },
+        opacity: 1,
+        emissive: {
+          r: 0,
+          g: 0,
+          b: 0,
+        },
+        roughness: 1,
+        metalness: 0,
       },
       Grey: {
-        type: "Phong",
-        color: 0xc4c4c4,
+        color: {
+          r: 200,
+          g: 200,
+          b: 200,
+        },
+        opacity: 1,
+        emissive: {
+          r: 0,
+          g: 0,
+          b: 0,
+        },
+        roughness: 1,
+        metalness: 0,
       },
     },
     blocksContainers: {},

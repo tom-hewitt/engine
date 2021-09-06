@@ -58,7 +58,8 @@ export interface Mesh extends Object {
 }
 
 export interface MeshAttributes extends Attributes, Position, Rotation, Size {
-  Mesh: LiteralMesh;
+  Geometry: LiteralGeometry;
+  Material: LiteralMaterial;
 }
 
 export const scenesInitialState: ScenesState = {};

@@ -93,48 +93,70 @@ export const setupScene = (
    */
   const sceneState = () => state.current.scenes[sceneId];
 
+  let geometries: { [key: string]: THREE.BufferGeometry } = {};
+
   /**
-   * Helper function to create primitive geometries
-   * @param {PrimitiveGeometry} geometry The saved geometry
-   * @returns {THREE.BufferGeometry} A THREE geometry representing the save geometry
+   * Creates a THREE geometry from the given saved geometry
+   * @param {string} geometry The saved geometry
+   * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
    */
-  const createPrimitiveGeometry = (geometry: PrimitiveGeometry) => {
-    switch (geometry.primitive) {
+  const createGeometry = (geometry: string) => {
+    switch (geometry) {
       case "Box": {
         return new THREE.BoxGeometry(1, 1, 1);
       }
       case "Plane": {
         return new THREE.PlaneGeometry(1, 1);
       }
-    }
-  };
-
-  /**
-   * Creates a THREE geometry from the given saved geometry
-   * @param {Geometry} geometry The saved geometry
-   * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
-   */
-  const createGeometry = (geometry: Geometry) => {
-    switch (geometry.type) {
-      case "Primitive": {
-        return createPrimitiveGeometry(geometry);
+      default: {
+        throw new Error(`Can't find geometry ${geometry}`);
       }
     }
   };
 
   /**
-   * Creates a THREE material from a saved material
+   * Gets a THREE geometry from the given saved geometry, or creates on if it doesn't exist
+   * @param {string} geometryId The saved geometry
+   * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
+   */
+  const getGeometry = (geometryId: string) => {
+    if (geometries[geometryId]) {
+      return geometries[geometryId];
+    }
+
+    const geometry = createGeometry(geometryId);
+
+    geometries[geometryId] = geometry;
+
+    return geometry;
+  };
+
+  let materials: { [key: string]: THREE.MeshStandardMaterial } = {};
+
+  /**
+   * Gets a THREE material from a saved material, or creates one if it doesn't exist
    * @param {MaterialId} materialId The id of the saved material
    * @returns {THREE.Material} A THREE material representing the saved material
    */
-  const createMaterial = (materialId: MaterialId) => {
-    const material = state.current.materials[materialId];
-
-    switch (material.type) {
-      case "Phong": {
-        return new THREE.MeshPhongMaterial({ color: material.color });
-      }
+  const getMaterial = (materialId: MaterialId) => {
+    if (materials[materialId]) {
+      return materials[materialId];
     }
+
+    const materialData = state.current.materials[materialId];
+
+    const material = new THREE.MeshStandardMaterial({
+      color: rgbToInt(materialData.color),
+      opacity: materialData.opacity,
+      emissive: rgbToInt(materialData.emissive),
+      roughness: materialData.roughness,
+      metalness: materialData.metalness,
+      flatShading: materialData.flatShading,
+    });
+
+    materials[materialId] = material;
+
+    return material;
   };
 
   /**
@@ -142,13 +164,8 @@ export const setupScene = (
    * @param {MeshId} meshId The id of the mesh
    * @returns {THREE.Mesh} A 3D object representing the saved mesh
    */
-  const createMesh = (meshId: MeshId) => {
-    const mesh = state.current.meshes[meshId];
-
-    const geometry = createGeometry(mesh.geometry);
-    const material = createMaterial(mesh.material);
-
-    return new THREE.Mesh(geometry, material);
+  const createMesh = (geometry: string, materialId: string) => {
+    return new THREE.Mesh(getGeometry(geometry), getMaterial(materialId));
   };
 
   /**
@@ -181,7 +198,10 @@ export const setupScene = (
         break;
       }
       case "Mesh": {
-        object3D = createMesh(object.attributes.Mesh.value);
+        object3D = createMesh(
+          object.attributes.Geometry.value,
+          object.attributes.Material.value
+        );
         object3D.rotation.set(
           THREE.MathUtils.degToRad(object.attributes.Rotation.value.x),
           THREE.MathUtils.degToRad(object.attributes.Rotation.value.y),

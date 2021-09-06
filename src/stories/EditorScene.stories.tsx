@@ -91,9 +91,13 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
                 z: 0.1,
               },
             },
-            Mesh: {
-              type: "Mesh",
+            Geometry: {
+              type: "Geometry",
               value: "Box",
+            },
+            Material: {
+              type: "Material",
+              value: "Blue",
             },
           },
         };
@@ -143,16 +147,20 @@ const StressTestComponent: Story<{ n: number }> = (args) => {
           ...cubes,
         },
       };
-      state.current.meshes["Box"] = {
-        geometry: {
-          type: "Primitive",
-          primitive: "Box",
-        },
-        material: "Blue",
-      };
       state.current.materials["Blue"] = {
-        type: "Phong",
-        color: 0x44aa88,
+        color: {
+          r: 0,
+          g: 0,
+          b: 255,
+        },
+        opacity: 1,
+        emissive: {
+          r: 0,
+          g: 0,
+          b: 0,
+        },
+        roughness: 1,
+        metalness: 0,
       };
     })
   );

@@ -13,7 +13,8 @@ export type LiteralProps =
   | LiteralFloatProps
   | LiteralVector3DProps
   | LiteralColorProps
-  | LiteralMeshProps;
+  | LiteralGeometryProps
+  | LiteralMaterialProps;
 
 interface LiteralBooleanProps extends LiteralBoolean {
   onSubmit: (literal: LiteralBoolean) => void;
@@ -39,8 +40,12 @@ interface LiteralColorProps extends LiteralColor {
   onSubmit: (literal: LiteralColor) => void;
 }
 
-interface LiteralMeshProps extends LiteralMesh {
-  onSubmit: (literal: LiteralMesh) => void;
+interface LiteralGeometryProps extends LiteralGeometry {
+  onSubmit: (literal: LiteralGeometry) => void;
+}
+
+interface LiteralMaterialProps extends LiteralMaterial {
+  onSubmit: (literal: LiteralMaterial) => void;
 }
 
 export default function Literal(props: LiteralProps) {
@@ -87,7 +92,9 @@ export default function Literal(props: LiteralProps) {
           onSubmit={(value) => props.onSubmit({ type: "Color", value })}
         />
       );
-    case "Mesh":
-      return <p>LITERAL MESH</p>;
+    case "Geometry":
+      return <p>LITERAL GEOMETRY</p>;
+    case "Material":
+      return <p>LITERAL MATERIAL</p>;
   }
 }

@@ -26,7 +26,6 @@ import scenes, { scenesInitialState, ScenesState } from "./scenes";
 export interface CurrentState {
   levels: LevelsState;
   scenes: ScenesState;
-  meshes: MeshesState;
   materials: MaterialsState;
   blocksContainers: BlocksContainersState;
   blocks: BlocksState;
@@ -38,7 +37,6 @@ export interface CurrentState {
 export const initialCurrentState: CurrentState = {
   levels: levelsInitialState,
   scenes: scenesInitialState,
-  meshes: meshesInitialState,
   materials: materialsIntitialState,
   blocksContainers: blocksContainersInitialState,
   blocks: blocksInitialState,
