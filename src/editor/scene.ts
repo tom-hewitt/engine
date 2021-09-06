@@ -261,7 +261,10 @@ export class EditorScene extends BaseEditorScene {
       emissive: rgbToInt(materialData.emissive),
       roughness: materialData.roughness,
       metalness: materialData.metalness,
-      flatShading: materialData.flatShading,
+      flatShading:
+        materialData.flatShading !== undefined
+          ? materialData.flatShading
+          : false,
     });
 
     this.materials[materialId] = material;
