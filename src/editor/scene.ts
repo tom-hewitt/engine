@@ -13,12 +13,6 @@ import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { MaterialId } from "../reducers/materials";
 import { rgbToInt } from "../utils/colorUtils";
 
-// Constants
-// [FOV, aspect, near, far]
-const defaultCamera = [75, 2, 0.1, 1000];
-const defaultCameraPosition: [number, number, number] = [0, 1, 2];
-const backgroundColor = 0xdcdcdc;
-
 /**
  * Creates a THREE geometry from the given saved geometry
  * @param {string} geometry The saved geometry
@@ -40,23 +34,23 @@ const createGeometry = (geometry: string) => {
 
 class BaseEditorScene {
   // Constants
-  defaultCamera = [75, 2, 0.1, 1000];
-  defaultCameraPosition: [number, number, number] = [0, 1, 2];
-  backgroundColor = 0xdcdcdc;
+  protected static defaultCamera = [75, 2, 0.1, 1000];
+  protected static defaultCameraPosition: [number, number, number] = [0, 1, 2];
+  protected static backgroundColor = 0xdcdcdc;
 
-  canvas: HTMLCanvasElement;
+  protected canvas: HTMLCanvasElement;
 
-  pixelRatio: number;
+  protected pixelRatio: number;
 
-  width: number;
-  height: number;
+  protected width: number;
+  protected height: number;
 
-  renderer: THREE.WebGLRenderer;
-  renderRequested = false;
+  protected renderer: THREE.WebGLRenderer;
+  protected renderRequested = false;
 
-  camera: THREE.PerspectiveCamera;
+  protected camera: THREE.PerspectiveCamera;
 
-  scene: THREE.Scene;
+  protected scene: THREE.Scene;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -75,14 +69,14 @@ class BaseEditorScene {
     );
 
     // Setup the camera
-    this.camera = new THREE.PerspectiveCamera(...this.defaultCamera);
-    this.camera.position.set(...this.defaultCameraPosition);
+    this.camera = new THREE.PerspectiveCamera(...BaseEditorScene.defaultCamera);
+    this.camera.position.set(...BaseEditorScene.defaultCameraPosition);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
 
     // Setup the scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(this.backgroundColor);
+    this.scene.background = new THREE.Color(BaseEditorScene.backgroundColor);
 
     window.addEventListener("resize", this.onWindowResize);
   }
@@ -90,7 +84,7 @@ class BaseEditorScene {
   /**
    * Updates the camera and renderer to fit the new window size
    */
-  onWindowResize = () => {
+  protected onWindowResize = () => {
     this.width = this.canvas.clientWidth;
     this.height = this.canvas.clientHeight;
 
@@ -106,7 +100,7 @@ class BaseEditorScene {
     this.requestRender();
   };
 
-  render() {
+  protected render() {
     this.renderRequested = false;
     this.renderer.render(this.scene, this.camera);
   }
@@ -124,31 +118,31 @@ class BaseEditorScene {
 }
 
 export class EditorScene extends BaseEditorScene {
-  private effectComposer: EffectComposer;
+  protected effectComposer: EffectComposer;
 
-  private outlinePass: OutlinePass;
+  protected outlinePass: OutlinePass;
 
-  private raycaster: THREE.Raycaster;
+  protected raycaster: THREE.Raycaster;
 
-  private clock: THREE.Clock;
+  protected clock: THREE.Clock;
 
-  private state: State;
+  protected state: State;
 
-  private store: Store<State>;
+  protected store: Store<State>;
 
-  private sceneId: string;
+  protected sceneId: string;
 
-  private controls: Controls;
+  protected controls: Controls;
 
-  private oldSceneState: Scene | undefined = undefined;
+  protected oldSceneState: Scene | undefined = undefined;
 
-  private geometries: { [key: string]: THREE.BufferGeometry } = {};
+  protected geometries: { [key: string]: THREE.BufferGeometry } = {};
 
-  private materials: { [key: string]: THREE.MeshStandardMaterial } = {};
+  protected materials: { [key: string]: THREE.MeshStandardMaterial } = {};
 
-  private sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
+  protected sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
 
-  private selectedObject: SceneObjectId | undefined = undefined;
+  protected selectedObject: SceneObjectId | undefined = undefined;
 
   constructor(canvas: HTMLCanvasElement, store: Store<State>, sceneId: string) {
     super(canvas);
@@ -209,14 +203,14 @@ export class EditorScene extends BaseEditorScene {
   /**
    * @returns The current state of the scene
    */
-  sceneState = () => this.state.current.scenes[this.sceneId];
+  protected sceneState = () => this.state.current.scenes[this.sceneId];
 
   /**
    * Gets a THREE geometry from the given saved geometry, or creates on if it doesn't exist
    * @param {string} geometryId The saved geometry
    * @returns {THREE.BufferGeometry} A THREE geometry representing the saved geometry
    */
-  getGeometry = (geometryId: string) => {
+  protected getGeometry = (geometryId: string) => {
     if (this.geometries[geometryId]) {
       return this.geometries[geometryId];
     }
@@ -233,7 +227,7 @@ export class EditorScene extends BaseEditorScene {
    * @param {MaterialId} materialId The id of the saved material
    * @returns {THREE.Material} A THREE material representing the saved material
    */
-  getMaterial = (materialId: MaterialId) => {
+  protected getMaterial = (materialId: MaterialId) => {
     if (this.materials[materialId]) {
       return this.materials[materialId];
     }
@@ -259,7 +253,7 @@ export class EditorScene extends BaseEditorScene {
    * @param {MeshId} meshId The id of the mesh
    * @returns {THREE.Mesh} A 3D object representing the saved mesh
    */
-  createMesh = (geometry: string, materialId: string) => {
+  protected createMesh = (geometry: string, materialId: string) => {
     return new THREE.Mesh(
       this.getGeometry(geometry),
       this.getMaterial(materialId)
@@ -273,7 +267,10 @@ export class EditorScene extends BaseEditorScene {
    * @param {SceneObject} object The scene object as it is saved in state
    * @returns {THREE.Object3D} The 3D object representation of the scene object
    */
-  createObject3D = (id: SceneObjectId, object: SceneObject): THREE.Object3D => {
+  protected createObject3D = (
+    id: SceneObjectId,
+    object: SceneObject
+  ): THREE.Object3D => {
     let object3D: THREE.Object3D;
     switch (object.type) {
       case "Directional Light": {
@@ -326,7 +323,9 @@ export class EditorScene extends BaseEditorScene {
    * @param callback The function to be performed on each item in order.
    * Gives id and object as parameters
    */
-  dfs = (callback: (id: SceneObjectId, object: SceneObject) => void) => {
+  protected dfs = (
+    callback: (id: SceneObjectId, object: SceneObject) => void
+  ) => {
     const state = this.sceneState();
 
     if (state.children) {
@@ -354,7 +353,7 @@ export class EditorScene extends BaseEditorScene {
    * traversal
    * @returns A hash table of Object3Ds
    */
-  populateScene = () => {
+  protected populateScene = () => {
     const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
 
     this.dfs((id, object) => {
@@ -376,7 +375,7 @@ export class EditorScene extends BaseEditorScene {
    * @param {THREE.Vector2} mouse The coordinates of the click on a scale of
    * -1 to 1
    */
-  onClick = (mouse: THREE.Vector2) => {
+  protected onClick = (mouse: THREE.Vector2) => {
     this.raycaster.setFromCamera(mouse, this.camera);
 
     const object3D = this.raycaster.intersectObjects(
@@ -390,7 +389,7 @@ export class EditorScene extends BaseEditorScene {
   /**
    * Updates the camera, renderer and postprocessor to fit the new window size
    */
-  onWindowResize = () => {
+  protected onWindowResize = () => {
     this.width = this.canvas.clientWidth;
     this.height = this.canvas.clientHeight;
 
@@ -416,7 +415,7 @@ export class EditorScene extends BaseEditorScene {
    * @param {SceneObject} object The saved object
    * @param {THREE.Object3D} object3D The 3D object to update
    */
-  updateObject3D = (
+  protected updateObject3D = (
     id: SceneObjectId,
     object: SceneObject,
     object3D: THREE.Object3D
@@ -463,7 +462,7 @@ export class EditorScene extends BaseEditorScene {
    * Performs a depth first traversal of the scene tree, updating existing
    * 3D objects and creating new ones
    */
-  updateScene = () => {
+  protected updateScene = () => {
     if (this.sceneState() !== this.oldSceneState) {
       this.dfs((id, object) => {
         let object3D = this.sceneObject3Ds[id];
@@ -488,7 +487,7 @@ export class EditorScene extends BaseEditorScene {
    * If the object that is currently selected by the user has changed, update the
    * outline effect to reflect the change
    */
-  updateSelectedObject = () => {
+  protected updateSelectedObject = () => {
     const newSelectedObject = this.state.temp.selectedSceneObject;
 
     if (newSelectedObject !== this.selectedObject) {
@@ -502,7 +501,7 @@ export class EditorScene extends BaseEditorScene {
   /**
    * Reacts to an update in the app's state
    */
-  update = () => {
+  protected update = () => {
     this.oldSceneState = this.sceneState();
     this.state = this.store.getState();
 
@@ -523,7 +522,7 @@ export class EditorScene extends BaseEditorScene {
   /**
    * Renders the scene and updates the controls
    */
-  render = () => {
+  protected render = () => {
     super.render();
     this.renderRequested = false;
 
