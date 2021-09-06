@@ -1,4 +1,4 @@
-import { CurrentState, algorithms } from "../../reducers/current";
+import { CurrentState, Algorithms } from "../../reducers/current";
 
 it("inserts an expression block", () => {
   const initialState: CurrentState = {
@@ -33,7 +33,7 @@ it("inserts an expression block", () => {
     },
   };
 
-  const state = algorithms.insertExpressionBlock(initialState, "0", "2", "1");
+  const state = Algorithms.insertExpressionBlock(initialState, "0", "2", "1");
 
   expect(state.expressions["0"]).toEqual({
     expressionType: "Block",
@@ -75,7 +75,7 @@ it("undos an expression block insertion", () => {
     },
   };
 
-  const state = algorithms.undoInsertExpressionBlock(
+  const state = Algorithms.undoInsertExpressionBlock(
     initialState,
     "0",
     "2",
