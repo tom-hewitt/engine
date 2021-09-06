@@ -5,6 +5,8 @@ import LiteralIntegerView from "./LiteralInteger/LiteralInteger";
 import LiteralFloatView from "./LiteralFloat/LiteralFloat";
 import Literal3DVectorView from "./LiteralVector3D/LiteralVector3D";
 import LiteralColor from "./LiteralColor/LiteralColor";
+import LiteralGeometry from "./LiteralGeometry/LiteralGeometry";
+import LiteralMaterial from "./LiteralMaterial/LiteralMaterial";
 
 export type LiteralProps =
   | LiteralBooleanProps
@@ -93,8 +95,18 @@ export default function Literal(props: LiteralProps) {
         />
       );
     case "Geometry":
-      return <p>LITERAL GEOMETRY</p>;
+      return (
+        <LiteralGeometry
+          {...props}
+          onSubmit={(value) => props.onSubmit({ type: "Geometry", value })}
+        />
+      );
     case "Material":
-      return <p>LITERAL MATERIAL</p>;
+      return (
+        <LiteralMaterial
+          {...props}
+          onSubmit={(value) => props.onSubmit({ type: "Material", value })}
+        />
+      );
   }
 }
