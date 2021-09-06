@@ -1,14 +1,14 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import EditorScene from "../components/EditorScene/EditorScene";
+import EditorScene from "../editor/gui/components/EditorScene/EditorScene";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import mockStore from "./mockStore";
 import produce from "immer";
-import { initialState } from "../reducers/reducer";
-import Literal3DVector from "../components/Literal/LiteralVector3D/LiteralVector3D";
-import { State } from "../reducers/reducer";
-import { SceneObject, SceneObjectId } from "../reducers/scenes";
-import defaultState from "../defaultState";
+import { initialState } from "../editor/state/reducers/reducer";
+import Literal3DVector from "../editor/gui/components/Literal/LiteralVector3D/LiteralVector3D";
+import { State } from "../editor/state/reducers/reducer";
+import { SceneObject, SceneObjectId } from "../editor/state/reducers/scenes";
+import defaultState from "../editor/state/defaults/defaultState";
 
 export default {
   component: EditorScene,

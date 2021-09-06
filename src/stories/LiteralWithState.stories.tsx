@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Meta } from "@storybook/react";
-import Literal from "../components/Literal/Literal";
+import Literal from "../editor/gui/components/Literal/Literal";
 
 export default {
   title: "Components/Literal/With State",

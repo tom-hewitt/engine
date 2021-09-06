@@ -1,6 +1,8 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react";
-import Literal, { LiteralProps } from "../components/Literal/Literal";
+import Literal, {
+  LiteralProps,
+} from "../editor/gui/components/Literal/Literal";
 
 export default {
   component: Literal,

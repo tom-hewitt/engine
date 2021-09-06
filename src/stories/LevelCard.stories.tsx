@@ -1,11 +1,11 @@
 import React from "react";
 import { Meta } from "@storybook/react";
-import LevelCard from "../components/LevelCard/LevelCard";
+import LevelCard from "../editor/gui/components/LevelCard/LevelCard";
 import mockStore from "./mockStore";
 import produce from "immer";
-import { initialState } from "../reducers/reducer";
+import { initialState } from "../editor/state/reducers/reducer";
 import { Provider } from "react-redux";
-import defaultState from "../defaultState";
+import defaultState from "../editor/state/defaults/defaultState";
 
 export default {
   component: LevelCard,

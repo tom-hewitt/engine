@@ -1,13 +1,13 @@
 import React from "react";
 import { Meta } from "@storybook/react";
-import FunctionCard from "../components/FunctionCard/FunctionCard";
+import FunctionCard from "../editor/gui/components/FunctionCard/FunctionCard";
 import mockStore from "./mockStore";
 import produce from "immer";
-import { initialState } from "../reducers/reducer";
+import { initialState } from "../editor/state/reducers/reducer";
 import { Provider } from "react-redux";
-import BlocksDndContext from "../components/BlocksDndContext/BlocksDndContext";
-import SceneObjectCard from "../components/SceneObjectCard/SceneObjectCard";
-import defaultState from "../defaultState";
+import BlocksDndContext from "../editor/gui/components/BlocksDndContext/BlocksDndContext";
+import SceneObjectCard from "../editor/gui/components/SceneObjectCard/SceneObjectCard";
+import defaultState from "../editor/state/defaults/defaultState";
 
 export default {
   component: SceneObjectCard,

@@ -1,4 +1,4 @@
-import { CurrentState, Algorithms } from "../../reducers/current";
+import { CurrentState, Algorithms } from "../../editor/state/reducers/current";
 
 it("inserts an expression block", () => {
   const initialState: CurrentState = {

@@ -1,7 +1,7 @@
 import {
   Algorithms,
   BlocksContainersState,
-} from "../../reducers/blocksContainers";
+} from "../../editor/state/reducers/blocksContainers";
 
 it("reorders a block", () => {
   const initialState: BlocksContainersState = {

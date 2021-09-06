@@ -2,10 +2,10 @@ import React from "react";
 import { Meta } from "@storybook/react";
 import { Provider } from "react-redux";
 import produce from "immer";
-import { initialState } from "../reducers/reducer";
+import { initialState } from "../editor/state/reducers/reducer";
 import mockStore from "./mockStore";
-import BlocksDndContext from "../components/BlocksDndContext/BlocksDndContext";
-import BlocksContainer from "../components/BlocksContainer/BlocksContainer";
+import BlocksDndContext from "../editor/gui/components/BlocksDndContext/BlocksDndContext";
+import BlocksContainer from "../editor/gui/components/BlocksContainer/BlocksContainer";
 
 export default {
   component: BlocksContainer,
