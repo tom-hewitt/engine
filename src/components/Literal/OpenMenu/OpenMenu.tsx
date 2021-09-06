@@ -6,13 +6,17 @@ import "./OpenMenu.scss";
 const background = hexToRGB(colors.Primary, "0");
 const focusedBackground = hexToRGB(colors.Primary, "0.1");
 
-export default function OpenMenu(props: { value: string }) {
+export default function OpenMenu(props: {
+  value: string;
+  onClick?: () => void;
+}) {
   return (
     <motion.div
       className="openMenuContainer"
       whileTap={{ scale: 0.99 }}
       animate={{ backgroundColor: background }}
       whileHover={{ backgroundColor: focusedBackground }}
+      onClick={props.onClick}
     >
       <span className="openMenuText">{props.value}</span>
     </motion.div>
