@@ -3,6 +3,24 @@ import { CloseButton } from "../Card/Card";
 import Modal from "../Modal/Modal";
 import styles from "./GeometryPicker.module.scss";
 
+const geometries = {
+  primitive: ["Box", "Plane"],
+};
+
+function Geometry(props: { geometry: string; onClick: () => void }) {
+  return (
+    <motion.div
+      className={styles.geometry}
+      initial={{ backgroundColor: "rgba(48, 48, 48, 0.5)" }}
+      whileHover={{ backgroundColor: "rgba(48, 48, 48, 1)" }}
+      onClick={props.onClick}
+    >
+      <canvas height="60px"></canvas>
+      <span className={styles.geometryName}>{props.geometry}</span>
+    </motion.div>
+  );
+}
+
 export default function GeometryPicker(props: {
   geometry: string;
   onSubmit: (geometry: string) => void;
@@ -25,7 +43,15 @@ export default function GeometryPicker(props: {
             <div className={styles.headerBar}>
               <CloseButton onClick={props.onCancel} />
             </div>
-            <div className={styles.grid}></div>
+            <div className={styles.grid}>
+              {geometries.primitive.map((geometry) => (
+                <Geometry
+                  key={geometry}
+                  geometry={geometry}
+                  onClick={() => props.onSubmit(geometry)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </motion.div>

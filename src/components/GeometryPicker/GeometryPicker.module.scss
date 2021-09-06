@@ -19,6 +19,8 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+
+  width: 150px;
 }
 
 .categoriesTitle {
@@ -57,4 +59,21 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 10px;
+}
+
+.geometry {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 5px;
+
+  cursor: pointer;
+}
+
+.geometryName {
+  font-family: IBM Plex Mono;
+  font-weight: bold;
+  font-size: 10px;
+
+  color: colors.$primary;
 }

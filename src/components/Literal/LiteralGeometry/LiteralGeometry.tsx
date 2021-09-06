@@ -14,7 +14,10 @@ export default function LiteralGeometry(props: {
         <GeometryPicker
           geometry={props.value}
           onCancel={() => setShowPicker(false)}
-          onSubmit={props.onSubmit}
+          onSubmit={(value) => {
+            props.onSubmit(value);
+            setShowPicker(false);
+          }}
         />
       ) : null}
     </>
