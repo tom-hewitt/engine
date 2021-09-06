@@ -12,6 +12,7 @@ import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import { MaterialId } from "../reducers/materials";
 import { rgbToInt } from "../utils/colorUtils";
+import { degToRad } from "three/src/math/MathUtils";
 
 /**
  * Creates a THREE geometry from the given saved geometry
@@ -214,7 +215,7 @@ export class EditorScene extends BaseEditorScene {
 
     this.sceneId = sceneId;
 
-    this.sceneObject3Ds = this.populateScene();
+    this.populateScene();
 
     this.controls = new Controls(
       this.camera,
@@ -292,6 +293,39 @@ export class EditorScene extends BaseEditorScene {
   };
 
   /**
+   * Updates the 3D object's matrix to match the saved object
+   * @param object
+   * @param object3D
+   */
+  protected updateMatrix = (object: SceneObject, object3D: THREE.Object3D) => {
+    if (object.attributes.Rotation) {
+      object3D.matrix.makeRotationFromEuler(
+        new THREE.Euler(
+          degToRad(object.attributes.Rotation.value.x),
+          degToRad(object.attributes.Rotation.value.y),
+          degToRad(object.attributes.Rotation.value.z)
+        )
+      );
+    }
+
+    if (object.attributes.Size) {
+      object3D.matrix.scale(
+        new THREE.Vector3(
+          object.attributes.Size.value.x,
+          object.attributes.Size.value.y,
+          object.attributes.Size.value.z
+        )
+      );
+    }
+
+    object3D.matrix.setPosition(
+      object.attributes.Position.value.x,
+      object.attributes.Position.value.y,
+      object.attributes.Position.value.z
+    );
+  };
+
+  /**
    * Creates a 3d object from a saved scene object
    * @param {SceneObjectId} id The id of the scene object, so it can be
    * added to the 3D object
@@ -339,12 +373,30 @@ export class EditorScene extends BaseEditorScene {
       }
     }
 
+    object3D.matrixAutoUpdate = false;
+    this.updateMatrix(object, object3D);
+
     object3D.name = id;
     object3D.position.set(
       object.attributes.Position.value.x,
       object.attributes.Position.value.y,
       object.attributes.Position.value.z
     );
+
+    // Save the new object to the scene object 3Ds hash map
+    this.sceneObject3Ds[id] = object3D;
+
+    // Add it to it's parent
+    if (object.parent) {
+      this.sceneObject3Ds[object.parent].add(object3D);
+    } else {
+      this.scene.add(object3D);
+    }
+
+    // If the new object is selected, add the outline effect
+    if (id === this.selectedObject) {
+      this.outlinePass.selectedObjects = [object3D];
+    }
 
     return object3D;
   };
@@ -385,20 +437,9 @@ export class EditorScene extends BaseEditorScene {
    * @returns A hash table of Object3Ds
    */
   protected populateScene = () => {
-    const sceneObject3Ds: { [key: string]: THREE.Object3D } = {};
-
     this.dfs((id, object) => {
-      const object3D = this.createObject3D(id, object);
-
-      sceneObject3Ds[id] = object3D;
-      if (object.parent) {
-        sceneObject3Ds[object.parent].add(object3D);
-      } else {
-        this.scene.add(object3D);
-      }
+      this.createObject3D(id, object);
     });
-
-    return sceneObject3Ds;
   };
 
   /**
@@ -463,27 +504,23 @@ export class EditorScene extends BaseEditorScene {
       switch (object.type) {
         case "Directional Light": {
           if (object3D instanceof THREE.DirectionalLight) {
-            object3D.target.position.set(
-              object.attributes["Light Target"].value.x,
-              object.attributes["Light Target"].value.y,
-              object.attributes["Light Target"].value.z
-            );
             object3D.color.set(rgbToInt(object.attributes.Color.value));
             object3D.intensity = object.attributes.Intensity.value;
+
+            this.updateMatrix(object, object3D);
           }
           break;
         }
         case "Mesh": {
-          object3D.rotation.set(
-            object.attributes.Rotation.value.x,
-            object.attributes.Rotation.value.y,
-            object.attributes.Rotation.value.z
-          );
-          object3D.scale.set(
-            object.attributes.Size.value.x,
-            object.attributes.Size.value.y,
-            object.attributes.Size.value.z
-          );
+          if (object3D instanceof THREE.Mesh) {
+            if (object.attributes.Geometry !== oldObject?.attributes.Geometry) {
+              object3D.geometry = this.getGeometry(
+                object.attributes.Geometry.value
+              );
+            }
+
+            this.updateMatrix(object, object3D);
+          }
         }
       }
     }

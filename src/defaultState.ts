@@ -100,7 +100,7 @@ const defaultState: State = {
               Rotation: {
                 type: "Vector3D",
                 value: {
-                  x: -90,
+                  x: 0,
                   y: 0,
                   z: 0,
                 },
