@@ -294,8 +294,8 @@ export class EditorScene extends BaseEditorScene {
 
   /**
    * Updates the 3D object's matrix to match the saved object
-   * @param object
-   * @param object3D
+   * @param object The saved object
+   * @param object3D The 3D Object
    */
   protected updateMatrix = (object: SceneObject, object3D: THREE.Object3D) => {
     if (object.attributes.Rotation) {
